@@ -42,12 +42,6 @@ export class ConcurrencyView implements DemoView {
     this.chart = chart;
     this.buildSlots();
     this.buildProcs();
-    $('nearWrap').onclick = () => {
-      for (let i = 0; i < n; i++) {
-        machine.write(procBase(i), 0xf0);
-        this.lastSeen[i] = 0xf0;
-      }
-    };
   }
 
   private buildSlots() {
