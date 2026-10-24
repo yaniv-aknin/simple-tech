@@ -11,7 +11,7 @@ import {attachTooltip} from './ui/tooltip.ts';
 
 const SPEEDS = [0, 1, 5, 10, 50, 100, 500];
 const MAX_STEPS_PER_FRAME = 400;
-const DEFAULT_PROCESSES = 2;
+const DEFAULT_PROCESSES = 1;
 
 const breakpoints = new Set<number>();
 const listing = new Listing($('listing'));
