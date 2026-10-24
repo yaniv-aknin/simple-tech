@@ -33,6 +33,7 @@ const shadow = (access: Access | null, t: number) => {
 };
 
 interface Card {
+  el: HTMLElement;
   program: Program;
   listing: HTMLElement;
   inputs: HTMLInputElement[];
@@ -55,11 +56,13 @@ interface Hover {
 class View {
   private readonly sys: VirtualSystem;
   private readonly cards: Card[] = [];
+  private readonly shown: boolean[];
   private readonly frames: {box: HTMLElement; owner: HTMLElement; cells: HTMLElement[]}[] = [];
   private hover: Hover | null = null;
 
-  constructor(sys: VirtualSystem) {
+  constructor(sys: VirtualSystem, shown: boolean[]) {
     this.sys = sys;
+    this.shown = shown;
     $('procs').replaceChildren(...sys.procs.map((p, i) => this.buildCard(p, i)));
     this.buildFrames();
     document.onmouseover = e => this.pointAt(e);
@@ -170,6 +173,7 @@ class View {
     );
     card.querySelector('.watches')!.append(...watches);
     this.cards.push({
+      el: card,
       program: proc.program,
       listing,
       inputs,
@@ -221,7 +225,13 @@ class View {
 
   render(t: number) {
     const {sys} = this;
-    sys.procs.forEach((proc, pid) => this.renderCard(proc, pid, t));
+    const count = this.shown.filter(Boolean).length;
+    if ($('procs').dataset.count !== String(count)) $('procs').dataset.count = String(count);
+    sys.procs.forEach((proc, pid) => {
+      const card = this.cards[pid];
+      if (card.el.hidden === this.shown[pid]) card.el.hidden = !this.shown[pid];
+      if (this.shown[pid]) this.renderCard(proc, pid, t);
+    });
     this.renderFrames(t);
     setText($('physTitle'), `Physical memory: ${sys.frames * PAGE_SIZE} bytes`);
     setText($('usage'), `${sys.framesInUse} of ${sys.frames} frames in use`);
@@ -347,9 +357,10 @@ class View {
 initTheme();
 
 let speedIdx = 3;
+const shown = PROCESSES.map(() => true);
 let memory = MEMORIES[0];
 let sys = new VirtualSystem(PROCESSES, memory);
-let view = new View(sys);
+let view = new View(sys, shown);
 let budget = 0;
 let last = 0;
 
@@ -367,6 +378,31 @@ SPEEDS.forEach((ips, i) => {
 });
 showSpeed();
 
+const strip = $('strip');
+const showStrip = () => {
+  const count = shown.filter(Boolean).length;
+  [...strip.children].forEach((b, pid) => {
+    b.classList.toggle('on', shown[pid]);
+    (b as HTMLButtonElement).disabled = shown[pid] && count === 1;
+  });
+};
+PROCESSES.forEach((def, pid) => {
+  const b = h('button', 'pill');
+  b.append(
+    Object.assign(h('i', 'chip'), {style: `background:${procColor(pid, true)}`}),
+    `P${pid + 1} ${def.name}`,
+  );
+  b.title = 'Show or hide this program. Hiding it stops it and frees its frames.';
+  b.onclick = () => {
+    b.blur();
+    if (shown[pid]) sys.reset(pid);
+    shown[pid] = !shown[pid];
+    showStrip();
+  };
+  strip.append(b);
+});
+showStrip();
+
 const memBox = $('memsize');
 const showMemory = () =>
   [...memBox.children].forEach((b, i) => b.classList.toggle('on', MEMORIES[i] === memory));
@@ -381,12 +417,42 @@ MEMORIES.forEach(choice => {
     old.procs.forEach((proc, pid) => {
       for (const [key, value] of Object.entries(proc.values)) sys.setParam(pid, key, value);
     });
-    view = new View(sys);
+    view = new View(sys, shown);
     showMemory();
   };
   memBox.append(b);
 });
 showMemory();
+
+/**
+ * With one or two programs the cards scale up, by the largest factor that still fits the window without
+ * scrolling (and keeps each card about as wide as its two-column layout wants).
+ */
+function fitZoom() {
+  const procs = $('procs');
+  const count = shown.filter(Boolean).length;
+  procs.style.setProperty('--zoom', '1');
+  if (count >= 3) return;
+  const root = document.documentElement;
+  const real = (root.clientWidth - 32 - 14 * (count - 1)) / count;
+  const max = Math.min(2.2, real / 880);
+  const min = 0.8;
+  const fits = (z: number) => {
+    procs.style.setProperty('--zoom', String(z));
+    return root.scrollHeight <= window.innerHeight;
+  };
+  if (max <= min || fits(max)) return;
+  let lo = min;
+  let hi = max;
+  for (let i = 0; i < 8; i++) {
+    const mid = (lo + hi) / 2;
+    if (fits(mid)) lo = mid;
+    else hi = mid;
+  }
+  procs.style.setProperty('--zoom', String(lo));
+}
+
+let fitted = '';
 
 function frame(t: number) {
   const dt = Math.min(100, t - last) / 1000;
@@ -403,6 +469,13 @@ function frame(t: number) {
     if (n >= MAX_STEPS_PER_FRAME) budget = 0;
   }
   view.render(t);
+  const crashed = sys.procs.some((p, pid) => shown[pid] && p.state === 'crashed');
+  const states = sys.procs.map(p => p.state).join();
+  const layout = [shown.join(), memory.frames, crashed, states, innerWidth, innerHeight].join();
+  if (layout !== fitted) {
+    fitted = layout;
+    fitZoom();
+  }
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);

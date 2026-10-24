@@ -86,8 +86,33 @@ button:hover {
   align-items: center;
   gap: 10px;
 }
-.toolbar .gap {
-  margin-left: 14px;
+.strip {
+  display: flex;
+  gap: 6px;
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 99px;
+}
+.pill.on {
+  border-color: var(--strong, var(--blue));
+  box-shadow: inset 0 0 0 1px var(--text);
+}
+.pill:not(.on) {
+  opacity: 0.55;
+}
+.pill:disabled {
+  cursor: default;
+}
+.group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.toolbar {
+  column-gap: 22px;
 }
 .toolbar .end {
   margin-left: auto;
@@ -138,9 +163,39 @@ button:hover {
 
 .procs {
   display: grid;
+  justify-content: start;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   grid-template-rows: repeat(8, auto);
   gap: 0 14px;
+}
+.procs[data-count='1'] {
+  grid-template-columns: minmax(0, calc(980px * var(--zoom, 1)));
+  --cell-h: 24px;
+  --cell-font: 13px;
+}
+.procs[data-count='2'] {
+  grid-template-columns: repeat(2, minmax(0, calc(900px * var(--zoom, 1))));
+  --cell-h: 22px;
+  --cell-font: 12px;
+}
+.procs[data-count='1'] .card,
+.procs[data-count='2'] .card {
+  zoom: var(--zoom, 1);
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  column-gap: 18px;
+}
+.procs[data-count='1'] .card > *,
+.procs[data-count='2'] .card > * {
+  grid-column: 1;
+}
+.procs[data-count='1'] .card > .memory,
+.procs[data-count='2'] .card > .memory {
+  grid-column: 2;
+  grid-row: 1 / span 8;
+  align-self: start;
+}
+.card[hidden] {
+  display: none;
 }
 .card {
   display: grid;
@@ -317,7 +372,7 @@ button:hover {
 .vgrid {
   display: grid;
   grid-template-columns: 24px repeat(16, minmax(0, 1fr));
-  font: 11px var(--mono);
+  font: var(--cell-font, 11px) var(--mono);
 }
 .vgrid .hd {
   display: flex;
@@ -330,7 +385,7 @@ button:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 18px;
+  height: var(--cell-h, 18px);
   border-bottom: 1px solid var(--bg);
   color: var(--text);
 }
