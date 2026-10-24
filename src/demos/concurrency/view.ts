@@ -1,9 +1,9 @@
-import {hex} from '../../machine/format';
-import type {Machine} from '../../machine/machine';
-import {$, setText} from '../../ui/dom';
-import {bindFlash} from '../../ui/flash';
-import type {DemoView, Session} from '../demo';
-import {CUR, PROC_HUES, PROC_SIZE, SLOT_SIZE, TABLE, procBase, slotAddr} from './concurrency';
+import {hex} from '../../machine/format.ts';
+import type {Machine} from '../../machine/machine.ts';
+import {$, setText} from '../../ui/dom.ts';
+import {bindFlash} from '../../ui/flash.ts';
+import type {DemoView, Session} from '../demo.ts';
+import {CUR, PROC_HUES, PROC_SIZE, SLOT_SIZE, TABLE, procBase, slotAddr} from './concurrency.ts';
 
 const chip = (i: number) => `<i class="chip" style="background:hsl(${PROC_HUES[i]} 65% 42%)"></i>`;
 

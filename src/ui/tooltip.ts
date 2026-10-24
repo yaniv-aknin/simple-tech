@@ -1,5 +1,5 @@
-import {hex2} from '../machine/format';
-import {opSpec} from '../machine/isa';
+import {hex2} from '../machine/format.ts';
+import {opSpec} from '../machine/isa.ts';
 
 export function attachTooltip(listing: HTMLElement) {
   const tip = document.createElement('div');

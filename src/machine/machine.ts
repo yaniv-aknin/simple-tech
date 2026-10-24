@@ -1,5 +1,5 @@
-import {hex, hex2} from './format';
-import {opSpec} from './isa';
+import {hex, hex2} from './format.ts';
+import {opSpec} from './isa.ts';
 
 export type Phase = 'fetch' | 'execute' | 'timer';
 

@@ -1,7 +1,7 @@
-import {hex, hex2} from '../machine/format';
-import {opSpec} from '../machine/isa';
-import type {Machine, Phase} from '../machine/machine';
-import {$, setText} from './dom';
+import {hex, hex2} from '../machine/format.ts';
+import {opSpec} from '../machine/isa.ts';
+import type {Machine, Phase} from '../machine/machine.ts';
+import {$, setText} from './dom.ts';
 
 const PHASES: Phase[] = ['fetch', 'execute', 'timer'];
 const bits = (v: number) => v.toString(2).padStart(8, '0') + '  ' + hex(v);

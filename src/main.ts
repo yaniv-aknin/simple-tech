@@ -1,12 +1,12 @@
 import './style.css';
-import {DEMOS, type DemoKey} from './demos';
-import type {DemoView, Session, ViewMode} from './demos/demo';
-import type {Direction} from './machine/keyboard';
-import {CpuPanel} from './ui/cpu';
-import {$, toggleOn} from './ui/dom';
-import {Listing, type Lang} from './ui/listing';
-import {RamGrid} from './ui/ram';
-import {attachTooltip} from './ui/tooltip';
+import {DEMOS, type DemoKey} from './demos/index.ts';
+import type {DemoView, Session, ViewMode} from './demos/demo.ts';
+import type {Direction} from './machine/keyboard.ts';
+import {CpuPanel} from './ui/cpu.ts';
+import {$, toggleOn} from './ui/dom.ts';
+import {Listing, type Lang} from './ui/listing.ts';
+import {RamGrid} from './ui/ram.ts';
+import {attachTooltip} from './ui/tooltip.ts';
 
 const SPEEDS = [0, 1, 5, 10, 50, 100, 500];
 const MAX_STEPS_PER_FRAME = 400;

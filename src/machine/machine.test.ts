@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'vitest';
-import {assemble} from './assembler';
-import {Keyboard} from './keyboard';
-import {Machine, type MachineOptions} from './machine';
+import {assemble} from './assembler.ts';
+import {Keyboard} from './keyboard.ts';
+import {Machine, type MachineOptions} from './machine.ts';
 
 const clock = () => 0;
 const load = (src: string, symbols = {}, options: MachineOptions = {}) =>

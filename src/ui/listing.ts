@@ -1,8 +1,8 @@
-import {parseC} from '../demos/c-source';
-import type {Session} from '../demos/demo';
-import type {Program} from '../machine/assembler';
-import {hex, hex2} from '../machine/format';
-import type {Machine} from '../machine/machine';
+import {parseC} from '../demos/c-source.ts';
+import type {Session} from '../demos/demo.ts';
+import type {Program} from '../machine/assembler.ts';
+import {hex, hex2} from '../machine/format.ts';
+import type {Machine} from '../machine/machine.ts';
 
 export type Lang = 'asm' | 'c';
 

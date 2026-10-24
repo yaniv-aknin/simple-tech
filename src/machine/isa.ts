@@ -1,5 +1,5 @@
-import {hex} from './format';
-import type {Machine} from './machine';
+import {hex} from './format.ts';
+import type {Machine} from './machine.ts';
 
 export const Op = {
   NOP: 0,

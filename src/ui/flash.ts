@@ -1,4 +1,4 @@
-import type {Access, Machine} from '../machine/machine';
+import type {Access, Machine} from '../machine/machine.ts';
 
 const FLASH_MS = 700;
 

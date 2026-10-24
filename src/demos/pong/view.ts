@@ -1,10 +1,10 @@
-import {hex} from '../../machine/format';
-import {Keyboard} from '../../machine/keyboard';
-import type {Machine} from '../../machine/machine';
-import {$, setText} from '../../ui/dom';
-import {bindFlash} from '../../ui/flash';
-import type {DemoView, Session} from '../demo';
-import {ADDR, VAR_INFO} from './pong';
+import {hex} from '../../machine/format.ts';
+import {Keyboard} from '../../machine/keyboard.ts';
+import type {Machine} from '../../machine/machine.ts';
+import {$, setText} from '../../ui/dom.ts';
+import {bindFlash} from '../../ui/flash.ts';
+import type {DemoView, Session} from '../demo.ts';
+import {ADDR, VAR_INFO} from './pong.ts';
 
 const GW = 16;
 const GH = 12;

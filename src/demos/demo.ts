@@ -1,6 +1,6 @@
-import {assemble, type Program} from '../machine/assembler';
-import type {Keyboard} from '../machine/keyboard';
-import {Machine, type Interrupt} from '../machine/machine';
+import {assemble, type Program} from '../machine/assembler.ts';
+import type {Keyboard} from '../machine/keyboard.ts';
+import {Machine, type Interrupt} from '../machine/machine.ts';
 
 export type ViewMode = 'vars' | 'instr' | 'ram';
 

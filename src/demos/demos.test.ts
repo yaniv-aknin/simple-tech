@@ -1,9 +1,9 @@
 import {describe, expect, it} from 'vitest';
-import {concurrencySetup, procBase} from './concurrency/concurrency';
-import {Keyboard} from '../machine/keyboard';
-import {parseC} from './c-source';
-import {boot} from './demo';
-import {ADDR, pongSetup} from './pong/pong';
+import {concurrencySetup, procBase} from './concurrency/concurrency.ts';
+import {Keyboard} from '../machine/keyboard.ts';
+import {parseC} from './c-source.ts';
+import {boot} from './demo.ts';
+import {ADDR, pongSetup} from './pong/pong.ts';
 
 const clock = () => 0;
 

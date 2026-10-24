@@ -1,4 +1,4 @@
-import {Op} from './isa';
+import {Op} from './isa.ts';
 
 export type Item =
   | {kind: 'note'; text: string}

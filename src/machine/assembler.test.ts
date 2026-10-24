@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'vitest';
-import {assemble} from './assembler';
-import {Op} from './isa';
+import {assemble} from './assembler.ts';
+import {Op} from './isa.ts';
 
 describe('assemble', () => {
   it('encodes instructions as opcode/operand pairs', () => {

@@ -1,5 +1,5 @@
-import {hex} from '../../machine/format';
-import type {DemoSetup} from '../demo';
+import {hex} from '../../machine/format.ts';
+import type {DemoSetup} from '../demo.ts';
 
 export const CUR = 0x08;
 export const TABLE = 0x10;

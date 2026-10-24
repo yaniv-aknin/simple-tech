@@ -1,8 +1,8 @@
-import {concurrencySetup} from './concurrency/concurrency';
-import {ConcurrencyView} from './concurrency/view';
-import {boot, type Demo} from './demo';
-import {pongSetup} from './pong/pong';
-import {PongView} from './pong/view';
+import {concurrencySetup} from './concurrency/concurrency.ts';
+import {ConcurrencyView} from './concurrency/view.ts';
+import {boot, type Demo} from './demo.ts';
+import {pongSetup} from './pong/pong.ts';
+import {PongView} from './pong/view.ts';
 
 export const DEMOS = {
   pong: {

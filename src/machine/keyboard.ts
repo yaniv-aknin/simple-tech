@@ -1,4 +1,4 @@
-import type {Machine} from './machine';
+import type {Machine} from './machine.ts';
 
 export type Direction = -1 | 1;
 

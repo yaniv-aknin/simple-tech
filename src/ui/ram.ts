@@ -1,8 +1,8 @@
-import type {Session} from '../demos/demo';
-import {hex, hex2} from '../machine/format';
-import type {Machine} from '../machine/machine';
-import {setText} from './dom';
-import {flashLevel} from './flash';
+import type {Session} from '../demos/demo.ts';
+import {hex, hex2} from '../machine/format.ts';
+import type {Machine} from '../machine/machine.ts';
+import {setText} from './dom.ts';
+import {flashLevel} from './flash.ts';
 
 export class RamGrid {
   private readonly cells: HTMLElement[] = [];

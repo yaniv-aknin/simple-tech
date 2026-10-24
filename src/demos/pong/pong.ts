@@ -1,4 +1,4 @@
-import type {DemoSetup} from '../demo';
+import type {DemoSetup} from '../demo.ts';
 import source from './pong.asm?raw';
 import cSource from './pong.c?raw';
 
