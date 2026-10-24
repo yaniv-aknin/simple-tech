@@ -27,7 +27,7 @@ src/
   machine/          the computer itself, no DOM: assembler, instruction set, CPU, keyboard
   demos/            one folder per demo: program source, memory layout, and its panels
   ui/               shared panels: CPU, RAM grid, program listing, tooltip
-  main.ts           wiring: sidebar, view modes, clock, input
+  main.ts           wiring: sidebar, panel toggles, clock, input
   ai/core/          AI explainer logic, no DOM: tasks, OpenAI calls, Markov chains, Dickens search, Wikipedia tool
   ai/pages/         the AI pages' scripts and styles
 public/ai/          recorded answers (data/) and books (texts/)

@@ -2,8 +2,6 @@ import {assemble, type Program} from '../machine/assembler.ts';
 import type {Keyboard} from '../machine/keyboard.ts';
 import {Machine, type Interrupt} from '../machine/machine.ts';
 
-export type ViewMode = 'vars' | 'instr' | 'ram';
-
 /** How a core after the first one starts: where it begins, and whether it is on a timer. */
 export interface CoreSetup {
   interrupt?: Interrupt;
@@ -65,6 +63,5 @@ export interface DemoView {
 }
 
 export interface Demo {
-  defaultMode: ViewMode;
   start(options: {processes: number; cores: number}): {session: Session; view: DemoView};
 }

@@ -6,14 +6,12 @@ import {PongView} from './pong/view.ts';
 
 export const DEMOS = {
   pong: {
-    defaultMode: 'vars',
     start() {
       const session = boot(pongSetup());
       return {session, view: new PongView(session)};
     },
   },
   procs: {
-    defaultMode: 'vars',
     start({processes, cores}) {
       const session = boot(concurrencySetup(processes, cores));
       return {session, view: new ConcurrencyView(session, processes)};

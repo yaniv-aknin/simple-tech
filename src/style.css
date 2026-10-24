@@ -127,15 +127,11 @@ body[data-demo='procs'][data-kernel='off'] .kernel-code,
 body[data-demo='procs'][data-kernel='off'] .kernel-ui {
   display: none;
 }
-body[data-mode='vars'] .cpu,
-body[data-mode='vars'] .ram,
-body[data-mode='vars'] .prog,
-body[data-mode='instr'] .ram {
-  visibility: hidden;
-}
-body[data-mode='instr'] .phases,
-body[data-mode='instr'] .r-pc,
-body[data-mode='instr'] .r-ir {
+body[data-vars='off'] .col.left,
+body[data-ins='off'] .prog,
+body[data-cpu='off'] .cpus,
+body[data-ram='off'] .ram,
+body[data-cpu='off'][data-ram='off'] .col.mid {
   display: none;
 }
 h2 {
@@ -147,7 +143,7 @@ h2 {
 }
 .layout {
   display: grid;
-  grid-template-columns: minmax(340px, 416px) minmax(400px, 576px) minmax(340px, 1fr);
+  grid-template-columns: var(--columns, minmax(340px, 416px) minmax(340px, 1fr));
   gap: 14px;
   flex: 1;
 }

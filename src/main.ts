@@ -1,7 +1,7 @@
 import './style.css';
 import {initTheme, mountThemeToggle} from './theme.ts';
 import {DEMOS, type DemoKey} from './demos/index.ts';
-import {atBreakpoint, finishKernel, type DemoView, type Session, type ViewMode} from './demos/demo.ts';
+import {atBreakpoint, finishKernel, type DemoView, type Session} from './demos/demo.ts';
 import type {Direction} from './machine/keyboard.ts';
 import {CpuPanel} from './ui/cpu.ts';
 import {$, toggleOn} from './ui/dom.ts';
@@ -12,6 +12,9 @@ import {attachTooltip} from './ui/tooltip.ts';
 const SPEEDS = [0, 1, 5, 10, 50, 100, 500];
 const MAX_STEPS_PER_FRAME = 400;
 const DEFAULT_PROCESSES = 1;
+const PANELS = ['vars', 'ins', 'cpu', 'ram'] as const;
+type Panel = (typeof PANELS)[number];
+const DEFAULT_PANELS: Panel[] = ['vars', 'ins'];
 
 const breakpoints = new Set<number>();
 const listing = new Listing($('listing'));
@@ -26,7 +29,7 @@ let processes = DEFAULT_PROCESSES;
 let cores = 1;
 let showKernel = false;
 let cpus: CpuPanel[] = [];
-let mode: ViewMode = 'vars';
+let shown = new Set<Panel>(DEFAULT_PANELS);
 let speedIdx = 0;
 let session: Session;
 let view: DemoView;
@@ -48,7 +51,9 @@ function restart() {
 /** The URL hash is `<demo or page path>?<params>`, e.g. `#procs?n=4` or `#ai/markov/build/?book=1`. */
 function writeDemoHash() {
   const params = new URLSearchParams();
-  if (mode !== DEMOS[demoKey].defaultMode) params.set('mode', mode);
+  if (PANELS.some(p => shown.has(p) !== DEFAULT_PANELS.includes(p))) {
+    params.set('show', PANELS.filter(p => shown.has(p)).join(',') || 'none');
+  }
   if (demoKey === 'procs' && processes !== DEFAULT_PROCESSES) params.set('n', String(processes));
   if (demoKey === 'procs' && cores !== 1) params.set('cores', String(cores));
   if (demoKey === 'procs' && showKernel) params.set('kernel', '1');
@@ -56,10 +61,19 @@ function writeDemoHash() {
   history.replaceState(null, '', '#' + demoKey + query);
 }
 
-function setMode(m: ViewMode) {
-  mode = m;
-  document.body.dataset.mode = m;
-  toggleOn($('modes'), b => b.dataset.mode === m);
+/** Shows the chosen panels and gives the columns of the layout to those that are left. */
+function setPanels(panels: Iterable<Panel>) {
+  shown = new Set(panels);
+  for (const p of PANELS) document.body.dataset[p] = shown.has(p) ? 'on' : 'off';
+  toggleOn($('views'), b => shown.has(b.dataset.view as Panel));
+  const middle = shown.has('cpu') || shown.has('ram');
+  const columns = [
+    shown.has('vars') && 'minmax(340px, 416px)',
+    middle && 'minmax(400px, 576px)',
+    shown.has('ins') && 'minmax(340px, 1fr)',
+  ].filter(Boolean);
+  $('layout').style.setProperty('--columns', columns.join(' ') || '1fr');
+  listing.refit();
 }
 
 function setLang(lang: Lang) {
@@ -100,7 +114,6 @@ function switchDemo(key: DemoKey) {
   toggleOn($('tabs'), b => b.dataset.demo === key);
   $('ctl-' + key).appendChild($('controls'));
   setSpeed(0);
-  setMode(DEMOS[key].defaultMode);
   restart();
 }
 
@@ -128,8 +141,8 @@ function route() {
   setCores(key === 'procs' && [2, 4].includes(c) ? c : 1);
   setKernel(key === 'procs' && params.get('kernel') === '1');
   switchDemo(key);
-  const m = params.get('mode');
-  if (m === 'vars' || m === 'instr' || m === 'ram') setMode(m);
+  const wanted = params.get('show');
+  setPanels(wanted === null ? DEFAULT_PANELS : PANELS.filter(p => wanted.split(',').includes(p)));
   writeDemoHash();
 }
 
@@ -142,7 +155,7 @@ function frame(t: number) {
   lastT = t;
   const ips = SPEEDS[speedIdx];
   if (ips > 0) {
-    const byPhase = mode === 'ram' && ips <= 10;
+    const byPhase = (shown.has('cpu') || shown.has('ram')) && ips <= 10;
     budget += dt * ips * (byPhase ? 2 : 1);
     let n = 0;
     while (budget >= 1 && n < MAX_STEPS_PER_FRAME) {
@@ -171,9 +184,10 @@ function frame(t: number) {
 
 const buttons = (id: string) => [...$(id).querySelectorAll('button')];
 
-for (const b of buttons('modes'))
+for (const b of buttons('views'))
   b.onclick = () => {
-    setMode(b.dataset.mode as ViewMode);
+    const panel = b.dataset.view as Panel;
+    setPanels(shown.has(panel) ? [...shown].filter(p => p !== panel) : [...shown, panel]);
     writeDemoHash();
   };
 for (const b of buttons('tabs')) b.onclick = () => (location.hash = b.dataset.page ?? b.dataset.demo!);

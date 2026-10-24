@@ -28,16 +28,17 @@
 
     <main>
       <header>
-        <div class="seg" id="modes">
-          <button data-mode="vars" class="on">Variables</button>
-          <button data-mode="instr">Variables + instructions</button>
-          <button data-mode="ram">RAM</button>
+        <div class="seg" id="views">
+          <button data-view="vars">Variables</button>
+          <button data-view="ins">Instructions</button>
+          <button data-view="cpu">CPU</button>
+          <button data-view="ram">RAM</button>
         </div>
         <button id="rst" class="reset">Reset</button>
       </header>
 
-      <div class="layout">
-        <div class="col">
+      <div class="layout" id="layout">
+        <div class="col left">
           <section class="panel demo-pong">
             <h2>Screen</h2>
             <div class="scorebar">
@@ -89,7 +90,7 @@
           </section>
         </div>
 
-        <div class="col">
+        <div class="col mid">
           <div class="cpus" id="cpus"></div>
 
           <section class="panel ram">
