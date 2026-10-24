@@ -4,7 +4,7 @@ import type {DemoView, Session, ViewMode} from './demos/demo';
 import type {Direction} from './machine/keyboard';
 import {CpuPanel} from './ui/cpu';
 import {$, toggleOn} from './ui/dom';
-import {Listing} from './ui/listing';
+import {Listing, type Lang} from './ui/listing';
 import {RamGrid} from './ui/ram';
 import {attachTooltip} from './ui/tooltip';
 
@@ -29,13 +29,18 @@ function restart() {
   ({session, view} = DEMOS[demoKey].start({processes}));
   budget = 0;
   ram.build(session);
-  listing.build(session.program);
+  listing.build(session);
 }
 
 function setMode(m: ViewMode) {
   mode = m;
   document.body.dataset.mode = m;
   toggleOn($('modes'), b => b.dataset.mode === m);
+}
+
+function setLang(lang: Lang) {
+  listing.setLang(lang);
+  toggleOn($('lang'), b => b.dataset.lang === lang);
 }
 
 function setSpeed(i: number) {
@@ -87,6 +92,7 @@ const buttons = (id: string) => [...$(id).children] as HTMLElement[];
 
 for (const b of buttons('modes')) b.onclick = () => setMode(b.dataset.mode as ViewMode);
 for (const b of buttons('tabs')) b.onclick = () => switchDemo(b.dataset.demo as DemoKey);
+for (const b of buttons('lang')) b.onclick = () => setLang(b.dataset.lang as Lang);
 for (const b of buttons('speed')) b.onclick = () => setSpeed(Number(b.dataset.i));
 for (const b of buttons('nsel'))
   b.onclick = () => {
@@ -123,5 +129,6 @@ addEventListener('blur', () => {
 });
 
 setProcesses(processes);
+setLang('asm');
 switchDemo('pong');
 requestAnimationFrame(frame);

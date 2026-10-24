@@ -27,7 +27,20 @@ describe('assemble', () => {
     expect(p.items).toEqual([
       {kind: 'note', text: 'a note'},
       {kind: 'label', name: 'loop'},
-      {kind: 'ins', addr: 0, text: 'JMP loop', comment: 'again', bytes: [Op.JMP, 0]},
+      {kind: 'ins', addr: 0, text: 'JMP loop', comment: 'again', bytes: [Op.JMP, 0], tag: null},
+    ]);
+  });
+
+  it('tags instructions with the C line they came from', () => {
+    const p = assemble('LDI A, 1\n.c one\nLDI A, 2\nlabel:\nADD A, B\n.c two\nRTI', {});
+    expect([...p.tagAt]).toEqual([
+      [2, 'one'],
+      [4, 'one'],
+      [6, 'two'],
+    ]);
+    expect([...p.tagCount]).toEqual([
+      ['one', 2],
+      ['two', 1],
     ]);
   });
 

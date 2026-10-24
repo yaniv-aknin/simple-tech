@@ -1,3 +1,4 @@
+import {hex} from '../../machine/format';
 import type {DemoSetup} from '../demo';
 
 export const CUR = 0x08;
@@ -17,9 +18,11 @@ export function source(n: number) {
 ; --- KERNEL: runs whenever the timer fires ---
 .org 0x00
 kernel:
+.c k_next
   LOAD A, [CUR]     ; slot of the process that just ran
   LDX A, [4]        ; A = that slot's NEXT field
   STORE [CUR], A    ; the next process is now current
+.c k_rti
   RTI               ; load its PC, A, B, flags and carry on
 `;
   for (let i = 1; i <= n; i++) {
@@ -27,6 +30,7 @@ kernel:
 ; --- PROCESS ${i} ---
 .org ${procBase(i - 1) + 2}
 loop${i}:
+.c inc${i}
   LOAD A, [P${i}LO]
   LDI B, 1
   ADD A, B
@@ -38,6 +42,28 @@ carry${i}:
   ADD A, B
   STORE [P${i}HI], A  ; high byte + 1
   JMP loop${i}
+`;
+  }
+  return s;
+}
+
+export function cSource(n: number) {
+  let s = `struct slot *cur;  // RAM 0x08
+
+void kernel(void) {  // runs on every timer tick
+    cur = cur->next;                //@k_next
+    return_from_interrupt();        //@k_rti
+}
+`;
+  for (let i = 1; i <= n; i++) {
+    s += `
+uint16_t count${i};  // RAM ${hex(procBase(i - 1))}
+
+void process${i}(void) {
+    for (;;) {
+        count${i} = count${i} + 1;   //@inc${i}
+    }
+}
 `;
   }
   return s;
@@ -71,6 +97,7 @@ export function concurrencySetup(n: number): DemoSetup {
   }
   return {
     source: source(n),
+    cSource: cSource(n),
     symbols,
     names,
     interrupt: {quantum: QUANTUM, curAddr: CUR},

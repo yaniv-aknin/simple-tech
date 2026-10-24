@@ -111,7 +111,12 @@
       </div>
 
       <section class="panel prog">
-        <h2>Program (stored in RAM)</h2>
+        <div class="proghead">
+          <h2>Program (stored in RAM)</h2>
+          <div class="seg" id="lang">
+            <button data-lang="asm" class="on">Assembly</button><button data-lang="c">C</button>
+          </div>
+        </div>
         <div id="listing"></div>
       </section>
     </div>

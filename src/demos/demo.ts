@@ -6,6 +6,7 @@ export type ViewMode = 'vars' | 'instr' | 'ram';
 
 export interface DemoSetup {
   source: string;
+  cSource: string;
   symbols: Record<string, number>;
   names: Record<number, string>;
   interrupt?: Interrupt;

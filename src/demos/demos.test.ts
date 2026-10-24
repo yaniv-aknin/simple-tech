@@ -1,6 +1,7 @@
 import {describe, expect, it} from 'vitest';
 import {concurrencySetup, procBase} from './concurrency/concurrency';
 import {Keyboard} from '../machine/keyboard';
+import {parseC} from './c-source';
 import {boot} from './demo';
 import {ADDR, pongSetup} from './pong/pong';
 
@@ -37,5 +38,17 @@ describe('concurrency', () => {
     m.mem[procBase(0)] = 0xff;
     for (let i = 0; i < 20; i++) m.stepInstruction();
     expect(m.mem[procBase(0) + 1]).toBe(1);
+  });
+});
+
+describe('C sources', () => {
+  it.each([
+    ['pong', pongSetup()],
+    ['concurrency', concurrencySetup(3)],
+  ])('%s: every C tag maps to assembly and back', (_, setup) => {
+    const {program} = boot(setup, clock);
+    const cTags = parseC(setup.cSource).flatMap(l => (l.tag ? [l.tag] : []));
+    expect(new Set(cTags).size).toBe(cTags.length);
+    expect(new Set(cTags)).toEqual(new Set(program.tagCount.keys()));
   });
 });
