@@ -37,6 +37,8 @@ export function poster(key: string): Post {
       headers: {Authorization: `Bearer ${key}`, 'Content-Type': 'application/json'},
       body: JSON.stringify(body),
       signal: AbortSignal.timeout(300_000),
+    }).catch(e => {
+      throw new Error(`${body.model}: ${e.message}`);
     });
     const payload = (await res.json().catch(() => null)) as Json | null;
     if (!res.ok) throw new Error(`${body.model}: ${payload?.error?.message ?? res.statusText}`);

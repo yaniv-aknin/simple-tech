@@ -8,4 +8,5 @@ const aiPages = readdirSync('ai', {recursive: true, encoding: 'utf8'})
 export default defineConfig({
   appType: 'mpa',
   build: {rollupOptions: {input: ['index.html', ...aiPages]}},
+  worker: {format: 'es'},
 });

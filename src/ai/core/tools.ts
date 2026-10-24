@@ -31,6 +31,8 @@ export interface SandboxRun {
   timed_out?: boolean;
   stdout?: string;
   stderr?: string;
+  /** Where the code ran, when not in a Docker container. */
+  sandbox?: string;
   /** What goes back to the model. */
   output: string;
 }
@@ -51,6 +53,26 @@ export interface ToolsData {
 
 export type RunPython = (code: string, input: string | null) => Promise<SandboxRun>;
 
+const MAX_OUTPUT_CHARS = 10000;
+
+/** What the model is told about a sandbox run: the output, or why there is none. */
+export function sandboxOutput(exitCode: number, stdout: string, stderr: string) {
+  const output =
+    exitCode === 137
+      ? `Error: stopped after ${TIME_LIMIT_S} seconds`
+      : exitCode
+        ? `Error (exit code ${exitCode}):\n${stderr}${stdout}`
+        : stdout;
+  return output.length > MAX_OUTPUT_CHARS ? output.slice(0, MAX_OUTPUT_CHARS) + '\n...(truncated)' : output;
+}
+
+/** Called as a run progresses, for showing it live. */
+export interface AgentProgress {
+  request?(body: Json, i: number): void;
+  response?(turn: Turn, i: number): void;
+  tool?(run: ToolRun, i: number): void;
+}
+
 /** Responses API loop: call the model, run any run_python calls in the sandbox, feed results back, repeat. */
 export async function runAgent(
   post: Post,
@@ -58,6 +80,7 @@ export async function runAgent(
   model: string,
   prompt: string,
   useTools: boolean,
+  progress: AgentProgress = {},
 ): Promise<Recording> {
   const items: Json[] = [{role: 'user', content: prompt}];
   const turns: Turn[] = [];
@@ -66,28 +89,29 @@ export async function runAgent(
   for (let i = 0; i < MAX_TURNS; i++) {
     const body: Json = {model, input: [...items], reasoning: {effort: 'low'}, max_output_tokens: 16000};
     if (useTools) body.tools = [TOOL_SPEC];
+    progress.request?.(body, i);
     const turn: Turn = {...(await post(RESPONSES_URL, body)), tool_runs: []};
     turns.push(turn);
+    progress.response?.(turn, i);
     const output: Json[] = turn.response.body.output;
     const calls = output.filter(item => item.type === 'function_call');
     if (!calls.length) break;
     items.push(...output);
     for (const call of calls) {
-      let args: Json | string;
-      let run: SandboxRun;
+      let args: Json | null = null;
+      let problem = '';
       try {
         args = JSON.parse(call.arguments);
-        if (typeof (args as Json).code !== 'string') throw new Error("'code'");
-        run = await runPython((args as Json).code, (args as Json).input ?? null);
+        if (typeof args!.code !== 'string') throw new Error("'code'");
       } catch (e) {
-        args = call.arguments;
-        run = {
-          started_at: nowIso(),
-          duration_ms: 0,
-          output: `Error: bad arguments (${(e as Error).message})`,
-        };
+        problem = (e as Error).message;
       }
-      turn.tool_runs.push({call_id: call.call_id, arguments: args, ...run});
+      const run: SandboxRun = problem
+        ? {started_at: nowIso(), duration_ms: 0, output: `Error: bad arguments (${problem})`}
+        : await runPython(args!.code, args!.input ?? null);
+      const toolRun = {call_id: call.call_id, arguments: problem ? call.arguments : args!, ...run};
+      turn.tool_runs.push(toolRun);
+      progress.tool?.(toolRun, i);
       items.push({type: 'function_call_output', call_id: call.call_id, output: run.output});
     }
   }

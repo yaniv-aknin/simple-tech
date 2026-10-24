@@ -2,11 +2,12 @@ import '../shared/page.ts';
 import './gpts.css';
 import './tools.css';
 import {TASKS, speedOf, type Model, type Option} from '../../core/gpts.ts';
-import type {Json} from '../../core/openai.ts';
+import {RESPONSES_URL, type Json} from '../../core/openai.ts';
 import {
   MODES,
   entryKey,
   finalText,
+  runAgent,
   type Mode,
   type Recording,
   type ToolRun,
@@ -14,7 +15,9 @@ import {
   type Turn,
 } from '../../core/tools.ts';
 import {$, $text, el, fetchJson} from '../shared/dom.ts';
-import {isCorrect, renderMaze} from './prompt.ts';
+import {livePost} from '../shared/key.ts';
+import {expectedAnswer, isCorrect, joinPrompt, renderMaze, splitPrompt, type Parts} from './prompt.ts';
+import {runPython, warmUp} from './pyodide.ts';
 
 interface ModelView extends Model {
   recordings: Partial<Record<Mode, Recording>>;
@@ -36,8 +39,11 @@ let config: {speed: number; options: OptionView[]};
 let current = 0;
 let mode: Mode = 'tools';
 let token = 0;
+let parts: Parts;
+let editing = false;
 
 const option = () => config.options[current];
+const isEdited = () => joinPrompt(parts) !== option().prompt;
 
 function buildConfig(data: ToolsData) {
   const recorded = new Set(Object.keys(data.entries).map(key => key.split('/')[0]));
@@ -56,16 +62,16 @@ function buildConfig(data: ToolsData) {
 /* ---------- prompt ---------- */
 
 function renderPrompt() {
-  const o = option();
-  const lines = o.prompt.split('\n');
   const q = document.createElement('div');
   q.className = 'q';
   q.style.fontSize = '22px';
-  q.textContent = `${lines[0]} ${lines[lines.length - 1]}`;
+  q.textContent = parts.grid === null ? parts.head : `${parts.head} ${parts.tail}`;
+  const expected = expectedAnswer(option(), parts);
   const truth = document.createElement('div');
   truth.className = 'truth';
+  truth.hidden = expected === null;
   truth.innerHTML = 'Correct answer<b></b>';
-  truth.querySelector('b')!.textContent = o.truth;
+  truth.querySelector('b')!.textContent = expected;
   const sizes = document.createElement('div');
   sizes.className = 'sizes';
   config.options.forEach((option, i) => {
@@ -75,7 +81,18 @@ function renderPrompt() {
   });
   const side = el('div', 'side');
   side.append(truth, sizes);
-  $('prompt').replaceChildren(q, renderMaze(o.grid), side);
+  const maze = parts.grid === null ? [] : [renderMaze(parts.grid, openEditor)];
+  $('prompt').replaceChildren(q, ...maze, side);
+  renderMode();
+}
+
+function renderMode() {
+  const box = $('mode');
+  box.replaceChildren();
+  if (!isEdited()) return;
+  const reset = el('button', '', 'reset');
+  reset.addEventListener('click', () => selectOption(current));
+  box.append(reset);
 }
 
 function renderResults() {
@@ -137,8 +154,8 @@ function decodedCalls(body: Json) {
     .join('\n');
 }
 
-function requestText(turn: Turn) {
-  return `POST ${turn.request.url}\nContent-Type: application/json\nAuthorization: Bearer $OPENAI_API_KEY\n\n${pretty(turn.request.body)}`;
+function requestText(body: Json) {
+  return `POST ${RESPONSES_URL}\nContent-Type: application/json\nAuthorization: Bearer $OPENAI_API_KEY\n\n${pretty(body)}`;
 }
 
 function responseText(turn: Turn) {
@@ -176,13 +193,12 @@ function step(kind: string, title: string, meta: string, wire?: {title: string; 
   return box;
 }
 
-function requestStep({turn, i}: {turn: Turn; i: number}) {
-  const body = turn.request.body;
+function requestStep(body: Json, i: number) {
   const kinds = (body.input as Json[]).map(item => item.role ?? item.type);
   const label = i ? `request ${i + 1}` : 'request';
   const box = step('request', `→ ${label}`, 'POST /v1/responses', {
     title: `${label} · as sent`,
-    text: requestText(turn),
+    text: requestText(body),
   });
   const tools = ((body.tools ?? []) as Json[]).map(tool => tool.name);
   box.append(
@@ -223,17 +239,26 @@ function responseStep({turn, i}: {turn: Turn; i: number}) {
 
 function toolStep({run}: {run: ToolRun}) {
   const status = run.timed_out ? 'timed out' : `exit ${run.exit_code}`;
-  const meta = `${secs(run.duration_ms)} · ${status} · fresh ${run.container?.image ?? 'container'}, no network`;
+  const where = run.sandbox ?? `fresh ${run.container?.image ?? 'container'}, no network`;
+  const meta = `${secs(run.duration_ms)} · ${status} · ${where}`;
   const box = step('tool', '⚙ sandbox', meta, {title: 'sandbox run', text: sandboxText(run)});
   box.append(el('div', 'label', 'returned to the model'), el('pre', 'out', run.output || '(empty)'));
   return box;
 }
 
-function answerStep(text: string, expected: string) {
-  const right = isCorrect(text, expected);
-  const box = step(right ? 'ok' : 'bad', right ? '✓ correct' : '✗ wrong', `expected ${expected}`);
+function answerStep(text: string, expected: string | null) {
+  const right = expected !== null && isCorrect(text, expected);
+  const box =
+    expected === null
+      ? step('answer', '= answer', '')
+      : step(right ? 'ok' : 'bad', right ? '✓ correct' : '✗ wrong', `expected ${expected}`);
   box.append(el('div', 'text', text.trim() || '(empty)'));
   return box;
+}
+
+function scoreText(text: string, expected: string | null, ms: number) {
+  const mark = expected === null ? '' : isCorrect(text, expected) ? '✓ ' : '✗ ';
+  return mark + secs(ms);
 }
 
 /* ---------- terminal view ---------- */
@@ -244,51 +269,110 @@ function fitTerminal() {
   code.style.height = Math.min(code.scrollHeight, window.innerHeight * 0.8) + 'px';
 }
 
-function openTerminal(title: string, text: string) {
+function openTerminal(title: string, text: string, editable = false) {
+  editing = editable;
   $('terminalTitle').textContent = title;
+  $text('code').readOnly = !editable;
   $text('code').value = text;
   $('modal').hidden = false;
   fitTerminal();
   $('code').scrollTop = 0;
 }
 
+const openEditor = () => openTerminal('message, exactly as sent', joinPrompt(parts), true);
+
 function closeTerminal() {
   $('modal').hidden = true;
+  if (!editing || $text('code').value === joinPrompt(parts)) return;
+  parts = splitPrompt($text('code').value);
+  token++;
+  renderPrompt();
+  renderResults();
 }
 
 /* ---------- running ---------- */
 
-function start() {
-  const mine = ++token;
-  renderResults();
-  const expected = option().truth;
-  option().models.forEach((m, mi) => {
+function columns() {
+  return option().models.map((m, mi) => {
     const col = $('results').children[mi];
     const log = col.querySelector<HTMLElement>('.log')!;
-    const recording = m.recordings[mode];
-    if (!recording) {
-      log.append(el('div', 'note', 'No recording. Run scripts/refresh-tools.ts'));
-      return;
-    }
     let stick = true;
     log.addEventListener('scroll', () => {
       stick = log.scrollTop + log.clientHeight >= log.scrollHeight - 40;
     });
+    const show = (node: HTMLElement) => {
+      log.append(node);
+      if (stick) log.scrollTop = log.scrollHeight;
+    };
+    return {m, show, score: col.querySelector('.score')!};
+  });
+}
+
+function start() {
+  const mine = ++token;
+  renderResults();
+  if (isEdited()) startLive(mine);
+  else replay(mine);
+}
+
+function replay(mine: number) {
+  const expected = option().truth!;
+  for (const {m, show, score} of columns()) {
+    const recording = m.recordings[mode];
+    if (!recording) {
+      show(el('div', 'note', 'No recording. Run scripts/refresh-tools.ts'));
+      continue;
+    }
     for (const event of timeline(recording)) {
       setTimeout(() => {
         if (mine !== token) return;
-        if (event.kind === 'request') log.append(requestStep(event));
-        else if (event.kind === 'response') log.append(responseStep(event));
-        else if (event.kind === 'tool') log.append(toolStep(event));
+        if (event.kind === 'request') show(requestStep(event.turn.request.body, event.i));
+        else if (event.kind === 'response') show(responseStep(event));
+        else if (event.kind === 'tool') show(toolStep(event));
         else {
-          log.append(answerStep(event.text, expected));
-          const score = col.querySelector('.score')!;
-          score.textContent = `${isCorrect(event.text, expected) ? '✓' : '✗'} ${secs(event.at)}`;
+          show(answerStep(event.text, expected));
+          score.textContent = scoreText(event.text, expected, event.at);
         }
-        if (stick) log.scrollTop = log.scrollHeight;
       }, event.at / config.speed);
     }
-  });
+  }
+}
+
+/** The edited question, asked live; the model's code runs in Pyodide in this browser. */
+async function startLive(mine: number) {
+  const prompt = joinPrompt(parts);
+  const expected = expectedAnswer(option(), parts);
+  const cols = columns();
+  if (mode === 'tools') warmUp();
+  let post;
+  try {
+    post = await livePost();
+  } catch (e) {
+    for (const {show} of cols) show(el('div', 'note', (e as Error).message));
+    return;
+  }
+  for (const {m, show, score} of cols) {
+    const live =
+      <T>(f: (x: T, i: number) => HTMLElement) =>
+      (x: T, i: number) => {
+        if (mine === token) show(f(x, i));
+      };
+    runAgent(post, runPython, m.api!, prompt, mode === 'tools', {
+      request: live(requestStep),
+      response: live((turn, i) => responseStep({turn, i})),
+      tool: live(run => toolStep({run})),
+    }).then(
+      recording => {
+        if (mine !== token) return;
+        const text = finalText(recording);
+        show(answerStep(text, expected));
+        score.textContent = scoreText(text, expected, recording.total_ms);
+      },
+      e => {
+        if (mine === token) show(el('div', 'note', (e as Error).message));
+      },
+    );
+  }
 }
 
 /* ---------- wiring ---------- */
@@ -304,6 +388,7 @@ function selectMode(next: Mode) {
 
 function selectOption(i: number) {
   current = i;
+  parts = splitPrompt(option().prompt);
   renderPrompt();
   token++;
   renderResults();

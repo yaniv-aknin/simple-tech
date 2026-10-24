@@ -1,9 +1,7 @@
 import {spawn, spawnSync} from 'node:child_process';
 import {randomUUID} from 'node:crypto';
 import {nowIso, roundMs} from '../src/ai/core/openai.ts';
-import {IMAGE, TIME_LIMIT_S, type SandboxRun} from '../src/ai/core/tools.ts';
-
-const MAX_OUTPUT_CHARS = 10000;
+import {IMAGE, TIME_LIMIT_S, sandboxOutput, type SandboxRun} from '../src/ai/core/tools.ts';
 
 const RUNNER = `
 import contextlib, io, json, sys
@@ -56,12 +54,7 @@ export async function runPython(code: string, input: string | null): Promise<San
   }
   const duration_ms = roundMs(performance.now() - t0);
   const timed_out = exitCode === 137;
-  let output = timed_out
-    ? `Error: stopped after ${TIME_LIMIT_S} seconds`
-    : exitCode
-      ? `Error (exit code ${exitCode}):\n${stderr}${stdout}`
-      : stdout;
-  if (output.length > MAX_OUTPUT_CHARS) output = output.slice(0, MAX_OUTPUT_CHARS) + '\n...(truncated)';
+  const output = sandboxOutput(exitCode, stdout, stderr);
   return {
     started_at,
     duration_ms,

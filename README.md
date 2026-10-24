@@ -66,9 +66,12 @@ Dickens, about 5.4M input tokens, and can hit the 4M tokens per minute rate limi
 parent, so a slide deck can drive them. On the Markov pages, the last card takes your own text: paste, then Start.
 Nothing leaves the browser. To prefill it, put a file at `public/ai/texts/custom.txt` (gitignored).
 
-**Mazes and tools.** `run_python(code, input)` runs in a fresh `python:3.13-alpine` container: no network, 128 MB,
-one CPU, read-only filesystem, stopped after 5 seconds. The code must define `main(input)`; what it prints, then its
-return value, goes back to the model.
+**Mazes and tools.** `run_python(code, input)` must define `main(input)`; what it prints, then its return value,
+goes back to the model, and the code is stopped after 5 seconds. The recordings ran it in a fresh
+`python:3.13-alpine` container (no network, 128 MB, one CPU, read-only filesystem). Live, it runs in the browser: in
+Pyodide (CPython compiled to WebAssembly, about 12 MB from jsDelivr on first use), in a fresh Web Worker per run. The
+worker cannot see the page or the saved API key; it is not cut off from the network, and its memory is not capped.
+Click the maze to edit the message and run it live.
 
 **Dickens.** **Stuffing** sends one whole novel, or all 16 (over Luna's 922,000 token limit, so the page refuses
 locally and sends nothing). **RAG** embeds the question, finds the 2 nearest of each novel's passages (23,123 of
