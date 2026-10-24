@@ -168,6 +168,7 @@ const handlers: Record<Method, (ev: Event, run: Run) => void> = {
         tile.addEventListener('click', () => showNote(tile));
         $('tiles').append(tile);
       }
+      $('tiles').append(newSynthesisTile());
     } else if (ev.type === 'agent') {
       const tile = $('tiles').querySelector<HTMLElement>(`[data-slug="${ev.slug}"]`)!;
       const ts = tile.querySelector('.ts')!;
@@ -185,16 +186,20 @@ const handlers: Record<Method, (ev: Event, run: Run) => void> = {
         tile.dataset.note = ev.message;
       }
     } else if (ev.type === 'synthesis') {
-      run.status = run.body.appendChild(el('div', 'line pending', 'Synthesising the 16 notes'));
-      scrollAgents();
+      const tile = synthesisTile();
+      tile.classList.add('running');
+      tile.querySelector('.ts')!.textContent = 'reading the notes';
     } else if (ev.type === 'answer') {
-      run.status!.classList.remove('pending');
-      run.body.append(el('div', 'answer', ev.text));
+      const tile = synthesisTile();
+      tile.classList.remove('running');
+      tile.classList.add('done');
+      tile.querySelector('.ts')!.textContent = '✓';
+      tile.dataset.note = ev.text;
+      showNote(tile);
       run.metrics.tokens = fmt(ev.total_tokens);
       run.metrics.calls = String(ev.calls);
-      scrollAgents();
     } else if (ev.type === 'error') {
-      run.status?.classList.remove('pending');
+      $('tiles').querySelector('.wide')?.classList.remove('running');
       run.body.append(el('div', 'fail', ev.message));
     }
   },
@@ -204,23 +209,33 @@ function scrollToEnd(box: HTMLElement) {
   requestAnimationFrame(() => box.scrollTo({top: box.scrollHeight, behavior: 'smooth'}));
 }
 
-const scrollAgents = () => scrollToEnd($('agentsScroll'));
+const SYNTHESIS = 'Synthesizing the 16 notes';
+
+const synthesisTile = () => $('tiles').querySelector<HTMLElement>('.wide')!;
+
+function newSynthesisTile() {
+  const tile = el('div', 'tile wide');
+  tile.append(el('span', 'tn', SYNTHESIS), el('span', 'ts', 'waiting for the notes'));
+  tile.addEventListener('click', () => showNote(tile));
+  return tile;
+}
 
 function showNote(tile: HTMLElement) {
   if (!tile.dataset.note) return;
+  const wide = tile.classList.contains('wide');
   for (const t of $('tiles').children) t.classList.toggle('sel', t === tile);
-  let note = $('agentsBody').querySelector('.note');
-  if (!note) {
-    note = el('div', 'line note');
-    $('agentsBody').prepend(note);
-  }
-  note.textContent = `${tile.querySelector('.tn')!.textContent}: ${tile.dataset.note}`;
+  const note = el('div', wide ? 'answer' : 'line note');
+  note.textContent = wide
+    ? tile.dataset.note
+    : `${tile.querySelector('.tn')!.textContent}: ${tile.dataset.note}`;
+  $('agentsBody').querySelector('.note, .answer')?.remove();
+  $('agentsBody').prepend(note);
 }
 
 function clearColumn(method: Method) {
   $(method + 'Body').replaceChildren();
   emptyMetrics(method);
-  if (method === 'agents') $('tiles').replaceChildren(...books.map(plannedTile));
+  if (method === 'agents') $('tiles').replaceChildren(...books.map(plannedTile), newSynthesisTile());
 }
 
 function plannedTile(b: BookInfo) {
