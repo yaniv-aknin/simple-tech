@@ -319,4 +319,13 @@
   .main.wiki {
     grid-template-columns: 1fr;
   }
+  .messages {
+    min-height: 360px;
+  }
+  .browser {
+    min-height: 360px;
+  }
+  .paste textarea {
+    min-height: 200px;
+  }
 }

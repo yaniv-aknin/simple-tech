@@ -351,7 +351,11 @@ textarea {
   }
   .runs {
     grid-template-rows: none;
-    grid-auto-rows: 72px;
+    grid-auto-rows: minmax(72px, auto);
+  }
+  .run.multi,
+  .run.long {
+    padding-block: 12px;
   }
   .prompt {
     flex-wrap: wrap;

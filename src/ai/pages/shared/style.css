@@ -401,6 +401,9 @@ aside.panel {
     font-size: 28px;
     padding: 20px 24px;
   }
+  .stage {
+    min-height: 320px;
+  }
   .actions {
     margin-left: 0;
   }
