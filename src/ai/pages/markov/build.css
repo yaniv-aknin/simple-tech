@@ -1,18 +1,18 @@
 #text .done {
-  color: var(--muted);
+  color: var(--dim);
 }
 #text .ahead {
-  color: #4b4b55;
+  color: var(--fainter);
 }
 #text .ctx {
-  color: var(--ink);
+  color: var(--text);
   background: var(--accent-soft);
   border-radius: 6px;
   padding: 0 5px;
 }
 #text .nxt {
   color: #fff;
-  background: var(--accent);
+  background: var(--blue);
   border-radius: 6px;
   padding: 0 5px;
 }
@@ -25,12 +25,12 @@
 .stat {
   padding: 8px 14px;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--muted);
+  background: color-mix(in srgb, var(--text) 4%, transparent);
+  color: var(--dim);
   font-size: 20px;
 }
 .stat .num {
-  color: var(--ink);
+  color: var(--text);
   font-size: 24px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
@@ -42,14 +42,14 @@
   height: 4px;
   margin-top: -6px;
   border-radius: 2px;
-  background: rgba(255, 255, 255, 0.07);
+  background: color-mix(in srgb, var(--text) 7%, transparent);
   overflow: hidden;
 }
 .progress .fill {
   height: 100%;
   width: 0;
   border-radius: 2px;
-  background: var(--accent);
+  background: var(--blue);
   opacity: 0.75;
   transition: width 0.15s linear;
 }
@@ -69,7 +69,7 @@
   flex-direction: column;
 }
 .log-empty {
-  color: var(--muted);
+  color: var(--dim);
   font-size: 24px;
   line-height: 1.4;
   padding-bottom: 4px;
@@ -84,22 +84,22 @@
   font-size: 26px;
 }
 .log-row .k {
-  color: var(--muted);
+  color: var(--dim);
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .log-row .arrow {
-  color: var(--muted);
+  color: var(--dim);
 }
 .log-row .next {
-  color: var(--ink);
+  color: var(--text);
   font-weight: 600;
 }
 .log-row .next small {
-  font-family: Inter, system-ui, sans-serif;
+  font-family: var(--sans);
   font-weight: 400;
   font-size: 17px;
-  color: var(--muted);
+  color: var(--dim);
 }
 .log-row .count {
   margin-left: auto;
@@ -107,14 +107,14 @@
   border-radius: 8px;
   font-size: 20px;
   line-height: 28px;
-  color: var(--muted);
-  background: rgba(255, 255, 255, 0.06);
+  color: var(--dim);
+  background: color-mix(in srgb, var(--text) 6%, transparent);
   font-variant-numeric: tabular-nums;
 }
 .log-row .count.repeat {
   color: #fff;
-  background: var(--accent);
+  background: var(--blue);
 }
 .log-row.newest .k {
-  color: var(--accent-text);
+  color: var(--accent);
 }

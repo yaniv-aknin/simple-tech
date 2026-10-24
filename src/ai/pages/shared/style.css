@@ -1,28 +1,11 @@
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: block;
-  src: url('inter-latin.woff2') format('woff2');
-}
+@import '../../../theme.css';
+
 :root {
-  color-scheme: dark;
-  --bg: #08080a;
-  --ink: #f4f4f6;
-  --muted: #8b8b96;
-  --card: #101014;
-  --field: #0b0b0e;
-  --line: rgba(255, 255, 255, 0.08);
-  --line-strong: rgba(255, 255, 255, 0.18);
-  --accent: #5b7cff;
-  --accent-strong: #4a68e6;
-  --accent-text: #9fb2ff;
-  --accent-soft: rgba(91, 124, 255, 0.22);
-  --bar: rgba(91, 124, 255, 0.22);
-  --bar-chosen: rgba(91, 124, 255, 0.5);
-  --copied: rgba(91, 124, 255, 0.3);
-  --error: #ff7a7a;
-  --radius: 14px;
+  --bar: color-mix(in srgb, var(--blue) 22%, transparent);
+  --bar-chosen: color-mix(in srgb, var(--blue) 50%, transparent);
+  --copied: color-mix(in srgb, var(--accent) 30%, transparent);
+  --accent-soft: color-mix(in srgb, var(--blue) 22%, transparent);
+  --radius: 10px;
 }
 * {
   box-sizing: border-box;
@@ -33,18 +16,9 @@ body {
   height: 100%;
 }
 body {
-  background:
-    radial-gradient(ellipse 70% 55% at 85% 105%, rgba(91, 124, 255, 0.22), transparent 70%),
-    radial-gradient(ellipse 50% 40% at 5% -10%, rgba(159, 178, 255, 0.07), transparent 70%), var(--bg);
-  background-attachment: fixed;
-  color: var(--ink);
-  font-family:
-    Inter,
-    system-ui,
-    -apple-system,
-    'Segoe UI',
-    Roboto,
-    sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
   font-size: 20px;
   line-height: 1.4;
   -webkit-font-smoothing: antialiased;
@@ -68,7 +42,6 @@ h1 {
   font-size: 36px;
   font-weight: 600;
   letter-spacing: -0.035em;
-  font-variation-settings: 'opsz' 32;
 }
 
 .books {
@@ -83,7 +56,7 @@ h1 {
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  background: var(--card);
+  background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   font: inherit;
@@ -95,9 +68,9 @@ h1 {
   border-color: var(--line-strong);
 }
 .book.active {
-  border-color: var(--accent);
+  border-color: var(--blue);
   box-shadow:
-    0 0 0 1px var(--accent),
+    0 0 0 1px var(--blue),
     0 8px 40px -8px var(--accent-soft);
 }
 .book .emoji {
@@ -110,7 +83,7 @@ h1 {
   display: block;
 }
 .book .author {
-  color: var(--muted);
+  color: var(--dim);
   font-size: 17px;
   display: block;
 }
@@ -127,7 +100,7 @@ h1 {
   flex-wrap: wrap;
   gap: 18px 32px;
   align-items: flex-end;
-  background: var(--card);
+  background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 16px 22px;
@@ -152,13 +125,13 @@ h1 {
   display: flex;
   justify-content: space-between;
   font-size: 18px;
-  color: var(--muted);
+  color: var(--dim);
 }
 .speed {
   min-width: 200px;
 }
 input[type='range'] {
-  accent-color: var(--accent);
+  accent-color: var(--blue);
   height: 32px;
 }
 .seed input {
@@ -169,11 +142,11 @@ input[type='range'] {
   border: 1px solid var(--line-strong);
   border-radius: 10px;
   background: var(--field);
-  color: var(--ink);
+  color: var(--text);
 }
 .seed input:focus {
   outline: none;
-  border-color: var(--accent);
+  border-color: var(--blue);
   box-shadow: 0 0 0 3px var(--accent-soft);
 }
 .actions {
@@ -195,39 +168,39 @@ input[type='range'] {
   cursor: pointer;
 }
 #go {
-  background: var(--accent);
+  background: var(--blue);
   color: #fff;
 }
 #next,
 #clear {
-  background: var(--card);
-  color: var(--ink);
+  background: var(--panel);
+  color: var(--text);
   box-shadow: inset 0 0 0 1px var(--line-strong);
 }
 #next:hover,
 #clear:hover {
-  background: #1a1a20;
-  box-shadow: inset 0 0 0 1px var(--accent);
+  background: var(--button-hover);
+  box-shadow: inset 0 0 0 1px var(--blue);
 }
 #clear {
   min-width: 130px;
 }
 #clear {
-  color: var(--muted);
+  color: var(--dim);
 }
 #clear.active {
-  color: var(--ink);
+  color: var(--text);
 }
 #go:hover {
-  background: var(--accent-strong);
+  background: var(--blue-strong);
 }
 #go.stop {
-  background: var(--card);
-  color: var(--ink);
+  background: var(--panel);
+  color: var(--text);
   box-shadow: inset 0 0 0 1px var(--line-strong);
 }
 #go.stop:hover {
-  background: #1a1a20;
+  background: var(--button-hover);
 }
 
 .stage {
@@ -249,20 +222,20 @@ input[type='range'] {
   line-height: 1.55;
   letter-spacing: -0.3px;
   padding: 30px 38px;
-  color: var(--muted);
-  background: var(--card);
+  color: var(--dim);
+  background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
 }
 .stage textarea::placeholder {
-  color: #4b4b55;
+  color: var(--fainter);
 }
 .stage.editing textarea {
   display: block;
 }
 .stage textarea:focus {
   outline: none;
-  border-color: var(--accent);
+  border-color: var(--blue);
   box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
@@ -270,7 +243,7 @@ input[type='range'] {
   flex: 1;
   min-height: 0;
   overflow: hidden;
-  background: var(--card);
+  background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 30px 38px;
@@ -280,7 +253,7 @@ input[type='range'] {
   white-space: pre-wrap;
 }
 .output .placeholder {
-  color: var(--muted);
+  color: var(--dim);
   font-size: 26px;
   letter-spacing: 0;
 }
@@ -289,7 +262,7 @@ input[type='range'] {
   border-radius: 6px;
 }
 .w.latest {
-  color: var(--accent-text);
+  color: var(--accent);
 }
 .w.given {
   font-weight: 600;
@@ -308,7 +281,7 @@ input[type='range'] {
   }
 }
 .status {
-  color: var(--muted);
+  color: var(--dim);
   font-size: 19px;
   min-height: 1.4em;
 }
@@ -330,7 +303,7 @@ input[type='range'] {
 aside.panel {
   grid-row: 3;
   grid-column: 2;
-  background: var(--card);
+  background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 26px 28px;
@@ -346,7 +319,6 @@ aside.panel {
   font-size: 28px;
   font-weight: 600;
   letter-spacing: -0.03em;
-  font-variation-settings: 'opsz' 32;
 }
 .bars {
   display: flex;
@@ -356,7 +328,7 @@ aside.panel {
 .bar {
   position: relative;
   height: 60px;
-  background: rgba(255, 255, 255, 0.04);
+  background: color-mix(in srgb, var(--text) 4%, transparent);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -388,10 +360,10 @@ aside.panel {
 .bar .txt .word small {
   font-weight: 400;
   font-size: 18px;
-  color: var(--muted);
+  color: var(--dim);
 }
 .bar.chosen {
-  outline: 3px solid var(--accent);
+  outline: 3px solid var(--blue);
   outline-offset: -1px;
 }
 .bar.chosen .fill {
@@ -399,16 +371,16 @@ aside.panel {
 }
 .bar.rare {
   background: transparent;
-  border: 2px dashed var(--accent);
+  border: 2px dashed var(--blue);
 }
 .bar.rare .txt {
-  color: var(--accent-text);
+  color: var(--accent);
 }
 .bar.rare .txt .word small {
-  color: var(--muted);
+  color: var(--dim);
 }
 .panel .empty {
-  color: var(--muted);
+  color: var(--dim);
   font-size: 24px;
 }
 

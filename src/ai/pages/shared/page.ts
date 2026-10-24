@@ -1,5 +1,8 @@
 import './style.css';
 import './key.ts';
+import {initTheme} from '../../../theme.ts';
+
+initTheme();
 
 const NAV_KEYS = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'PageUp', 'PageDown']);
 

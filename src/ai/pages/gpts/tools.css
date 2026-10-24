@@ -1,7 +1,7 @@
 .switch {
   display: flex;
   padding: 3px;
-  background: var(--card);
+  background: var(--panel);
   border: 1px solid var(--line-strong);
   border-radius: 10px;
 }
@@ -9,7 +9,7 @@
   font: inherit;
   font-size: 20px;
   font-weight: 600;
-  color: var(--muted);
+  color: var(--dim);
   background: none;
   border: 0;
   border-radius: 8px;
@@ -17,7 +17,7 @@
   cursor: pointer;
 }
 .switch button.on {
-  background: var(--accent);
+  background: var(--blue);
   color: #fff;
 }
 
@@ -42,7 +42,7 @@
   animation: pop 0.3s ease-out;
 }
 .step.response {
-  border-color: var(--accent);
+  border-color: var(--blue);
 }
 .step.tool {
   border-color: var(--term);
@@ -60,11 +60,11 @@
   font-weight: 600;
 }
 .step .meta {
-  color: var(--muted);
+  color: var(--dim);
   font-weight: 400;
 }
 .step .note {
-  color: var(--muted);
+  color: var(--dim);
 }
 .step .text {
   margin-top: 4px;
@@ -95,14 +95,14 @@
 }
 .step .label {
   margin-top: 6px;
-  color: var(--muted);
+  color: var(--dim);
   font-size: 15px;
 }
 .step.clickable {
   cursor: pointer;
 }
 .step.clickable:hover {
-  border-color: var(--ink);
+  border-color: var(--text);
 }
 .sheet.wire {
   width: min(1100px, 100%);

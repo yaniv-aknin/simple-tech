@@ -9,6 +9,12 @@ export const PROC_SIZE = 24;
 export const QUANTUM = 10;
 export const PROC_HUES = [205, 335, 40, 130, 275, 10, 175, 70];
 
+/** A process's colour: `strong` for its counter, else for its code and slot. */
+export const procColor = (i: number, strong = false) =>
+  strong
+    ? `light-dark(hsl(${PROC_HUES[i]} 65% 55%), hsl(${PROC_HUES[i]} 65% 42%))`
+    : `light-dark(hsl(${PROC_HUES[i]} 50% 85%), hsl(${PROC_HUES[i]} 45% 27%))`;
+
 export const procBase = (i: number) => PROC0 + PROC_SIZE * i;
 export const slotAddr = (i: number) => TABLE + SLOT_SIZE * i;
 export const SLOT_FIELDS = ['PC', 'A', 'B', 'FLAGS', 'NEXT'];
@@ -73,12 +79,12 @@ function cellColor(a: number, n: number) {
   if (a >= PROC0 && a < PROC0 + PROC_SIZE * n) {
     const i = Math.floor((a - PROC0) / PROC_SIZE);
     const off = (a - PROC0) % PROC_SIZE;
-    if (off < 2) return `hsl(${PROC_HUES[i]} 65% 42%)`;
-    if (off < 22) return `hsl(${PROC_HUES[i]} 45% 27%)`;
+    if (off < 2) return procColor(i, true);
+    if (off < 22) return procColor(i);
     return '';
   }
   if (a >= TABLE && a < TABLE + SLOT_SIZE * n) {
-    return `hsl(${PROC_HUES[Math.floor((a - TABLE) / SLOT_SIZE)]} 45% 27%)`;
+    return procColor(Math.floor((a - TABLE) / SLOT_SIZE));
   }
   return '';
 }

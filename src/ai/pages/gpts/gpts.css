@@ -1,7 +1,3 @@
-:root {
-  --ok: #6ee7a8;
-  --term: #4ade80;
-}
 body {
   -webkit-user-select: none;
   user-select: none;
@@ -32,12 +28,12 @@ textarea {
   margin-right: auto;
 }
 .mode {
-  color: var(--muted);
+  color: var(--dim);
   font-size: 20px;
 }
 .mode button {
   font: inherit;
-  color: var(--muted);
+  color: var(--dim);
   background: none;
   border: 0;
   text-decoration: underline;
@@ -54,7 +50,7 @@ textarea {
   display: flex;
   align-items: center;
   gap: 32px;
-  background: var(--card);
+  background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 14px 24px;
@@ -74,7 +70,7 @@ textarea {
   font-size: 28px;
   line-height: 1.45;
   letter-spacing: -0.3px;
-  color: var(--ink);
+  color: var(--text);
   background: transparent;
   border: 1px solid transparent;
   border-radius: 8px;
@@ -83,22 +79,22 @@ textarea {
   width: calc(100% + 16px);
 }
 .prompt textarea:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: color-mix(in srgb, var(--text) 4%, transparent);
 }
 .prompt textarea:focus {
   outline: none;
-  border-color: var(--accent);
+  border-color: var(--blue);
   box-shadow: 0 0 0 3px var(--accent-soft);
 }
 .prompt .truth {
-  color: var(--muted);
+  color: var(--dim);
   font-size: 22px;
   white-space: nowrap;
   text-align: right;
 }
 .prompt .truth b {
   display: block;
-  color: var(--accent-text);
+  color: var(--accent);
   font-size: 48px;
   letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
@@ -121,7 +117,7 @@ textarea {
 .preview .more {
   flex: none;
   font: inherit;
-  color: var(--accent-text);
+  color: var(--accent);
   background: none;
   border: 0;
   padding: 0;
@@ -145,19 +141,19 @@ textarea {
   cursor: pointer;
 }
 .maze:hover {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--blue);
   outline-offset: 4px;
   border-radius: 3px;
 }
 .maze .c {
   border-radius: 2px;
-  background: rgba(255, 255, 255, 0.07);
+  background: color-mix(in srgb, var(--text) 7%, transparent);
 }
 .maze .c.wall {
-  background: var(--muted);
+  background: var(--dim);
 }
 .maze .c.end {
-  background: var(--accent);
+  background: var(--blue);
 }
 
 .results {
@@ -172,7 +168,7 @@ textarea {
   flex-direction: column;
   gap: 14px;
   min-height: 0;
-  background: var(--card);
+  background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 18px 22px 22px;
@@ -186,15 +182,14 @@ textarea {
   font-size: 34px;
   font-weight: 600;
   letter-spacing: -0.035em;
-  font-variation-settings: 'opsz' 32;
 }
 .msub {
-  color: var(--muted);
+  color: var(--dim);
   font-size: 22px;
 }
 .score {
   margin-left: auto;
-  color: var(--accent-text);
+  color: var(--accent);
   font-size: 30px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
@@ -215,11 +210,11 @@ textarea {
   overflow: hidden;
   border: 2px solid transparent;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.04);
+  background: color-mix(in srgb, var(--text) 4%, transparent);
 }
 .run .n {
   flex: none;
-  color: var(--muted);
+  color: var(--dim);
   font-size: 20px;
   width: 1.2em;
 }
@@ -264,18 +259,18 @@ textarea {
 }
 .run.pending .ans::after {
   content: '…';
-  color: var(--muted);
+  color: var(--dim);
   animation: pulse 1s ease-in-out infinite;
 }
 .run.ok {
   border-color: var(--ok);
-  background: rgba(110, 231, 168, 0.1);
+  background: color-mix(in srgb, var(--ok) 10%, transparent);
 }
 .run.ok .ans {
   color: var(--ok);
 }
 .run.bad {
-  background: rgba(255, 122, 122, 0.08);
+  background: color-mix(in srgb, var(--error) 8%, transparent);
 }
 .run.bad .ans {
   color: var(--error);
@@ -310,7 +305,7 @@ textarea {
   display: flex;
   flex-direction: column;
   background: #040806;
-  border: 1px solid rgba(74, 222, 128, 0.35);
+  border: 1px solid color-mix(in srgb, var(--term) 35%, transparent);
   border-radius: var(--radius);
   overflow: hidden;
 }
@@ -319,8 +314,8 @@ textarea {
   justify-content: space-between;
   align-items: center;
   padding: 10px 18px;
-  border-bottom: 1px solid rgba(74, 222, 128, 0.2);
-  color: rgba(74, 222, 128, 0.6);
+  border-bottom: 1px solid color-mix(in srgb, var(--term) 20%, transparent);
+  color: color-mix(in srgb, var(--term) 60%, transparent);
   font-family: ui-monospace, 'SF Mono', Menlo, monospace;
   font-size: 18px;
 }
@@ -328,7 +323,7 @@ textarea {
   font: inherit;
   color: var(--term);
   background: none;
-  border: 1px solid rgba(74, 222, 128, 0.35);
+  border: 1px solid color-mix(in srgb, var(--term) 35%, transparent);
   border-radius: 6px;
   padding: 4px 14px;
   cursor: pointer;
@@ -448,7 +443,7 @@ textarea.script {
   font: inherit;
   font-size: 16px;
   font-weight: 600;
-  color: var(--muted);
+  color: var(--dim);
   background: var(--field);
   border: 1px solid var(--line-strong);
   border-radius: 8px;
@@ -457,8 +452,8 @@ textarea.script {
 }
 .sizes button.on {
   color: #fff;
-  background: var(--accent);
-  border-color: var(--accent);
+  background: var(--blue);
+  border-color: var(--blue);
 }
 
 body[data-task='2-4-6'] .prompt,

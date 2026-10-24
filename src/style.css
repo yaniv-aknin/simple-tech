@@ -1,16 +1,5 @@
-:root {
-  --bg: #0e1117;
-  --panel: #171c26;
-  --line: #2a3140;
-  --text: #e6e9ef;
-  --dim: #8a93a6;
-  --accent: #5ac8fa;
-  --read: #ffd60a;
-  --write: #ff453a;
-  --code: #1e3b63;
-  --var: #2c4f2c;
-  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-}
+@import './theme.css';
+
 * {
   box-sizing: border-box;
 }
@@ -18,9 +7,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font:
-    14px/1.45 system-ui,
-    sans-serif;
+  font: 14px/1.45 var(--sans);
   padding: 16px;
   min-height: 100vh;
   display: grid;
@@ -57,8 +44,9 @@ main {
   border-color: transparent;
 }
 .tabs button.on {
-  background: #0a84ff;
-  border-color: #0a84ff;
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
 }
 header,
 .layout {
@@ -113,8 +101,9 @@ h1 {
   border-left: 0;
 }
 .seg button.on {
-  background: #0a84ff;
-  border-color: #0a84ff;
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
 }
 body[data-demo='page'] header,
 body[data-demo='page'] .layout,
@@ -202,7 +191,7 @@ canvas {
   margin-top: 12px;
 }
 button {
-  background: #232a38;
+  background: var(--button);
   color: var(--text);
   border: 1px solid var(--line);
   border-radius: 6px;
@@ -211,7 +200,7 @@ button {
   cursor: pointer;
 }
 button:hover {
-  background: #2c3546;
+  background: var(--button-hover);
 }
 .speed {
   margin-top: 12px;
@@ -244,7 +233,7 @@ button:hover {
 .phases span.on {
   background: var(--accent);
   border-color: var(--accent);
-  color: #06222f;
+  color: var(--on-accent);
 }
 .reg {
   display: grid;
@@ -290,7 +279,7 @@ button:hover {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: #2a3140;
+  background: var(--line);
   font: 700 12px var(--mono);
   font-style: normal;
   color: var(--dim);
@@ -302,7 +291,7 @@ button:hover {
 #msg {
   margin-top: 12px;
   padding: 10px;
-  background: #10141c;
+  background: var(--field);
   border-radius: 8px;
   min-height: 84px;
   border-left: 3px solid var(--accent);
@@ -318,7 +307,7 @@ button:hover {
   font: 12.5px/1.7 var(--mono);
   border: 1px solid var(--line);
   border-radius: 6px;
-  background: #10141c;
+  background: var(--field);
 }
 #rows,
 #crows {
@@ -346,10 +335,10 @@ button:hover {
   white-space: pre;
 }
 .cl .ln {
-  color: #566075;
+  color: var(--fainter);
 }
 .cl .cn {
-  color: #6a7488;
+  color: var(--faint);
   text-align: right;
 }
 .cl .code {
@@ -358,17 +347,17 @@ button:hover {
   text-overflow: ellipsis;
 }
 .cl.next {
-  background: #2a3350;
+  background: var(--next);
 }
 .cl.cur {
-  background: #164a2d;
+  background: var(--cur);
   box-shadow: inset 3px 0 var(--accent);
 }
 .kw {
-  color: #c792ea;
+  color: var(--keyword);
 }
 .ccm {
-  color: #6a7488;
+  color: var(--faint);
 }
 .sec {
   break-inside: avoid;
@@ -379,10 +368,10 @@ button:hover {
   display: none;
   max-width: 340px;
   padding: 10px 12px;
-  background: #0b0e14;
+  background: var(--tip);
   border: 1px solid var(--line);
   border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 24px var(--shadow);
   pointer-events: none;
   font-size: 13px;
 }
@@ -420,17 +409,17 @@ button:hover {
   color: var(--dim);
 }
 .ins .by {
-  color: #7aa7e0;
+  color: var(--bytes);
 }
 .ins .cm {
-  color: #6a7488;
+  color: var(--faint);
   white-space: normal;
 }
 .ins.next {
-  background: #2a3350;
+  background: var(--next);
 }
 .ins.cur {
-  background: #164a2d;
+  background: var(--cur);
   box-shadow: inset 3px 0 var(--accent);
 }
 .lbl {
@@ -438,7 +427,7 @@ button:hover {
   padding: 4px 8px 0;
 }
 .note {
-  color: #6fd48a;
+  color: var(--ok);
   padding: 8px 8px 2px;
   font-weight: 600;
 }
@@ -459,22 +448,22 @@ button:hover {
   background: none;
 }
 #ram .c {
-  background: #1f2533;
-  color: #9aa3b5;
+  background: var(--cell);
+  color: var(--on-cell);
 }
 #ram .code {
   background: var(--code);
-  color: #cfe1ff;
+  color: var(--on-code);
 }
 #ram .var {
   background: var(--var);
-  color: #d8f5d8;
+  color: var(--on-var);
 }
 #ram .pc {
   outline: 2px solid var(--accent);
 }
 #ram .ir {
-  outline: 2px solid #6fd48a;
+  outline: 2px solid var(--ok);
 }
 .legend {
   display: flex;
@@ -523,7 +512,7 @@ td.n {
 }
 #vars tr.cur td,
 #ptab tr.on td {
-  background: #164a2d;
+  background: var(--cur);
 }
 #ptab td:last-child,
 #vars.slots td:last-child {
@@ -539,7 +528,7 @@ td.n {
   font-size: 12px;
 }
 #ptab tr.on .st {
-  color: #6fd48a;
+  color: var(--ok);
 }
 #ptab tr.tot td {
   color: var(--dim);

@@ -3,9 +3,9 @@ import type {Machine} from '../../machine/machine.ts';
 import {$, setText} from '../../ui/dom.ts';
 import {bindFlash} from '../../ui/flash.ts';
 import type {DemoView, Session} from '../demo.ts';
-import {CUR, PROC_HUES, PROC_SIZE, SLOT_SIZE, TABLE, procBase, slotAddr} from './concurrency.ts';
+import {CUR, PROC_SIZE, SLOT_SIZE, TABLE, procBase, slotAddr, procColor} from './concurrency.ts';
 
-const chip = (i: number) => `<i class="chip" style="background:hsl(${PROC_HUES[i]} 65% 42%)"></i>`;
+const chip = (i: number) => `<i class="chip" style="background:${procColor(i, true)}"></i>`;
 
 function fmtSlot(field: number, v: number) {
   if (field === 0 || field === 4) return hex(v);

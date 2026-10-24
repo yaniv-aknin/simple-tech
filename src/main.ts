@@ -1,4 +1,5 @@
 import './style.css';
+import {initTheme, mountThemeToggle} from './theme.ts';
 import {DEMOS, type DemoKey} from './demos/index.ts';
 import type {DemoView, Session, ViewMode} from './demos/demo.ts';
 import type {Direction} from './machine/keyboard.ts';
@@ -142,6 +143,8 @@ addEventListener('blur', () => {
   release(1);
 });
 
+initTheme();
+mountThemeToggle();
 setProcesses(processes);
 setLang('asm');
 switchDemo('pong');
