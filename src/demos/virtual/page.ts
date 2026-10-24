@@ -3,6 +3,7 @@ import {hex, hex2} from '../../machine/format.ts';
 import type {Program} from '../../machine/assembler.ts';
 import type {Access} from '../../machine/machine.ts';
 import {$, setText} from '../../ui/dom.ts';
+import {editByte} from '../../ui/edit.ts';
 import {flashLevel} from '../../ui/flash.ts';
 import {initTheme} from '../../theme.ts';
 import {procColor} from '../concurrency/concurrency.ts';
@@ -67,6 +68,7 @@ class View {
     this.buildFrames();
     document.onmouseover = e => this.pointAt(e);
     document.documentElement.onmouseleave = () => (this.hover = null);
+    document.ondblclick = e => this.edit(e);
   }
 
   private pointAt(e: MouseEvent) {
@@ -81,6 +83,25 @@ class View {
         this.hover = {pid: own.pid, page: own.page, addr: own.page * PAGE_SIZE + off};
       } else this.hover = {pid: own.pid, page: own.part * PAGE_SIZE + off, addr: null};
     } else this.hover = null;
+  }
+
+  /** Double-clicking a byte of a program's memory, or of the RAM, lets you change it. */
+  private edit(e: MouseEvent) {
+    const cell = (e.target as Element).closest<HTMLElement>('.c');
+    const d = cell?.dataset;
+    if (!cell || !d) return;
+    const {sys} = this;
+    if (d.kind === 'virtual') {
+      const pid = Number(d.pid);
+      const addr = Number(d.addr);
+      const value = sys.peek(pid, addr);
+      if (value !== null && sys.procs[pid].state !== 'crashed') {
+        editByte(cell, value, v => sys.poke(pid, addr, v));
+      }
+    } else if (d.kind === 'frame') {
+      const index = Number(d.frame) * PAGE_SIZE + Number(d.off);
+      if (sys.owner[Number(d.frame)]) editByte(cell, sys.ram[index], v => sys.pokeFrame(index, v));
+    }
   }
 
   /** The frame behind the hovered address, if it has one. */

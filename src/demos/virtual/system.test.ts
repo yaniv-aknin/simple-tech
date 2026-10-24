@@ -343,3 +343,46 @@ describe('page tables in RAM', () => {
     expect(sys.framesInUse).toBe(2);
   });
 });
+
+describe('editing memory by hand', () => {
+  it('changes a byte of a program through its own page table', () => {
+    const sys = new VirtualSystem(PROCESSES, {clock});
+    sys.toggle(0);
+    run(sys, 4);
+    expect(sys.poke(0, 0x80, 200)).toBe(true);
+    expect(sys.peek(0, 0x80)).toBe(200);
+    run(sys, 4);
+    expect(sys.peek(0, 0x80)).toBe(201);
+  });
+
+  it('refuses a byte that has no frame', () => {
+    const sys = new VirtualSystem(PROCESSES, {clock});
+    sys.toggle(0);
+    expect(sys.poke(0, 0x40, 1)).toBe(false);
+    expect(sys.pokeFrame(15, 1)).toBe(false);
+  });
+
+  it('changes a byte of RAM, which is the same byte the program sees', () => {
+    const sys = new VirtualSystem(PROCESSES, {clock});
+    sys.toggle(1);
+    const frame = sys.procs[1].table[0x80 / 4];
+    expect(sys.pokeFrame(frame * 4 + 1, 7)).toBe(true);
+    expect(sys.peek(1, 0x81)).toBe(7);
+  });
+
+  it('remaps a page when its page table entry is edited, even onto another program', () => {
+    const sys = new VirtualSystem(PROCESSES, {frames: 64, tablesInRam: true, clock});
+    sys.toggle(0);
+    sys.toggle(1);
+    const mine = sys.procs[0].table[0x80 / 4];
+    const theirs = sys.procs[1].table[0];
+    expect(sys.pokeFrame(sys.entryAddress(0, 0x80 / 4)!, PRESENT | theirs)).toBe(true);
+    expect(sys.procs[0].table[0x80 / 4]).toBe(theirs);
+    expect(sys.peek(0, 0x80)).toBe(sys.peek(1, 0x00));
+    expect(mine).not.toBe(theirs);
+    sys.pokeFrame(sys.entryAddress(0, 0x80 / 4)!, PRESENT | 63);
+    expect(sys.procs[0].table[0x80 / 4]).toBe(63);
+    sys.pokeFrame(sys.entryAddress(0, 0x80 / 4)!, 0xff);
+    expect(sys.procs[0].table[0x80 / 4]).toBe(-1);
+  });
+});

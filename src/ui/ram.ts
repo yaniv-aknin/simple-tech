@@ -2,11 +2,13 @@ import type {Session} from '../demos/demo.ts';
 import {hex, hex2} from '../machine/format.ts';
 import type {Machine} from '../machine/machine.ts';
 import {setText} from './dom.ts';
+import {editByte} from './edit.ts';
 import {flashLevel} from './flash.ts';
 
 export class RamGrid {
   private readonly cells: HTMLElement[] = [];
   private bases: string[] = [];
+  private machine: Machine | null = null;
 
   constructor(el: HTMLElement) {
     const div = (className: string, textContent = '') =>
@@ -17,9 +19,15 @@ export class RamGrid {
       div('h', hex2(r * 16));
       for (let c = 0; c < 16; c++) this.cells.push(div(''));
     }
+    el.addEventListener('dblclick', e => {
+      const addr = this.cells.indexOf(e.target as HTMLElement);
+      const m = this.machine;
+      if (addr >= 0 && m) editByte(this.cells[addr], m.mem[addr], value => m.write(addr, value));
+    });
   }
 
   build({program, machine, setup}: Session) {
+    this.machine = machine;
     this.bases = this.cells.map((d, a) => {
       d.title = hex(a) + machine.nm(a);
       d.style.background = setup.cellColor(a);

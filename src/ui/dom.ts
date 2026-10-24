@@ -5,6 +5,7 @@ export function $<T extends HTMLElement = HTMLElement>(id: string): T {
 }
 
 export function setText(el: Element, text: string) {
+  if ((el as HTMLElement).dataset?.editing) return;
   if (el.textContent !== text) el.textContent = text;
 }
 

@@ -245,6 +245,33 @@ export class VirtualSystem {
     return frame < 0 ? null : this.ram[frame * PAGE_SIZE + (addr & 3)];
   }
 
+  /** Overwrites a byte of a process's memory, as if it had written it. False where the byte has no frame. */
+  poke(pid: number, addr: number, value: number) {
+    const proc = this.procs[pid];
+    const frame = proc.table[addr >> 2];
+    if (frame < 0 || proc.state === 'crashed') return false;
+    const phys = frame * PAGE_SIZE + (addr & 3);
+    this.ram[phys] = value & 255;
+    this.touch(pid, addr, phys, 'write');
+    return true;
+  }
+
+  /**
+   * Overwrites a byte of physical RAM that is in use. A byte of a page table changes the mapping it holds: the
+   * page then leads wherever the new entry says, even to a frame that belongs to something else.
+   */
+  pokeFrame(index: number, value: number) {
+    const own = this.owner[index >> 2];
+    if (!own) return false;
+    this.ram[index] = value & 255;
+    this.ramAccess[index] = {kind: 'write', t: this.clock()};
+    if (own.kind === 'table') {
+      const frame = value & PRESENT ? value & 0x7f : -1;
+      this.procs[own.pid].table[own.part * PAGE_SIZE + (index & 3)] = frame < this.frames ? frame : -1;
+    }
+    return true;
+  }
+
   get framesInUse() {
     return this.owner.filter(o => o).length;
   }
