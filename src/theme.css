@@ -43,7 +43,8 @@
   color-scheme: dark;
 }
 
-.themetoggle {
+.themetoggle,
+.sourcelink {
   position: fixed;
   left: 12px;
   bottom: 10px;
@@ -60,6 +61,10 @@
   opacity: 0.6;
   cursor: pointer;
 }
-.themetoggle:hover {
+.sourcelink {
+  left: 46px;
+}
+.themetoggle:hover,
+.sourcelink:hover {
   opacity: 1;
 }
