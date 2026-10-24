@@ -9,6 +9,9 @@ start:
     SCORE = 0;                      //@sc0
     PX = 6;                         //@px0
 
+    while (KEY == 0)                //@wait
+        ;
+
     for (;;) {
         PX = PX + KEY;              //@px_add
         if (PX >= 128)              //@px_lo

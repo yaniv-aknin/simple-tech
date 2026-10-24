@@ -24,6 +24,34 @@ describe('pong', () => {
   });
 });
 
+describe('pong waiting for a key', () => {
+  const stepsWithoutReachingLoop = (m: ReturnType<typeof boot>['machine'], loop: number) => {
+    for (let i = 0; i < 500; i++) {
+      m.stepInstruction();
+      if (m.pc === loop) return false;
+    }
+    return true;
+  };
+
+  it('does not start until a key is pressed', () => {
+    const {machine: m, program} = boot(pongSetup(), clock);
+    expect(stepsWithoutReachingLoop(m, program.labels.loop)).toBe(true);
+    expect(m.mem[ADDR.BX]).toBe(5);
+    new Keyboard(m, ADDR.KEY).press(1);
+    expect(stepsWithoutReachingLoop(m, program.labels.loop)).toBe(false);
+  });
+
+  it('waits again after a miss', () => {
+    const {machine: m, program} = boot(pongSetup(), clock);
+    const keyboard = new Keyboard(m, ADDR.KEY);
+    keyboard.press(-1);
+    for (let i = 0; i < 5000 && m.pc !== program.labels.miss; i++) m.stepInstruction();
+    expect(m.pc).toBe(program.labels.miss);
+    keyboard.release(-1);
+    expect(stepsWithoutReachingLoop(m, program.labels.loop)).toBe(true);
+  });
+});
+
 describe('concurrency', () => {
   it.each([1, 2, 4, 8])('shares the CPU between %i processes', n => {
     const {machine: m} = boot(concurrencySetup(n), clock);
@@ -137,6 +165,7 @@ describe('hiding the kernel', () => {
 describe('breakpoints', () => {
   it('stop when a core is about to run the address, and not before', () => {
     const {machine: m, program} = boot(pongSetup(), clock);
+    new Keyboard(m, ADDR.KEY).press(1);
     const at = program.labels.loop;
     const breakpoints = new Set([at]);
     expect(atBreakpoint([m], new Set())).toBe(false);

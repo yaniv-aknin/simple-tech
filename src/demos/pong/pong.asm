@@ -19,6 +19,12 @@ start:
   LDI A, 6
   STORE [PX], A     ; paddle in the middle
 
+; --- wait for a key press ---
+wait:
+.c wait
+  LOAD A, [KEY]
+  JZ wait           ; 0: no key yet
+
 ; --- main loop: forever ---
 loop:
 .c px_add
