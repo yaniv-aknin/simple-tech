@@ -410,4 +410,33 @@ describe('editing memory by hand', () => {
     sys.pokeFrame(sys.entryAddress(0, 0x80 / 4)!, 0xff);
     expect(sys.procs[0].table[0x80 / 4]).toBe(-1);
   });
+
+  it('moves a page to the free frame its entry is edited to, and frees the frame it left', () => {
+    const sys = new VirtualSystem(PROCESSES, {frames: 64, tablesInRam: true, clock});
+    sys.toggle(0);
+    run(sys, 8);
+    const page = 0x80 / 4;
+    const before = sys.procs[0].table[page];
+    const free = sys.owner.indexOf(null);
+    const inUse = sys.framesInUse;
+    sys.pokeFrame(sys.entryAddress(0, page)!, PRESENT | free);
+    expect(sys.owner[free]).toEqual({pid: 0, kind: 'page', page});
+    expect(sys.owner[before]).toBeNull();
+    expect(sys.framesInUse).toBe(inUse);
+    run(sys, 4);
+    expect(sys.ram[free * 4]).toBe(1);
+    sys.pokeFrame(sys.entryAddress(0, page)!, 0);
+    expect(sys.owner[free]).toBeNull();
+    expect(sys.framesInUse).toBe(inUse - 1);
+  });
+
+  it('leaves a shared frame with its owner when a page is mapped onto it, and then away', () => {
+    const sys = new VirtualSystem(PROCESSES, {frames: 64, tablesInRam: true, clock});
+    sys.toggle(0);
+    sys.toggle(1);
+    const theirs = sys.procs[1].table[0];
+    sys.pokeFrame(sys.entryAddress(0, 0x80 / 4)!, PRESENT | theirs);
+    sys.pokeFrame(sys.entryAddress(0, 0x80 / 4)!, 0);
+    expect(sys.owner[theirs]).toEqual({pid: 1, kind: 'page', page: 0});
+  });
 });

@@ -271,7 +271,8 @@ export class VirtualSystem {
 
   /**
    * Overwrites a byte of physical RAM that is in use. A byte of a page table changes the mapping it holds: the
-   * page then leads wherever the new entry says, even to a frame that belongs to something else.
+   * page then leads wherever the new entry says, and the frame it led to before is freed. A free frame it now
+   * leads to becomes the page's; one that belongs to something else stays theirs, and the two share it.
    */
   pokeFrame(index: number, value: number) {
     const own = this.owner[index >> 2];
@@ -279,8 +280,16 @@ export class VirtualSystem {
     this.ram[index] = value & 255;
     this.ramAccess[index] = {kind: 'write', t: this.clock()};
     if (own.kind === 'table') {
-      const frame = value & PRESENT ? value & 0x7f : -1;
-      this.procs[own.pid].table[own.part * PAGE_SIZE + (index & 3)] = frame < this.frames ? frame : -1;
+      const {pid} = own;
+      const page = own.part * PAGE_SIZE + (index & 3);
+      const before = this.procs[pid].table[page];
+      const frame = value & PRESENT && (value & 0x7f) < this.frames ? value & 0x7f : -1;
+      this.procs[pid].table[page] = frame;
+      const held = this.owner[before];
+      if (before !== frame && held?.kind === 'page' && held.pid === pid && held.page === page) {
+        this.owner[before] = null;
+      }
+      if (frame >= 0 && !this.owner[frame]) this.owner[frame] = {pid, kind: 'page', page};
     }
     return true;
   }
