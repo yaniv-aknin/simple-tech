@@ -1,6 +1,14 @@
 import '../shared/page.ts';
 import './build.css';
-import {escapeHtml, friendly, prettyJoin, spaceBefore, stripBoilerplate, tokenize} from '../../core/text.ts';
+import {
+  escapeHtml,
+  friendly,
+  isWord,
+  prettyJoin,
+  spaceBefore,
+  stripBoilerplate,
+  tokenize,
+} from '../../core/text.ts';
 import {loadBooks, loadText, renderBooks, type Book} from '../shared/books.ts';
 import {$, $input, $text} from '../shared/dom.ts';
 
@@ -8,10 +16,11 @@ const SLOWEST_PER_SEC = 1;
 const FASTEST_FLOOR_PER_SEC = 20;
 const FASTEST_FINISHES_IN_SEC = 10;
 const SPEED_STEPS = 14;
-const WINDOW_BEFORE = 18;
-const WINDOW_AFTER = 36;
+const CHUNK = 300;
 const LOG_ROWS = 14;
 const LOG_ROW_PX = 38;
+const MEMORY_ROWS = 10;
+const MEMORY_REFRESH_MS = 250;
 
 interface LogRow {
   ctx: string[];
@@ -27,6 +36,10 @@ let loadTicket = 0;
 
 let pos = 0;
 let hash = new Map<string, Map<string, number>>();
+let showPunct = false;
+let keyTotals = new Map<string, number>();
+let wordTotals = new Map<string, number>();
+let memoryShownAt = 0;
 let log: LogRow[] = [];
 let logSeq = 0;
 let loggedSeq = 0;
@@ -49,6 +62,9 @@ function rate() {
 function reset() {
   pos = 0;
   hash = new Map();
+  keyTotals = new Map();
+  wordTotals = new Map();
+  memoryShownAt = 0;
   log = [];
   logSeq = loggedSeq = 0;
   render();
@@ -67,6 +83,8 @@ function step() {
   }
   const count = (entry.get(next) || 0) + 1;
   entry.set(next, count);
+  keyTotals.set(key, (keyTotals.get(key) || 0) + 1);
+  if (isWord(next)) wordTotals.set(key, (wordTotals.get(key) || 0) + 1);
   log = [...log, {ctx, next, count}].slice(-LOG_ROWS);
   logSeq++;
   pos++;
@@ -75,27 +93,95 @@ function step() {
 
 /* ---------- drawing ---------- */
 
+let flow: HTMLElement | null = null;
+let spans: HTMLElement[] = [];
+let chunkStart = 0;
+let chunkKey = '';
+let shownCur = -1;
+
+const tokenClass = (i: number, cur: number, n: number) =>
+  cur < 0 ? 'ahead' : i < cur ? 'done' : i < cur + n ? 'ctx' : i === cur + n ? 'nxt' : 'ahead';
+
+function buildFlow(cur: number, n: number) {
+  chunkStart = Math.max(0, (Math.floor(Math.max(cur, 0) / CHUNK) - 1) * CHUNK);
+  const to = Math.min(tokens.length, chunkStart + 3 * CHUNK);
+  let html = '';
+  let prev: string | null = null;
+  for (let i = chunkStart; i < to; i++) {
+    html +=
+      (spaceBefore(prev, tokens[i]) ? ' ' : '') +
+      `<span class="${tokenClass(i, cur, n)}">${escapeHtml(tokens[i])}</span>`;
+    prev = tokens[i];
+  }
+  $('text').innerHTML = `<div class="flow">${html}</div>`;
+  flow = $('text').firstElementChild as HTMLElement;
+  spans = Array.from(flow.children) as HTMLElement[];
+}
+
+function centerMarker(cur: number, n: number, animate: boolean) {
+  const marker = spans[Math.max(cur, 0) + (cur < 0 ? 0 : n) - chunkStart];
+  if (!flow || !marker) return;
+  const target = $('text').clientHeight / 2 - marker.offsetTop - marker.offsetHeight / 2;
+  flow.style.transition = animate ? 'transform 0.2s ease-out' : 'none';
+  flow.style.transform = `translateY(${target}px)`;
+}
+
 function renderText() {
   const n = effectiveOrder();
   const cur = pos - 1;
-  const from = cur < 0 ? 0 : Math.max(0, cur - WINDOW_BEFORE);
-  const to = Math.min(tokens.length, cur < 0 ? WINDOW_AFTER + WINDOW_BEFORE : cur + n + 1 + WINDOW_AFTER);
-  let html = '';
-  let prev: string | null = null;
-  for (let i = from; i < to; i++) {
-    const cls = cur < 0 ? 'ahead' : i < cur ? 'done' : i < cur + n ? 'ctx' : i === cur + n ? 'nxt' : 'ahead';
-    html +=
-      (spaceBefore(prev, tokens[i]) ? ' ' : '') + `<span class="${cls}">${escapeHtml(tokens[i])}</span>`;
-    prev = tokens[i];
+  const key = `${chunkIdentity()}:${n}:${Math.floor(Math.max(cur, 0) / CHUNK)}`;
+  const rebuilt = key !== chunkKey;
+  if (rebuilt) {
+    chunkKey = key;
+    buildFlow(cur, n);
+  } else {
+    const lo = Math.max(chunkStart, Math.min(cur, shownCur) - 1);
+    const hi = Math.min(chunkStart + spans.length - 1, Math.max(cur, shownCur) + n + 1);
+    for (let i = lo; i <= hi; i++) spans[i - chunkStart].className = tokenClass(i, cur, n);
   }
-  $('text').innerHTML = html;
+  shownCur = cur;
+  centerMarker(cur, n, !rebuilt);
 }
+
+const chunkIdentity = () => `${current}:${tokens.length}`;
 
 function renderTally() {
   $('progressFill').style.width = (total() ? (pos / total()) * 100 : 0) + '%';
   $('tally').innerHTML =
     `<div class="stat"><span class="num">${hash.size.toLocaleString()}</span> keys</div>` +
     `<div class="stat"><span class="num">${pos.toLocaleString()}</span> of ${total().toLocaleString()} words</div>`;
+}
+
+function topKeys() {
+  const top: [string, number][] = [];
+  for (const entry of showPunct ? keyTotals : wordTotals) {
+    if (!showPunct && !entry[0].split(' ').every(isWord)) continue;
+    if (top.length === MEMORY_ROWS && entry[1] <= top[top.length - 1][1]) continue;
+    let i = top.length;
+    while (i > 0 && top[i - 1][1] < entry[1]) i--;
+    top.splice(i, 0, entry);
+    if (top.length > MEMORY_ROWS) top.pop();
+  }
+  return top;
+}
+
+function renderMemory(force: boolean) {
+  const now = performance.now();
+  if (!force && now - memoryShownAt < MEMORY_REFRESH_MS) return;
+  memoryShownAt = now;
+  $('memoryRows').innerHTML = topKeys()
+    .map(([key, count]) => {
+      let best = '';
+      let bestCount = 0;
+      for (const [word, c] of hash.get(key)!)
+        if ((showPunct || isWord(word)) && c > bestCount) [best, bestCount] = [word, c];
+      return (
+        `<div class="log-row"><span class="k">${escapeHtml(prettyJoin(key.split(' ')))}</span>` +
+        `<span class="arrow">→</span><span class="next">${friendly(best)}</span>` +
+        `<span class="count">×${count}</span></div>`
+      );
+    })
+    .join('');
 }
 
 function renderLog() {
@@ -129,6 +215,7 @@ function render() {
   renderText();
   renderTally();
   renderLog();
+  renderMemory(!isRunning);
   const b = books[current];
   $('status').textContent =
     b && tokens.length ? `${b.title}: ${tokens.length.toLocaleString()} words and punctuation marks` : '';
@@ -223,6 +310,13 @@ $('clear').addEventListener('click', () => {
   stop();
   reset();
   $('clear').blur();
+});
+window.addEventListener('resize', () => centerMarker(shownCur, effectiveOrder(), false));
+$('punct').addEventListener('click', () => {
+  showPunct = !showPunct;
+  $('punct').textContent = showPunct ? 'Hide punctuation' : 'Show punctuation';
+  renderMemory(true);
+  $('punct').blur();
 });
 $('memory').addEventListener('input', () => setOrder(Number($input('memory').value)));
 $('memory').addEventListener('change', () => $('memory').blur());

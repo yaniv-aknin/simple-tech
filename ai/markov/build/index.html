@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Next Word Prediction: Build</title>
+    <title>Learning a Markov chain</title>
   </head>
   <body>
     <div class="app">
       <header>
-        <h1>Next Word Prediction</h1>
+        <h1>Learning a Markov chain</h1>
       </header>
 
       <nav class="books" id="books" aria-label="Choose a book"></nav>
@@ -40,8 +40,17 @@
       </section>
 
       <aside class="panel">
-        <h2>The hash</h2>
-        <div class="log" id="log"><div class="track" id="track"></div></div>
+        <section class="widget">
+          <div class="widget-head">
+            <h2>Memory</h2>
+            <button class="link" id="punct">Show punctuation</button>
+          </div>
+          <div class="memory-rows" id="memoryRows"></div>
+        </section>
+        <section class="widget">
+          <h2>Learning</h2>
+          <div class="log" id="log"><div class="track" id="track"></div></div>
+        </section>
         <div class="tally" id="tally"></div>
         <div class="progress" aria-hidden="true"><div class="fill" id="progressFill"></div></div>
       </aside>

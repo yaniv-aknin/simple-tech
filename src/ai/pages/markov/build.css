@@ -1,3 +1,31 @@
+#text {
+  position: relative;
+  padding: 0;
+}
+#text::before,
+#text::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 28%;
+  z-index: 1;
+  pointer-events: none;
+}
+#text::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--panel), transparent);
+}
+#text::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--panel), transparent);
+}
+#text .flow {
+  position: absolute;
+  top: 0;
+  left: 38px;
+  right: 38px;
+}
 #text .done {
   color: var(--dim);
 }
@@ -117,4 +145,36 @@
 }
 .log-row.newest .k {
   color: var(--accent);
+}
+
+.widget {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.widget h2 {
+  font-size: 22px;
+  color: var(--dim);
+}
+.memory-rows {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.widget-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+button.link {
+  all: unset;
+  cursor: pointer;
+  font-size: 15px;
+  color: var(--dim);
+  text-decoration: underline;
+}
+button.link:hover {
+  color: var(--text);
 }
