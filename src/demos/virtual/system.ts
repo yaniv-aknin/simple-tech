@@ -68,7 +68,7 @@ export interface Process {
   crash: string | null;
   /** Its memory as it was when it crashed (null where it had no frame): the frames themselves are given back. */
   frozen: (number | null)[] | null;
-  /** Closed for good: it holds no memory and never runs again. Its pid is not reused. */
+  /** Closed: it holds no memory and never runs again. The next process added takes its pid. */
   closed: boolean;
 }
 
@@ -108,9 +108,13 @@ export class VirtualSystem {
     defs.forEach(def => this.spawn(def));
   }
 
-  /** Adds a stopped process running `def`: the same program can be added any number of times. */
+  /**
+   * Adds a stopped process running `def`, under the lowest pid of a closed process, if any. The same program can be
+   * added any number of times.
+   */
   spawn(def: ProcessDef) {
-    const pid = this.procs.length;
+    const closed = this.procs.findIndex(p => p.closed);
+    const pid = closed >= 0 ? closed : this.procs.length;
     const values = Object.fromEntries((def.params ?? []).map(p => [p.key, p.initial]));
     const program = assembleDef(def, values);
     const names: Record<number, string> = {};
@@ -119,7 +123,7 @@ export class VirtualSystem {
       read: (addr: number, fetch: boolean) => this.read(pid, addr, fetch),
       write: (addr: number, value: number) => this.write(pid, addr, value),
     };
-    this.procs.push({
+    this.procs[pid] = {
       def,
       program,
       values,
@@ -133,7 +137,7 @@ export class VirtualSystem {
       crash: null,
       frozen: null,
       closed: false,
-    });
+    };
     this.resetCpu(pid);
     return pid;
   }

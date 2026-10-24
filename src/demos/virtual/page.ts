@@ -144,9 +144,12 @@ class View {
     return h ? this.sys.procs[h.pid].table[h.page] : -1;
   }
 
-  /** Shows the process just added to the system. */
+  /** Shows the process just added to the system, in place of the closed one whose pid it took. */
   addCard(pid: number) {
-    $('procs').append(this.buildCard(this.sys.procs[pid], pid));
+    const closed = this.cards[pid]?.el;
+    const card = this.buildCard(this.sys.procs[pid], pid);
+    if (closed) closed.replaceWith(card);
+    else $('procs').append(card);
   }
 
   private buildCard(proc: Process, pid: number) {
@@ -229,7 +232,7 @@ class View {
     memory.append(grid);
 
     card.append(head, h('p', 'blurb', proc.def.blurb), controls, status, memory, listing);
-    this.cards.push({
+    this.cards[pid] = {
       el: card,
       program: proc.program,
       listing,
@@ -241,7 +244,7 @@ class View {
       regs: {pc: regs.pc.value, a: regs.a.value, b: regs.b.value},
       rows,
       cells,
-    });
+    };
     return card;
   }
 
@@ -479,7 +482,7 @@ export const mount: Mount = (root, signal) => {
     b.onclick = e => {
       b.blur();
       const id = sys.spawn(def);
-      breakpoints.push(new Set());
+      breakpoints[id] = new Set();
       view.addCard(id);
       if (!e.shiftKey) sys.toggle(id);
     };

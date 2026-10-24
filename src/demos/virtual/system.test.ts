@@ -129,6 +129,16 @@ describe('virtual memory', () => {
     expect(sys.peek(0, 0x80)).toBeGreaterThan(counted);
   });
 
+  it('gives a new process the lowest pid of a closed one', () => {
+    const sys = new VirtualSystem(PROCESSES, {clock});
+    sys.close(0);
+    sys.close(1);
+    expect(sys.spawn(PROCESSES[2])).toBe(0);
+    expect(sys.procs[0]).toMatchObject({closed: false, state: 'stopped', def: PROCESSES[2]});
+    expect(sys.spawn(PROCESSES[2])).toBe(1);
+    expect(sys.spawn(PROCESSES[2])).toBe(3);
+  });
+
   it('crashes a process that runs code from an unmapped page, and the others carry on', () => {
     const stray: ProcessDef = {name: 'Stray', blurb: '', symbols: {}, watch: [], source: '.org 0\nJMP 128'};
     const sys = new VirtualSystem([stray, PROCESSES[0]], {clock});
