@@ -89,7 +89,7 @@ function showPage(path: string, query: string) {
 
 function route() {
   const [path, query = ''] = location.hash.slice(1).split('?');
-  if (path.startsWith('ai/') && buttons('tabs').some(b => b.dataset.page === path)) {
+  if (buttons('tabs').some(b => b.dataset.page === path)) {
     showPage(path, query);
     return;
   }

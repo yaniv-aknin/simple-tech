@@ -1,7 +1,7 @@
 # Simple Tech
 
 Interactive explainers, as a static site. **Computer:** an 8-bit computer for teaching how CPUs work: 256 bytes
-of RAM, two registers, a tiny assembly language, and two demos (Pong, and timer-driven multitasking). **AI:** demo
+of RAM, two registers, a tiny assembly language, and three demos (Pong, timer-driven multitasking, and virtual memory). **AI:** demo
 pages about how language models work, replaying recorded model answers.
 
 ## Development
@@ -22,6 +22,7 @@ set Pages to deploy from GitHub Actions. The site works under any path, so a pro
 ```
 index.html          the shell: sidebar and the computer
 ai/                 one HTML page per AI explainer, shown in the shell's iframe
+computer/           standalone computer pages shown the same way (virtual memory; its code is in src/demos/virtual/)
 src/
   machine/          the computer itself, no DOM: assembler, instruction set, CPU, keyboard
   demos/            one folder per demo: program source, memory layout, and its panels

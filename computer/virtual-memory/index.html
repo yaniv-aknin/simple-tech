@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Virtual memory</title>
+  </head>
+  <body>
+    <main class="vm">
+      <header>
+        <h1>Virtual memory</h1>
+      </header>
+
+      <div class="toolbar">
+        <div class="seg" id="speed"></div>
+        <span class="dim">instructions per second, for each program</span>
+        <span class="dim gap">Physical memory</span>
+        <div class="seg" id="memsize"></div>
+        <button id="tables" class="end">Hide page tables</button>
+      </div>
+
+      <div class="legend">
+        <span><b class="k code"></b>program</span>
+        <span><b class="k var"></b>variable</span>
+        <span><b class="k used"></b>other memory in use</span>
+        <span><b class="k none"></b>no frame: nothing stored</span>
+        <span><b class="k read"></b>just read</span>
+        <span><b class="k write"></b>just written</span>
+        <span><b class="k pc"></b>next instruction</span>
+      </div>
+
+      <section class="panel physical">
+        <h2 id="physTitle">Physical memory</h2>
+        <div class="frames" id="frames"></div>
+        <p class="dim" id="usage"></p>
+      </section>
+
+      <section class="procs" id="procs"></section>
+    </main>
+
+    <script type="module" src="/src/demos/virtual/page.ts"></script>
+  </body>
+</html>
