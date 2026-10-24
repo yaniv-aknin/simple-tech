@@ -3,6 +3,7 @@ import {Corpus, generate, type Step} from '../../core/markov.ts';
 import {friendly, isWord, spaceBefore} from '../../core/text.ts';
 import {loadBooks, loadText, renderBooks, type Book} from '../shared/books.ts';
 import {$, $input, $text} from '../shared/dom.ts';
+import {getIntParam, setParam} from '../shared/params.ts';
 
 /* ---------- UI state ---------- */
 
@@ -21,6 +22,7 @@ function showBooks() {
 
 function selectBook(i: number) {
   current = (i + books.length) % books.length;
+  setParam('book', current || null);
   halt();
   $('status').textContent = '';
   showBooks();
@@ -50,6 +52,7 @@ async function prepare() {
 
 function setOrder(v: number) {
   order = Math.max(1, Math.min(3, v));
+  setParam('order', order === 2 ? null : order);
   $input('memory').value = String(order);
   $('memLabel').textContent = `Remembers the last ${order} word${order > 1 ? 's' : ''}`;
   halt();
@@ -278,8 +281,8 @@ function learnPasted() {
 
 async function boot() {
   books.push(...(await loadBooks()));
-  setOrder(2);
-  selectBook(0);
+  setOrder(getIntParam('order', 2));
+  selectBook(getIntParam('book', 0));
 }
 
 boot().catch(e => {

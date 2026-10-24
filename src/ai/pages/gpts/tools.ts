@@ -18,6 +18,7 @@ import {$, $text, el, fetchJson} from '../shared/dom.ts';
 import {livePost} from '../shared/key.ts';
 import {expectedAnswer, isCorrect, joinPrompt, renderMaze, splitPrompt, type Parts} from './prompt.ts';
 import {runPython, warmUp} from './pyodide.ts';
+import {getIntParam, getParam, setParam} from '../shared/params.ts';
 
 interface ModelView extends Model {
   recordings: Partial<Record<Mode, Recording>>;
@@ -379,6 +380,7 @@ async function startLive(mine: number) {
 
 function selectMode(next: Mode) {
   mode = next;
+  setParam('mode', mode === 'tools' ? null : mode);
   document
     .querySelectorAll<HTMLElement>('#switch button')
     .forEach(b => b.classList.toggle('on', b.dataset.mode === mode));
@@ -388,6 +390,7 @@ function selectMode(next: Mode) {
 
 function selectOption(i: number) {
   current = i;
+  setParam('option', i || null);
   parts = splitPrompt(option().prompt);
   renderPrompt();
   token++;
@@ -415,8 +418,9 @@ document.querySelectorAll<HTMLElement>('#switch button').forEach(b =>
 fetchJson<ToolsData>('data/tools.json')
   .then(data => {
     config = buildConfig(data);
-    selectOption(0);
-    selectMode('tools');
+    const wanted = getIntParam('option', 0);
+    selectOption(wanted < config.options.length ? wanted : 0);
+    selectMode(getParam('mode') === 'plain' ? 'plain' : 'tools');
   })
   .catch(e => {
     $('prompt').textContent = 'Could not load: ' + e.message;

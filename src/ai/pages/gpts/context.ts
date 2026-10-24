@@ -21,6 +21,7 @@ import {
 import {speedOf} from '../../core/gpts.ts';
 import {$, asset, el, fetchJson} from '../shared/dom.ts';
 import {livePost} from '../shared/key.ts';
+import {getParam, setParam} from '../shared/params.ts';
 
 const METER_MAX = 6_000_000;
 const fmt = (n: number) => n.toLocaleString('en-US');
@@ -275,6 +276,7 @@ async function run(method: Method) {
 /* ---------- wiring ---------- */
 
 function selectPreset(preset: (typeof QUESTIONS)[number]) {
+  setParam('preset', preset === QUESTIONS[0] ? null : preset.id);
   $<HTMLTextAreaElement>('question').value = preset.text;
   book = preset.book;
   $('scopeBook').textContent = bookInfo(book).title;
@@ -301,14 +303,15 @@ async function init() {
   $('meterLimit').textContent = `limit ${fmt(LIMIT_TOKENS)}`;
   $('agentsSpeed').textContent = `${AGENT_SPEEDUP.agents}x speed`;
   const labels: Record<string, string> = {'poor-rich': 'Poor vs rich', barkis: 'Barkis'};
-  QUESTIONS.forEach((preset, i) => {
+  const initial = QUESTIONS.find(q => q.id === getParam('preset')) ?? QUESTIONS[0];
+  QUESTIONS.forEach(preset => {
     const button = el('button', '', labels[preset.id] || preset.id);
     button.addEventListener('click', () => {
       selectPreset(preset);
       button.blur();
     });
     $('presets').append(button);
-    if (i === 0) selectPreset(preset);
+    if (preset === initial) selectPreset(preset);
   });
   reset();
   document.querySelectorAll<HTMLElement>('.run').forEach(b =>

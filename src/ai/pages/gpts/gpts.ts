@@ -17,6 +17,7 @@ import {renderBooks} from '../shared/books.ts';
 import {$, $text, asset, fetchJson} from '../shared/dom.ts';
 import {livePost} from '../shared/key.ts';
 import {expectedAnswer, isCorrect, joinPrompt, renderMaze, splitPrompt, type Parts} from './prompt.ts';
+import {getIntParam, setParam} from '../shared/params.ts';
 
 interface SavedRun {
   text?: string;
@@ -402,6 +403,7 @@ function loadOption() {
 
 function selectOption(i: number) {
   current = i;
+  setParam('option', i || null);
   const books = document.getElementById('books');
   if (books && config.options.length > 1) {
     const cards = config.options.map(o => ({emoji: o.emoji!, title: o.title!, author: o.sub!}));
@@ -441,11 +443,14 @@ window.addEventListener('resize', () =>
 fetchJson<GptsData>('data/gpts.json')
   .then(data => {
     config = buildConfig(data);
+    const wanted = getIntParam('option', -1);
     selectOption(
-      Math.max(
-        0,
-        config.options.findIndex(o => o.default),
-      ),
+      wanted >= 0 && wanted < config.options.length
+        ? wanted
+        : Math.max(
+            0,
+            config.options.findIndex(o => o.default),
+          ),
     );
   })
   .catch(e => {

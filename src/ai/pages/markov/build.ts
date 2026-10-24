@@ -11,6 +11,7 @@ import {
 } from '../../core/text.ts';
 import {loadBooks, loadText, renderBooks, type Book} from '../shared/books.ts';
 import {$, $input, $text} from '../shared/dom.ts';
+import {getIntParam, setParam} from '../shared/params.ts';
 
 const SLOWEST_PER_SEC = 1;
 const FASTEST_FLOOR_PER_SEC = 20;
@@ -273,6 +274,7 @@ function start() {
 
 async function selectBook(i: number) {
   current = (i + books.length) % books.length;
+  setParam('book', current || null);
   const ticket = ++loadTicket;
   stop();
   const b = books[current];
@@ -288,6 +290,7 @@ async function selectBook(i: number) {
 
 function setOrder(v: number) {
   order = Math.max(1, Math.min(3, v));
+  setParam('order', order === 2 ? null : order);
   $input('memory').value = String(order);
   $('memLabel').textContent = `Remembers the last ${order} word${order > 1 ? 's' : ''}`;
   stop();
@@ -336,8 +339,8 @@ $('pasteText').addEventListener('input', () => {
 
 async function boot() {
   books.push(...(await loadBooks()));
-  setOrder(2);
-  await selectBook(0);
+  setOrder(getIntParam('order', 2));
+  await selectBook(getIntParam('book', 0));
 }
 
 boot().catch(e => {

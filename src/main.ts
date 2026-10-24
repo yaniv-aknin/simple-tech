@@ -11,6 +11,7 @@ import {attachTooltip} from './ui/tooltip.ts';
 
 const SPEEDS = [0, 1, 5, 10, 50, 100, 500];
 const MAX_STEPS_PER_FRAME = 400;
+const DEFAULT_PROCESSES = 2;
 
 const listing = new Listing($('listing'));
 const ram = new RamGrid($('ram'));
@@ -19,7 +20,7 @@ attachTooltip($('listing'));
 
 let demoKey: DemoKey = 'pong';
 let page: string | null = null;
-let processes = 2;
+let processes = DEFAULT_PROCESSES;
 let mode: ViewMode = 'vars';
 let speedIdx = 0;
 let session: Session;
@@ -32,6 +33,15 @@ function restart() {
   budget = 0;
   ram.build(session);
   listing.build(session);
+}
+
+/** The URL hash is `<demo or page path>?<params>`, e.g. `#procs?n=4` or `#ai/markov/build/?book=1`. */
+function writeDemoHash() {
+  const params = new URLSearchParams();
+  if (mode !== DEMOS[demoKey].defaultMode) params.set('mode', mode);
+  if (demoKey === 'procs' && processes !== DEFAULT_PROCESSES) params.set('n', String(processes));
+  const query = params.size ? '?' + params : '';
+  history.replaceState(null, '', '#' + demoKey + query);
 }
 
 function setMode(m: ViewMode) {
@@ -67,13 +77,30 @@ function switchDemo(key: DemoKey) {
   restart();
 }
 
-function showPage(url: string) {
-  page = url;
+function showPage(path: string, query: string) {
+  page = path;
   setSpeed(0);
   document.body.dataset.demo = 'page';
-  toggleOn($('tabs'), b => b.dataset.page === url);
+  toggleOn($('tabs'), b => b.dataset.page === path);
+  const url = path + (query ? '?' + query : '');
   const iframe = $<HTMLIFrameElement>('page');
   if (iframe.getAttribute('src') !== url) iframe.src = url;
+}
+
+function route() {
+  const [path, query = ''] = location.hash.slice(1).split('?');
+  if (path.startsWith('ai/') && buttons('tabs').some(b => b.dataset.page === path)) {
+    showPage(path, query);
+    return;
+  }
+  const params = new URLSearchParams(query);
+  const key = path in DEMOS ? (path as DemoKey) : 'pong';
+  const n = Number(params.get('n'));
+  setProcesses(key === 'procs' && [1, 2, 4, 8].includes(n) ? n : DEFAULT_PROCESSES);
+  switchDemo(key);
+  const m = params.get('mode');
+  if (m === 'vars' || m === 'instr' || m === 'ram') setMode(m);
+  writeDemoHash();
 }
 
 function frame(t: number) {
@@ -104,15 +131,19 @@ function frame(t: number) {
 
 const buttons = (id: string) => [...$(id).querySelectorAll('button')];
 
-for (const b of buttons('modes')) b.onclick = () => setMode(b.dataset.mode as ViewMode);
-for (const b of buttons('tabs'))
-  b.onclick = () => (b.dataset.page ? showPage(b.dataset.page) : switchDemo(b.dataset.demo as DemoKey));
+for (const b of buttons('modes'))
+  b.onclick = () => {
+    setMode(b.dataset.mode as ViewMode);
+    writeDemoHash();
+  };
+for (const b of buttons('tabs')) b.onclick = () => (location.hash = b.dataset.page ?? b.dataset.demo!);
 for (const b of buttons('lang')) b.onclick = () => setLang(b.dataset.lang as Lang);
 for (const b of buttons('speed')) b.onclick = () => setSpeed(Number(b.dataset.i));
 for (const b of buttons('nsel'))
   b.onclick = () => {
     setProcesses(Number(b.dataset.n));
     restart();
+    writeDemoHash();
   };
 $('rst').onclick = () => {
   setSpeed(0);
@@ -147,5 +178,6 @@ initTheme();
 mountThemeToggle();
 setProcesses(processes);
 setLang('asm');
-switchDemo('pong');
+addEventListener('hashchange', route);
+route();
 requestAnimationFrame(frame);
