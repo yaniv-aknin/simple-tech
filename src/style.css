@@ -120,7 +120,7 @@ body:not([data-demo='page']) .page {
 body[data-demo='pong'] .demo-procs,
 body[data-demo='procs'] .demo-pong,
 body[data-demo='pong'] .r-mode,
-body[data-demo='pong'] #ph-timer {
+body[data-demo='pong'] .ph-timer {
   display: none;
 }
 body[data-mode='vars'] .cpu,
@@ -289,7 +289,20 @@ button:hover {
   background: var(--read);
   color: #222;
 }
-#msg {
+.cpus {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(0, 1fr);
+}
+.cpus[data-cores='2'],
+.cpus[data-cores='4'] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.cpu h2 {
+  display: flex;
+  align-items: center;
+}
+.cpu .msg {
   margin-top: 12px;
   padding: 10px;
   background: var(--field);
@@ -343,12 +356,30 @@ button:hover {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.cl.next {
+.cl.next0 {
   background: var(--next);
 }
-.cl.cur {
+.cl.cur0 {
   background: var(--cur);
   box-shadow: inset 3px 0 var(--accent);
+}
+.cl:is(.next1, .next2, .next3),
+.ins:is(.next1, .next2, .next3) {
+  background: color-mix(in srgb, var(--core) 18%, transparent);
+}
+.cl:is(.cur1, .cur2, .cur3),
+.ins:is(.cur1, .cur2, .cur3) {
+  background: color-mix(in srgb, var(--core) 32%, transparent);
+  box-shadow: inset 3px 0 var(--core);
+}
+:is(.cl, .ins):is(.next1, .cur1) {
+  --core: hsl(335 65% 55%);
+}
+:is(.cl, .ins):is(.next2, .cur2) {
+  --core: hsl(40 75% 50%);
+}
+:is(.cl, .ins):is(.next3, .cur3) {
+  --core: hsl(130 55% 42%);
 }
 .kw {
   color: var(--keyword);
@@ -401,10 +432,10 @@ button:hover {
   color: var(--faint);
   white-space: normal;
 }
-.ins.next {
+.ins.next0 {
   background: var(--next);
 }
-.ins.cur {
+.ins.cur0 {
   background: var(--cur);
   box-shadow: inset 3px 0 var(--accent);
 }
@@ -456,11 +487,33 @@ button:hover {
   font: inherit;
   text-align: center;
 }
-#ram .pc {
+#ram .pc0 {
   outline: 2px solid var(--accent);
 }
-#ram .ir {
+#ram .ir0 {
   outline: 2px solid var(--ok);
+}
+#ram .pc1,
+#ram .pc2,
+#ram .pc3 {
+  outline: 2px dashed var(--core);
+}
+#ram .ir1,
+#ram .ir2,
+#ram .ir3 {
+  outline: 2px dotted var(--core);
+}
+#ram .pc1,
+#ram .ir1 {
+  --core: hsl(335 65% 55%);
+}
+#ram .pc2,
+#ram .ir2 {
+  --core: hsl(40 75% 50%);
+}
+#ram .pc3,
+#ram .ir3 {
+  --core: hsl(130 55% 42%);
 }
 .legend {
   display: flex;

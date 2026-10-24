@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {concurrencySetup, procBase} from './concurrency/concurrency.ts';
+import {SLOT_SIZE, TABLE, concurrencySetup, coreOf, curAddr, procBase} from './concurrency/concurrency.ts';
 import {Keyboard} from '../machine/keyboard.ts';
 import {parseC} from './c-source.ts';
 import {boot} from './demo.ts';
@@ -42,10 +42,67 @@ describe('concurrency', () => {
   });
 });
 
+describe('concurrency on several cores', () => {
+  const run = (n: number, cores: number, steps: number) => {
+    const session = boot(concurrencySetup(n, cores), clock);
+    const seen = session.cores.map(() => new Set<number>());
+    for (let i = 0; i < steps; i++) {
+      session.cores.forEach((core, k) => {
+        core.stepInstruction();
+        if (!core.kernel && k < n) seen[k].add((core.mem[curAddr(k)] - TABLE) / SLOT_SIZE);
+      });
+    }
+    return {...session, seen};
+  };
+
+  it.each([
+    [4, 2],
+    [8, 2],
+    [8, 4],
+    [4, 4],
+  ])('runs %i processes on %i cores, each process only on its own core', (n, cores) => {
+    const {machine: m, seen} = run(n, cores, 300);
+    for (let i = 0; i < n; i++) expect(m.mem[procBase(i)]).toBeGreaterThan(0);
+    seen.forEach((processes, k) => {
+      expect([...processes].sort()).toEqual(
+        Array.from({length: n}, (_, i) => i).filter(i => coreOf(i, cores) === k),
+      );
+    });
+  });
+
+  it('gives every core its own registers and program counter, over the same RAM', () => {
+    const {cores} = run(4, 2, 17);
+    expect(cores).toHaveLength(2);
+    expect(cores[0].mem).toBe(cores[1].mem);
+    expect(cores[0].access).toBe(cores[1].access);
+    expect(cores[0].instrCount).toBeGreaterThan(0);
+    expect(cores[1].instrCount).toBeGreaterThan(0);
+    expect(cores[0].pc).not.toBe(cores[1].pc);
+  });
+
+  it('leaves a core idle when there is no process for it', () => {
+    const {machine: m, cores} = run(2, 4, 200);
+    expect(m.mem[procBase(0)]).toBeGreaterThan(0);
+    expect(m.mem[procBase(1)]).toBeGreaterThan(0);
+    for (const idle of cores.slice(2)) {
+      expect(idle.kernel).toBe(false);
+      expect(idle.interrupt).toBeUndefined();
+      expect(idle.pc).toBe(idle === cores[2] ? 16 : 24);
+    }
+  });
+
+  it('shares the time of one core between its own processes only', () => {
+    const {machine: m} = run(4, 2, 400);
+    const counts = [0, 2].map(i => m.mem[procBase(i)]);
+    expect(Math.abs(counts[0] - counts[1])).toBeLessThanOrEqual(3);
+  });
+});
+
 describe('C sources', () => {
   it.each([
     ['pong', pongSetup()],
     ['concurrency', concurrencySetup(3)],
+    ['concurrency on two cores', concurrencySetup(3, 2)],
   ])('%s: every C tag maps to assembly and back', (_, setup) => {
     const {program} = boot(setup, clock);
     const cTags = parseC(setup.cSource).flatMap(l => (l.tag ? [l.tag] : []));

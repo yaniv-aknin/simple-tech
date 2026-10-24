@@ -4,27 +4,48 @@ import {Machine, type Interrupt} from '../machine/machine.ts';
 
 export type ViewMode = 'vars' | 'instr' | 'ram';
 
+/** How a core after the first one starts: where it begins, and whether it is on a timer. */
+export interface CoreSetup {
+  interrupt?: Interrupt;
+  start: number;
+  kernel: boolean;
+}
+
 export interface DemoSetup {
   source: string;
   cSource: string;
   symbols: Record<string, number>;
   names: Record<number, string>;
+  /** The first core's timer. */
   interrupt?: Interrupt;
+  /** The cores after the first, which share its RAM. */
+  moreCores?: CoreSetup[];
   cellColor(addr: number): string;
-  init?(m: Machine, program: Program): void;
+  init?(cores: Machine[], program: Program): void;
 }
 
 export interface Session {
   setup: DemoSetup;
   program: Program;
+  /** The first core. */
   machine: Machine;
+  /** Every core, the first included. */
+  cores: Machine[];
 }
 
 export function boot(setup: DemoSetup, clock?: () => number): Session {
   const program = assemble(setup.source, setup.symbols);
   const machine = new Machine(program.bytes, {names: setup.names, interrupt: setup.interrupt, clock});
-  setup.init?.(machine, program);
-  return {setup, program, machine};
+  const shared = {mem: machine.mem, access: machine.access};
+  const more = (setup.moreCores ?? []).map(core => {
+    const m = new Machine(program.bytes, {names: setup.names, interrupt: core.interrupt, clock, shared});
+    m.pc = core.start;
+    m.kernel = core.kernel;
+    return m;
+  });
+  const cores = [machine, ...more];
+  setup.init?.(cores, program);
+  return {setup, program, machine, cores};
 }
 
 export interface DemoView {
@@ -34,5 +55,5 @@ export interface DemoView {
 
 export interface Demo {
   defaultMode: ViewMode;
-  start(options: {processes: number}): {session: Session; view: DemoView};
+  start(options: {processes: number; cores: number}): {session: Session; view: DemoView};
 }

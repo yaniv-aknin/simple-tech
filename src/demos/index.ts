@@ -14,8 +14,8 @@ export const DEMOS = {
   },
   procs: {
     defaultMode: 'vars',
-    start({processes}) {
-      const session = boot(concurrencySetup(processes));
+    start({processes, cores}) {
+      const session = boot(concurrencySetup(processes, cores));
       return {session, view: new ConcurrencyView(session, processes)};
     },
   },

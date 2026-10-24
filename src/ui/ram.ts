@@ -35,14 +35,21 @@ export class RamGrid {
     });
   }
 
-  render(m: Machine, t: number) {
-    const fetching = m.next === 'fetch';
-    const ir = fetching || m.executing === null ? [] : [m.executing, (m.executing + 1) & 255];
+  /** The cores share the RAM, so any of them shows it; each marks its own PC and IR. */
+  render(cores: Machine[], t: number) {
+    const m = cores[0];
+    const marks = cores.map((core, k) => {
+      const fetching = core.next === 'fetch';
+      const ir = fetching || core.executing === null ? [] : [core.executing, (core.executing + 1) & 255];
+      return {k, pc: fetching ? core.pc : -1, ir};
+    });
     this.cells.forEach((cell, i) => {
       setText(cell, hex2(m.mem[i]));
       let cls = this.bases[i];
-      if (fetching && i === m.pc) cls += ' pc';
-      if (ir.includes(i)) cls += ' ir';
+      for (const {k, pc, ir} of marks) {
+        if (i === pc) cls += ` pc${k}`;
+        if (ir.includes(i)) cls += ` ir${k}`;
+      }
       if (cell.className !== cls) cell.className = cls;
       const f = m.access[i];
       const a = flashLevel(f, t);

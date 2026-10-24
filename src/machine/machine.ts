@@ -22,6 +22,14 @@ export interface Interrupt {
   quantum: number;
   /** Address holding the running process's slot address. A slot is PC, A, B, FLAGS. */
   curAddr: number;
+  /** Where the kernel starts, which the timer jumps to. */
+  vector?: number;
+}
+
+/** RAM that several machines (the cores of one computer) share, with the record of who touched what. */
+export interface SharedRam {
+  mem: Uint8Array;
+  access: (Access | null)[];
 }
 
 export interface MachineOptions {
@@ -29,11 +37,12 @@ export interface MachineOptions {
   interrupt?: Interrupt;
   clock?: () => number;
   space?: AddressSpace;
+  shared?: SharedRam;
 }
 
 export class Machine {
-  readonly mem = new Uint8Array(256);
-  readonly access: (Access | null)[] = new Array(256).fill(null);
+  readonly mem: Uint8Array;
+  readonly access: (Access | null)[];
   readonly names: Record<number, string>;
   readonly interrupt: Interrupt | undefined;
   private readonly space: AddressSpace | undefined;
@@ -56,8 +65,10 @@ export class Machine {
 
   constructor(
     bytes: Uint8Array,
-    {names = {}, interrupt, clock = () => performance.now(), space}: MachineOptions = {},
+    {names = {}, interrupt, clock = () => performance.now(), space, shared}: MachineOptions = {},
   ) {
+    this.mem = shared?.mem ?? new Uint8Array(256);
+    this.access = shared?.access ?? new Array(256).fill(null);
     this.mem.set(bytes);
     this.names = names;
     this.interrupt = interrupt;
@@ -160,8 +171,8 @@ export class Machine {
     this.write(slot + 3, this.z | (this.n << 1));
     this.msg =
       `TIMER: ${this.interrupt!.quantum} instructions are up. The CPU saved PC, A, B and the flags ` +
-      `into the running process's slot (${hex(slot)}) and jumped to the kernel at 0x00.`;
-    this.pc = 0;
+      `into the running process's slot (${hex(slot)}) and jumped to the kernel at ${hex(this.interrupt!.vector ?? 0)}.`;
+    this.pc = this.interrupt!.vector ?? 0;
     this.kernel = true;
     this.executing = null;
     this.lastPhase = 'timer';

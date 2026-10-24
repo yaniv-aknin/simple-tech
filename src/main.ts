@@ -15,12 +15,13 @@ const DEFAULT_PROCESSES = 2;
 
 const listing = new Listing($('listing'));
 const ram = new RamGrid($('ram'));
-const cpu = new CpuPanel();
 attachTooltip($('listing'));
 
 let demoKey: DemoKey = 'pong';
 let page: string | null = null;
 let processes = DEFAULT_PROCESSES;
+let cores = 1;
+let cpus: CpuPanel[] = [];
 let mode: ViewMode = 'vars';
 let speedIdx = 0;
 let session: Session;
@@ -29,8 +30,12 @@ let budget = 0;
 let lastT = 0;
 
 function restart() {
-  ({session, view} = DEMOS[demoKey].start({processes}));
+  ({session, view} = DEMOS[demoKey].start({processes, cores}));
   budget = 0;
+  const count = session.cores.length;
+  $('cpus').dataset.cores = String(count);
+  $('cpus').replaceChildren();
+  cpus = session.cores.map((_, k) => new CpuPanel($('cpus'), count === 1 ? 'CPU' : `Core ${k + 1}`, k));
   ram.build(session);
   listing.build(session);
 }
@@ -40,6 +45,7 @@ function writeDemoHash() {
   const params = new URLSearchParams();
   if (mode !== DEMOS[demoKey].defaultMode) params.set('mode', mode);
   if (demoKey === 'procs' && processes !== DEFAULT_PROCESSES) params.set('n', String(processes));
+  if (demoKey === 'procs' && cores !== 1) params.set('cores', String(cores));
   const query = params.size ? '?' + params : '';
   history.replaceState(null, '', '#' + demoKey + query);
 }
@@ -64,6 +70,11 @@ function setSpeed(i: number) {
 function setProcesses(n: number) {
   processes = n;
   toggleOn($('nsel'), b => Number(b.dataset.n) === n);
+}
+
+function setCores(n: number) {
+  cores = n;
+  toggleOn($('csel'), b => Number(b.dataset.c) === n);
 }
 
 function switchDemo(key: DemoKey) {
@@ -97,6 +108,8 @@ function route() {
   const key = path in DEMOS ? (path as DemoKey) : 'pong';
   const n = Number(params.get('n'));
   setProcesses(key === 'procs' && [1, 2, 4, 8].includes(n) ? n : DEFAULT_PROCESSES);
+  const c = Number(params.get('cores'));
+  setCores(key === 'procs' && [2, 4].includes(c) ? c : 1);
   switchDemo(key);
   const m = params.get('mode');
   if (m === 'vars' || m === 'instr' || m === 'ram') setMode(m);
@@ -111,14 +124,15 @@ function frame(t: number) {
   const dt = Math.min(100, t - lastT) / 1000;
   lastT = t;
   const ips = SPEEDS[speedIdx];
-  const m = session.machine;
   if (ips > 0) {
     const byPhase = mode === 'ram' && ips <= 10;
     budget += dt * ips * (byPhase ? 2 : 1);
     let n = 0;
     while (budget >= 1 && n < MAX_STEPS_PER_FRAME) {
-      if (byPhase) m.stepPhase();
-      else m.stepInstruction();
+      for (const core of session.cores) {
+        if (byPhase) core.stepPhase();
+        else core.stepInstruction();
+      }
       budget--;
       n++;
     }
@@ -126,9 +140,9 @@ function frame(t: number) {
   }
   if (page === null) {
     view.render(t);
-    cpu.render(m);
-    listing.update(m, ips <= 10);
-    ram.render(m, t);
+    cpus.forEach((cpu, k) => cpu.render(session.cores[k]));
+    listing.update(session.cores, ips <= 10);
+    ram.render(session.cores, t);
   }
   requestAnimationFrame(frame);
 }
@@ -146,6 +160,12 @@ for (const b of buttons('speed')) b.onclick = () => setSpeed(Number(b.dataset.i)
 for (const b of buttons('nsel'))
   b.onclick = () => {
     setProcesses(Number(b.dataset.n));
+    restart();
+    writeDemoHash();
+  };
+for (const b of buttons('csel'))
+  b.onclick = () => {
+    setCores(Number(b.dataset.c));
     restart();
     writeDemoHash();
   };
@@ -181,6 +201,7 @@ addEventListener('blur', () => {
 initTheme();
 mountThemeToggle();
 setProcesses(processes);
+setCores(cores);
 setLang('asm');
 addEventListener('hashchange', route);
 route();

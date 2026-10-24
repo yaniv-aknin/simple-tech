@@ -57,10 +57,13 @@ export class Listing {
   private program!: Program;
   private readonly rowByAddr = new Map<number, HTMLElement>();
   private readonly rowByTag = new Map<string, HTMLElement>();
-  private readonly asmCur = new Marker(this.rowByAddr, 'cur');
-  private readonly asmNext = new Marker(this.rowByAddr, 'next');
-  private readonly cCur = new Marker(this.rowByTag, 'cur');
-  private readonly cNext = new Marker(this.rowByTag, 'next');
+  /** One set of markers per core, in classes such as `cur0` and `next1`. */
+  private marks: {
+    asmCur: Marker<number>;
+    asmNext: Marker<number>;
+    cCur: Marker<string>;
+    cNext: Marker<string>;
+  }[] = [];
   private followed: HTMLElement | null = null;
 
   constructor(el: HTMLElement) {
@@ -98,12 +101,17 @@ export class Listing {
     this.el.style.overflow = '';
   }
 
-  build({program, setup}: Session) {
+  build({program, setup, cores}: Session) {
     this.program = program;
     this.el.innerHTML = '';
     this.rowByAddr.clear();
     this.rowByTag.clear();
-    for (const m of [this.asmCur, this.asmNext, this.cCur, this.cNext]) m.reset();
+    this.marks = cores.map((_, k) => ({
+      asmCur: new Marker(this.rowByAddr, `cur${k}`),
+      asmNext: new Marker(this.rowByAddr, `next${k}`),
+      cCur: new Marker(this.rowByTag, `cur${k}`),
+      cNext: new Marker(this.rowByTag, `next${k}`),
+    }));
     this.buildAsm(program);
     this.buildC(setup.cSource, program);
     this.el.scrollTop = 0;
@@ -161,17 +169,31 @@ export class Listing {
     }
   }
 
-  update(m: Machine, follow: boolean) {
-    const cur = m.next === 'fetch' ? null : m.executing;
-    const next = m.next === 'fetch' ? m.pc : null;
-    const curTag = cur === null ? null : (this.program.tagAt.get(cur) ?? null);
-    const nextTag = next === null ? null : (this.program.tagAt.get(next) ?? null);
-    this.asmCur.set(cur);
-    this.asmNext.set(next);
-    this.cCur.set(curTag);
-    this.cNext.set(nextTag);
+  /** Marks what each core is running and about to run; the view follows the first core. */
+  update(cores: Machine[], follow: boolean) {
+    let followed: {
+      cur: number | null;
+      next: number | null;
+      curTag: string | null;
+      nextTag: string | null;
+    } | null = null;
+    cores.forEach((m, k) => {
+      const cur = m.next === 'fetch' ? null : m.executing;
+      const next = m.next === 'fetch' ? m.pc : null;
+      const curTag = cur === null ? null : (this.program.tagAt.get(cur) ?? null);
+      const nextTag = next === null ? null : (this.program.tagAt.get(next) ?? null);
+      const marks = this.marks[k];
+      marks.asmCur.set(cur);
+      marks.asmNext.set(next);
+      marks.cCur.set(curTag);
+      marks.cNext.set(nextTag);
+      if (k === 0) followed = {cur, next, curTag, nextTag};
+    });
+    const f = followed!;
     const row =
-      this.lang === 'c' ? this.rowByTag.get(curTag ?? nextTag ?? '') : this.rowByAddr.get(cur ?? next ?? -1);
+      this.lang === 'c'
+        ? this.rowByTag.get(f.curTag ?? f.nextTag ?? '')
+        : this.rowByAddr.get(f.cur ?? f.next ?? -1);
     if (!follow || !row || row === this.followed) return;
     this.followed = row;
     const el = this.el;
