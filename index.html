@@ -9,8 +9,19 @@
     <nav class="sidebar">
       <h1>Simple Tech</h1>
       <div class="tabs" id="tabs">
+        <h2>Computer</h2>
         <button data-demo="pong" class="on">Pong</button>
         <button data-demo="procs">Concurrency</button>
+        <h2>AI</h2>
+        <button data-page="/markov/predict/">Next Word Prediction</button>
+        <button data-page="/markov/build/">Next Word Prediction: Build</button>
+        <button data-page="/gpts/2-4-6/">Then and Now</button>
+        <button data-page="/gpts/gpt2-markov/">GPT2 vs Markov</button>
+        <button data-page="/gpts/python/">Hey do you have a pen?</button>
+        <button data-page="/gpts/wikipedia/">Inside Tool Calls</button>
+        <button data-page="/gpts/context/">Fast Reading Crash Course</button>
+        <button data-page="/gpts/s-m-l-apples/">Size isn't Everything: Apples</button>
+        <button data-page="/gpts/s-m-l/">Size isn't Everything: Mazes</button>
       </div>
     </nav>
 
@@ -135,6 +146,7 @@
           </div>
         </div>
       </div>
+      <iframe class="page" id="page" title="Explainer"></iframe>
     </main>
 
     <script type="module" src="/src/main.ts"></script>

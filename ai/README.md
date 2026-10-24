@@ -24,6 +24,8 @@ uv run app.py
 
 Then open http://127.0.0.1:8000 (set `PORT` to change it). `uv` installs Flask on first run, so run it once with internet; after that no internet is needed. Flask is declared in the script header of `app.py`.
 
+From the repo root, `pnpm dev` runs it together with Simple Tech, which shows these pages in its sidebar.
+
 ## Presenting
 
 The pages have no keyboard shortcuts. When embedded in another page, they forward arrow and page keys to it (`static/deck-keys.js`), so a slide deck can drive them.

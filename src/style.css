@@ -24,7 +24,7 @@ body {
   padding: 16px;
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 180px minmax(0, 1fr);
+  grid-template-columns: 200px minmax(0, 1fr);
   gap: 14px;
 }
 main {
@@ -44,6 +44,12 @@ main {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+.tabs h2 {
+  margin: 14px 12px 2px;
+}
+.tabs h2:first-child {
+  margin-top: 0;
 }
 .tabs button {
   text-align: left;
@@ -109,6 +115,17 @@ h1 {
 .seg button.on {
   background: #0a84ff;
   border-color: #0a84ff;
+}
+body[data-demo='page'] header,
+body[data-demo='page'] .layout,
+body:not([data-demo='page']) .page {
+  display: none;
+}
+.page {
+  flex: 1;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 10px;
 }
 body[data-demo='pong'] .demo-procs,
 body[data-demo='procs'] .demo-pong,

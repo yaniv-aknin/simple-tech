@@ -17,6 +17,7 @@ const cpu = new CpuPanel();
 attachTooltip($('listing'));
 
 let demoKey: DemoKey = 'pong';
+let page: string | null = null;
 let processes = 2;
 let mode: ViewMode = 'vars';
 let speedIdx = 0;
@@ -56,12 +57,22 @@ function setProcesses(n: number) {
 
 function switchDemo(key: DemoKey) {
   demoKey = key;
+  page = null;
   document.body.dataset.demo = key;
   toggleOn($('tabs'), b => b.dataset.demo === key);
   $('ctl-' + key).appendChild($('controls'));
   setSpeed(0);
   setMode(DEMOS[key].defaultMode);
   restart();
+}
+
+function showPage(url: string) {
+  page = url;
+  setSpeed(0);
+  document.body.dataset.demo = 'page';
+  toggleOn($('tabs'), b => b.dataset.page === url);
+  const iframe = $<HTMLIFrameElement>('page');
+  if (iframe.getAttribute('src') !== url) iframe.src = url;
 }
 
 function frame(t: number) {
@@ -81,17 +92,20 @@ function frame(t: number) {
     }
     if (n >= MAX_STEPS_PER_FRAME) budget = 0;
   }
-  view.render(t);
-  cpu.render(m);
-  listing.update(m, ips <= 10);
-  ram.render(m, t);
+  if (page === null) {
+    view.render(t);
+    cpu.render(m);
+    listing.update(m, ips <= 10);
+    ram.render(m, t);
+  }
   requestAnimationFrame(frame);
 }
 
-const buttons = (id: string) => [...$(id).children] as HTMLElement[];
+const buttons = (id: string) => [...$(id).querySelectorAll('button')];
 
 for (const b of buttons('modes')) b.onclick = () => setMode(b.dataset.mode as ViewMode);
-for (const b of buttons('tabs')) b.onclick = () => switchDemo(b.dataset.demo as DemoKey);
+for (const b of buttons('tabs'))
+  b.onclick = () => (b.dataset.page ? showPage(b.dataset.page) : switchDemo(b.dataset.demo as DemoKey));
 for (const b of buttons('lang')) b.onclick = () => setLang(b.dataset.lang as Lang);
 for (const b of buttons('speed')) b.onclick = () => setSpeed(Number(b.dataset.i));
 for (const b of buttons('nsel'))
