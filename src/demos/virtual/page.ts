@@ -22,12 +22,33 @@ const MEMORIES = [
 const SPEEDS = [0, 1, 5, 10, 50, 100, 500];
 const MAX_STEPS_PER_FRAME = 200;
 const STATE_TEXT = {stopped: 'not started', running: 'running', paused: 'paused', crashed: 'crashed'};
-const TOGGLE_TEXT = {stopped: 'Start', running: 'Pause', paused: 'Resume', crashed: 'Start'};
+const TOGGLE_TEXT = {
+  stopped: 'Start',
+  running: 'Pause',
+  paused: 'Resume',
+  crashed: 'Reset: free its frames, to start it afresh',
+};
+
+const icon = (paths: string) =>
+  '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" ' +
+  `stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
+const PLAY = icon('<path d="M7 4.5v15l12-7.5z" fill="currentColor"/>');
+const PAUSE = icon('<path d="M8 5v14M16 5v14"/>');
+const RESET = icon('<path d="M3.5 12a8.5 8.5 0 1 0 2.5-6L3.5 8.5"/><path d="M3.5 3.5v5h5"/>');
+const CLOSE = icon('<path d="M6 6l12 12M18 6 6 18"/>');
 
 const openCount = (sys: VirtualSystem) => sys.procs.filter(p => !p.closed).length;
 
 const h = <K extends keyof HTMLElementTagNameMap>(tag: K, className = '', text = '') =>
   Object.assign(document.createElement(tag), {className, textContent: text});
+
+/** A value of the process, under its label: what it watches in memory, or a register. */
+const stat = (label: string, className = 'stat') => {
+  const box = h('div', className);
+  const value = h('b');
+  box.append(h('span', '', label), value);
+  return {box, value};
+};
 
 const shadow = (access: Access | null, t: number) => {
   const a = flashLevel(access, t);
@@ -137,22 +158,19 @@ class View {
       Object.assign(h('i', 'chip'), {style: `background:${procColor(pid, true)}`}),
       h('h2', '', `P${pid + 1} ${proc.def.name}`),
     );
-    const state = head.appendChild(h('span', 'state'));
+    const toggle = Object.assign(h('button', 'icon toggle'), {
+      onclick: () => (this.sys.procs[pid].state === 'crashed' ? this.sys.reset(pid) : this.sys.toggle(pid)),
+    });
     head.append(
-      Object.assign(h('button', 'close', '×'), {
+      toggle,
+      Object.assign(h('button', 'icon'), {
         title: 'Close this program and free its frames',
-        ariaLabel: 'Close',
+        innerHTML: CLOSE,
         onclick: () => this.sys.close(pid),
       }),
     );
 
     const controls = h('div', 'controls');
-    const toggle = Object.assign(h('button', 'toggle'), {onclick: () => this.sys.toggle(pid)});
-    const reset = Object.assign(h('button', '', 'Reset'), {
-      title: 'Stop the program and free its frames',
-      onclick: () => this.sys.reset(pid),
-    });
-    controls.append(toggle, reset);
 
     const inputs = (proc.def.params ?? []).map(param => {
       const input = Object.assign(h('input', 'hexin'), {
@@ -173,15 +191,17 @@ class View {
       return input;
     });
 
-    const watches = proc.def.watch.map(w => {
-      const box = h('div', 'watch');
-      box.append(h('span', 'wl', w.label), h('b', 'wv'));
-      return box;
-    });
-    const regs = h('div', 'regs');
-    const regEls = {pc: h('b'), a: h('b'), b: h('b')};
-    for (const [name, el] of Object.entries(regEls)) regs.append(h('span', '', name.toUpperCase()), el);
+    const status = h('div', 'status');
+    const state = status.appendChild(h('span', 'state'));
+    const watches = proc.def.watch.map(w => stat(w.label, 'stat watch'));
+    const regs = {pc: stat('PC'), a: stat('A'), b: stat('B')};
     const crash = h('div', 'crash');
+    const group = (stats: {box: HTMLElement}[]) => {
+      const box = h('div', 'stats');
+      box.append(...stats.map(s => s.box));
+      return box;
+    };
+    status.append(group(watches), group(Object.values(regs)), crash);
 
     const listing = h('div', 'listing');
     attachTooltip(listing);
@@ -206,19 +226,9 @@ class View {
     }
 
     const memory = h('div', 'memory');
-    memory.append(h('h3', '', 'Its memory: 256 bytes, addresses 0x00 to 0xFF'), grid);
+    memory.append(grid);
 
-    card.append(
-      head,
-      h('p', 'blurb', proc.def.blurb),
-      controls,
-      h('div', 'watches'),
-      regs,
-      memory,
-      crash,
-      listing,
-    );
-    card.querySelector('.watches')!.append(...watches);
+    card.append(head, h('p', 'blurb', proc.def.blurb), controls, status, memory, listing);
     this.cards.push({
       el: card,
       program: proc.program,
@@ -227,8 +237,8 @@ class View {
       state,
       toggle,
       crash,
-      watches,
-      regs: regEls,
+      watches: watches.map(w => w.value),
+      regs: {pc: regs.pc.value, a: regs.a.value, b: regs.b.value},
       rows,
       cells,
     });
@@ -303,8 +313,10 @@ class View {
     const crashed = proc.state === 'crashed';
     card.state.className = 'state ' + proc.state;
     setText(card.state, STATE_TEXT[proc.state]);
-    setText(card.toggle, TOGGLE_TEXT[proc.state]);
-    card.toggle.disabled = crashed;
+    if (card.toggle.title !== TOGGLE_TEXT[proc.state]) {
+      card.toggle.title = TOGGLE_TEXT[proc.state];
+      card.toggle.innerHTML = {stopped: PLAY, running: PAUSE, paused: PLAY, crashed: RESET}[proc.state];
+    }
     setText(card.crash, crashed ? `Crashed: ${proc.crash}.` : '');
 
     const cpu = proc.cpu;
@@ -319,7 +331,7 @@ class View {
         : proc.frozen
           ? proc.frozen[w.addr!]
           : sys.peek(pid, w.addr!);
-      setText(card.watches[i].querySelector('.wv')!, v === null ? '–' : w.hex ? hex(v) : String(v));
+      setText(card.watches[i], v === null ? '–' : w.hex ? hex(v) : String(v));
     });
 
     for (const [addr, row] of card.rows) {
