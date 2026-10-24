@@ -101,6 +101,11 @@ export class Listing {
     this.el.style.overflow = '';
   }
 
+  /** Redraws the columns after parts of the listing were hidden or shown. */
+  refit() {
+    this.fit();
+  }
+
   build({program, setup, cores}: Session) {
     this.program = program;
     this.el.innerHTML = '';
@@ -112,14 +117,14 @@ export class Listing {
       cCur: new Marker(this.rowByTag, `cur${k}`),
       cNext: new Marker(this.rowByTag, `next${k}`),
     }));
-    this.buildAsm(program);
-    this.buildC(setup.cSource, program);
+    this.buildAsm(program, setup.kernelEnd ?? 0);
+    this.buildC(setup.cSource, program, setup.kernelEnd ?? 0);
     this.el.scrollTop = 0;
     this.followed = null;
     this.fit();
   }
 
-  private buildAsm(program: Program) {
+  private buildAsm(program: Program, kernelEnd: number) {
     const rows = document.createElement('div');
     rows.id = 'rows';
     this.el.appendChild(rows);
@@ -140,6 +145,7 @@ export class Listing {
         d.children[3].textContent = it.comment ? '; ' + it.comment : '';
         d.dataset.op = String(it.bytes[0]);
         this.rowByAddr.set(it.addr, d);
+        if (it.addr < kernelEnd) sec?.classList.add('kernel-code');
       }
       if (!sec || it.kind === 'note' || (it.kind === 'label' && prevKind !== 'note')) sec = section(rows);
       sec.appendChild(d);
@@ -147,11 +153,12 @@ export class Listing {
     }
   }
 
-  private buildC(src: string, program: Program) {
+  private buildC(src: string, program: Program, kernelEnd: number) {
     const rows = document.createElement('div');
     rows.id = 'crows';
     this.el.appendChild(rows);
     let sec: HTMLElement | null = null;
+    const kernelTags = new Set([...program.tagAt].filter(([addr]) => addr < kernelEnd).map(([, tag]) => tag));
     for (const line of parseC(src)) {
       if (!line.text.trim()) {
         sec = null;
@@ -166,6 +173,7 @@ export class Listing {
       }
       sec ??= section(rows);
       sec.appendChild(d);
+      if (line.tag && kernelTags.has(line.tag)) sec.classList.add('kernel-code');
     }
   }
 

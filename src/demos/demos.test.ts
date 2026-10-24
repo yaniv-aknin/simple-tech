@@ -2,7 +2,7 @@ import {describe, expect, it} from 'vitest';
 import {SLOT_SIZE, TABLE, concurrencySetup, coreOf, curAddr, procBase} from './concurrency/concurrency.ts';
 import {Keyboard} from '../machine/keyboard.ts';
 import {parseC} from './c-source.ts';
-import {boot} from './demo.ts';
+import {boot, finishKernel} from './demo.ts';
 import {ADDR, pongSetup} from './pong/pong.ts';
 
 const clock = () => 0;
@@ -95,6 +95,42 @@ describe('concurrency on several cores', () => {
     const {machine: m} = run(4, 2, 400);
     const counts = [0, 2].map(i => m.mem[procBase(i)]);
     expect(Math.abs(counts[0] - counts[1])).toBeLessThanOrEqual(3);
+  });
+});
+
+describe('hiding the kernel', () => {
+  const total = (hidden: boolean, instructions: number) => {
+    const {machine: m, cores} = boot(concurrencySetup(2), clock);
+    if (hidden) cores.forEach(finishKernel);
+    let kernelSeen = 0;
+    for (let i = 0; i < instructions; i++) {
+      m.stepInstruction();
+      if (hidden) finishKernel(m);
+      if (m.kernel) kernelSeen++;
+    }
+    return {counts: [0, 1].map(i => m.mem[procBase(i)]), kernelSeen};
+  };
+
+  it('runs the kernel to its end at once, so it is never seen running', () => {
+    expect(total(true, 200).kernelSeen).toBe(0);
+    expect(total(false, 200).kernelSeen).toBeGreaterThan(0);
+  });
+
+  it('spends no time on the kernel, so the counters get further', () => {
+    const hidden = total(true, 200).counts;
+    const shown = total(false, 200).counts;
+    expect(hidden[0] + hidden[1]).toBeGreaterThan(shown[0] + shown[1]);
+  });
+
+  it('still shares the time between the processes', () => {
+    const {counts} = total(true, 200);
+    expect(Math.min(...counts)).toBeGreaterThan(0);
+    expect(Math.abs(counts[0] - counts[1])).toBeLessThanOrEqual(3);
+  });
+
+  it('marks the kernel as the RAM below the processes', () => {
+    expect(concurrencySetup(2).kernelEnd).toBe(procBase(0));
+    expect(pongSetup().kernelEnd).toBeUndefined();
   });
 });
 

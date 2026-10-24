@@ -18,10 +18,17 @@ export interface DemoSetup {
   names: Record<number, string>;
   /** The first core's timer. */
   interrupt?: Interrupt;
+  /** RAM below this address belongs to the kernel: its code, and the tables it keeps. */
+  kernelEnd?: number;
   /** The cores after the first, which share its RAM. */
   moreCores?: CoreSetup[];
   cellColor(addr: number): string;
   init?(cores: Machine[], program: Program): void;
+}
+
+/** Runs a core's kernel to its end in one go, as when the kernel is hidden: it takes no visible time. */
+export function finishKernel(core: Machine) {
+  for (let i = 0; core.kernel && i < 100; i++) core.stepInstruction();
 }
 
 export interface Session {

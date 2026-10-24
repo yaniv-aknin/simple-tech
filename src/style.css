@@ -123,6 +123,10 @@ body[data-demo='pong'] .r-mode,
 body[data-demo='pong'] .ph-timer {
   display: none;
 }
+body[data-demo='procs'][data-kernel='off'] .kernel-code,
+body[data-demo='procs'][data-kernel='off'] .kernel-ui {
+  display: none;
+}
 body[data-mode='vars'] .cpu,
 body[data-mode='vars'] .ram,
 body[data-mode='vars'] .prog,
@@ -486,6 +490,9 @@ button:hover {
   color: var(--text);
   font: inherit;
   text-align: center;
+}
+#ram .hidden {
+  background: repeating-linear-gradient(135deg, transparent 0 3px, var(--line) 3px 4px);
 }
 #ram .pc0 {
   outline: 2px solid var(--accent);

@@ -1,7 +1,7 @@
 import './style.css';
 import {initTheme, mountThemeToggle} from './theme.ts';
 import {DEMOS, type DemoKey} from './demos/index.ts';
-import type {DemoView, Session, ViewMode} from './demos/demo.ts';
+import {finishKernel, type DemoView, type Session, type ViewMode} from './demos/demo.ts';
 import type {Direction} from './machine/keyboard.ts';
 import {CpuPanel} from './ui/cpu.ts';
 import {$, toggleOn} from './ui/dom.ts';
@@ -21,6 +21,7 @@ let demoKey: DemoKey = 'pong';
 let page: string | null = null;
 let processes = DEFAULT_PROCESSES;
 let cores = 1;
+let showKernel = false;
 let cpus: CpuPanel[] = [];
 let mode: ViewMode = 'vars';
 let speedIdx = 0;
@@ -36,6 +37,7 @@ function restart() {
   $('cpus').dataset.cores = String(count);
   $('cpus').replaceChildren();
   cpus = session.cores.map((_, k) => new CpuPanel($('cpus'), count === 1 ? 'CPU' : `Core ${k + 1}`, k));
+  if (!showKernel) session.cores.forEach(finishKernel);
   ram.build(session);
   listing.build(session);
 }
@@ -46,6 +48,7 @@ function writeDemoHash() {
   if (mode !== DEMOS[demoKey].defaultMode) params.set('mode', mode);
   if (demoKey === 'procs' && processes !== DEFAULT_PROCESSES) params.set('n', String(processes));
   if (demoKey === 'procs' && cores !== 1) params.set('cores', String(cores));
+  if (demoKey === 'procs' && showKernel) params.set('kernel', '1');
   const query = params.size ? '?' + params : '';
   history.replaceState(null, '', '#' + demoKey + query);
 }
@@ -70,6 +73,15 @@ function setSpeed(i: number) {
 function setProcesses(n: number) {
   processes = n;
   toggleOn($('nsel'), b => Number(b.dataset.n) === n);
+}
+
+function setKernel(on: boolean) {
+  showKernel = on;
+  document.body.dataset.kernel = on ? 'on' : 'off';
+  toggleOn($('ksel'), b => (b.dataset.k === '1') === on);
+  ram.hideKernel(!on);
+  listing.refit();
+  if (!on) session?.cores.forEach(finishKernel);
 }
 
 function setCores(n: number) {
@@ -110,6 +122,7 @@ function route() {
   setProcesses(key === 'procs' && [1, 2, 4, 8].includes(n) ? n : DEFAULT_PROCESSES);
   const c = Number(params.get('cores'));
   setCores(key === 'procs' && [2, 4].includes(c) ? c : 1);
+  setKernel(key === 'procs' && params.get('kernel') === '1');
   switchDemo(key);
   const m = params.get('mode');
   if (m === 'vars' || m === 'instr' || m === 'ram') setMode(m);
@@ -132,6 +145,7 @@ function frame(t: number) {
       for (const core of session.cores) {
         if (byPhase) core.stepPhase();
         else core.stepInstruction();
+        if (!showKernel) finishKernel(core);
       }
       budget--;
       n++;
@@ -161,6 +175,11 @@ for (const b of buttons('nsel'))
   b.onclick = () => {
     setProcesses(Number(b.dataset.n));
     restart();
+    writeDemoHash();
+  };
+for (const b of buttons('ksel'))
+  b.onclick = () => {
+    setKernel(b.dataset.k === '1');
     writeDemoHash();
   };
 for (const b of buttons('csel'))
@@ -202,6 +221,7 @@ initTheme();
 mountThemeToggle();
 setProcesses(processes);
 setCores(cores);
+setKernel(showKernel);
 setLang('asm');
 addEventListener('hashchange', route);
 route();

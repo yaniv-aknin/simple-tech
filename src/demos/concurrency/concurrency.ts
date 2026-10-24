@@ -143,6 +143,7 @@ export function concurrencySetup(n: number, cores = 1): DemoSetup {
         ? {interrupt: timer(k), start: kernelAddr(k), kernel: true}
         : {start: kernelAddr(k), kernel: false};
     }),
+    kernelEnd: PROC0,
     cellColor: a => cellColor(a, n),
     init(machines, program) {
       const mem = machines[0].mem;

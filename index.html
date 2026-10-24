@@ -61,6 +61,12 @@
               </div>
             </div>
             <div class="nrow">
+              <div>Kernel</div>
+              <div class="seg wide" id="ksel">
+                <button data-k="0">Hidden</button><button data-k="1">Shown</button>
+              </div>
+            </div>
+            <div class="nrow">
               <div>Number of CPU cores</div>
               <div class="seg wide" id="csel">
                 <button data-c="1">1</button><button data-c="2">2</button><button data-c="4">4</button>
@@ -77,7 +83,7 @@
             <div id="ctl-procs"></div>
           </section>
 
-          <section class="panel">
+          <section class="panel kernel-ui">
             <h2 id="varsTitle"></h2>
             <table id="vars"></table>
           </section>

@@ -9,6 +9,10 @@ export class RamGrid {
   private readonly cells: HTMLElement[] = [];
   private bases: string[] = [];
   private machine: Machine | null = null;
+  private kernelEnd = 0;
+  private kernelHidden = false;
+  private colors: string[] = [];
+  private blanked: boolean[] = [];
 
   constructor(el: HTMLElement) {
     const div = (className: string, textContent = '') =>
@@ -26,11 +30,19 @@ export class RamGrid {
     });
   }
 
+  /** Blanks out the RAM below the demo's `kernelEnd`, which holds the kernel's code and tables. */
+  hideKernel(hidden: boolean) {
+    this.kernelHidden = hidden;
+  }
+
   build({program, machine, setup}: Session) {
     this.machine = machine;
+    this.kernelEnd = setup.kernelEnd ?? 0;
+    this.colors = this.cells.map((_, a) => setup.cellColor(a));
+    this.blanked = this.cells.map(() => false);
     this.bases = this.cells.map((d, a) => {
       d.title = hex(a) + machine.nm(a);
-      d.style.background = setup.cellColor(a);
+      d.style.background = this.colors[a];
       return program.codeAddrs.has(a) ? 'c code' : machine.names[a] ? 'c var' : 'c';
     });
   }
@@ -44,6 +56,17 @@ export class RamGrid {
       return {k, pc: fetching ? core.pc : -1, ir};
     });
     this.cells.forEach((cell, i) => {
+      const blank = this.kernelHidden && i < this.kernelEnd;
+      if (blank !== this.blanked[i]) {
+        this.blanked[i] = blank;
+        cell.style.background = blank ? 'none' : this.colors[i];
+      }
+      if (blank) {
+        setText(cell, '');
+        if (cell.className !== 'c hidden') cell.className = 'c hidden';
+        if (cell.style.boxShadow) cell.style.boxShadow = '';
+        return;
+      }
       setText(cell, hex2(m.mem[i]));
       let cls = this.bases[i];
       for (const {k, pc, ir} of marks) {
