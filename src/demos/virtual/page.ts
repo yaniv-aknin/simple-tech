@@ -1,4 +1,5 @@
 import './page.css';
+import html from './page.html?raw';
 import {hex, hex2} from '../../machine/format.ts';
 import type {Program} from '../../machine/assembler.ts';
 import type {Access} from '../../machine/machine.ts';
@@ -6,7 +7,7 @@ import {$, setText} from '../../ui/dom.ts';
 import {editByte} from '../../ui/edit.ts';
 import {flashLevel} from '../../ui/flash.ts';
 import {attachTooltip} from '../../ui/tooltip.ts';
-import {initTheme} from '../../theme.ts';
+import type {Mount} from '../../page.ts';
 import {procColor} from '../concurrency/concurrency.ts';
 import {PROCESSES} from './programs.ts';
 import {DEFAULT_FRAMES, PAGE_SIZE, VirtualSystem, type Process} from './system.ts';
@@ -20,8 +21,6 @@ const MEMORIES = [
 
 const SPEEDS = [0, 1, 5, 10, 50, 100, 500];
 const MAX_STEPS_PER_FRAME = 200;
-/** Where each program has a breakpoint: the clock stops when any of them is about to run that address. */
-const breakpoints: Set<number>[] = [];
 const STATE_TEXT = {stopped: 'not started', running: 'running', paused: 'paused', crashed: 'crashed'};
 const TOGGLE_TEXT = {stopped: 'Start', running: 'Pause', paused: 'Resume', crashed: 'Start'};
 
@@ -61,17 +60,20 @@ interface Hover {
 
 class View {
   private readonly sys: VirtualSystem;
+  /** Where each program has a breakpoint: the clock stops when any of them is about to run that address. */
+  private readonly breakpoints: Set<number>[];
   private readonly cards: Card[] = [];
   private readonly frames: {box: HTMLElement; owner: HTMLElement; cells: HTMLElement[]}[] = [];
   private hover: Hover | null = null;
 
-  constructor(sys: VirtualSystem) {
+  constructor(sys: VirtualSystem, page: HTMLElement, breakpoints: Set<number>[]) {
     this.sys = sys;
+    this.breakpoints = breakpoints;
     $('procs').replaceChildren(...sys.procs.map((p, i) => this.buildCard(p, i)));
     this.buildFrames();
-    document.onmouseover = e => this.pointAt(e);
-    document.documentElement.onmouseleave = () => (this.hover = null);
-    document.ondblclick = e => this.edit(e);
+    page.onmouseover = e => this.pointAt(e);
+    page.onmouseleave = () => (this.hover = null);
+    page.ondblclick = e => this.edit(e);
   }
 
   private pointAt(e: MouseEvent) {
@@ -240,7 +242,7 @@ class View {
         const address = Object.assign(h('span', 'ad', hex(it.addr)), {
           title: 'Click to stop the clock when this program gets here. Click again to remove.',
           onclick: () => {
-            if (!breakpoints[pid].delete(it.addr)) breakpoints[pid].add(it.addr);
+            if (!this.breakpoints[pid].delete(it.addr)) this.breakpoints[pid].add(it.addr);
           },
         });
         address.dataset.pid = String(pid);
@@ -312,7 +314,7 @@ class View {
     for (const [addr, row] of card.rows) {
       const cls =
         'ins' +
-        (breakpoints[pid].has(addr) ? ' bp' : '') +
+        (this.breakpoints[pid].has(addr) ? ' bp' : '') +
         (loaded && !crashed && addr === cpu.pc ? ' next' : '') +
         (proc.state === 'running' && addr === proc.lastPc ? ' cur' : '');
       if (row.className !== cls) row.className = cls;
@@ -405,146 +407,148 @@ class View {
   }
 }
 
-/* ---------- running ---------- */
+export const mount: Mount = (root, signal) => {
+  root.innerHTML = html;
+  const page = root.querySelector<HTMLElement>('.vm')!;
+  const breakpoints: Set<number>[] = [];
+  let speedIdx = 3;
+  let memory = MEMORIES[0];
+  let sys = new VirtualSystem([], memory);
+  let view = new View(sys, page, breakpoints);
+  let budget = 0;
+  let last = 0;
 
-initTheme();
-
-let speedIdx = 3;
-let memory = MEMORIES[0];
-let sys = new VirtualSystem([], memory);
-let view = new View(sys);
-let budget = 0;
-let last = 0;
-
-const speedBox = $('speed');
-const showSpeed = () =>
-  [...speedBox.children].forEach(b =>
-    b.classList.toggle('on', (b as HTMLElement).dataset.i === String(speedIdx)),
-  );
-const stepButton = Object.assign(h('button', '', '>|'), {
-  title: 'Step one tick: an instruction of every running program',
-  onclick: () => {
-    speedIdx = 0;
-    budget = 0;
-    showSpeed();
-    sys.step();
-    stepButton.blur();
-  },
-});
-speedBox.append(stepButton);
-SPEEDS.forEach((ips, i) => {
-  const b = h('button', '', String(ips));
-  b.dataset.i = String(i);
-  b.onclick = () => {
-    speedIdx = i;
-    budget = 0;
-    showSpeed();
-    b.blur();
-  };
-  speedBox.append(b);
-});
-showSpeed();
-
-const strip = $('strip');
-PROCESSES.forEach((def, pid) => {
-  const b = h('button', 'pill');
-  b.append(Object.assign(h('i', 'chip'), {style: `background:${procColor(pid, true)}`}), def.name);
-  b.title = 'Add a process running this program. Shift-click to start it as well. It can be added again.';
-  b.onclick = e => {
-    b.blur();
-    const id = sys.spawn(def);
-    breakpoints.push(new Set());
-    view.addCard(id);
-    if (e.shiftKey) sys.toggle(id);
-  };
-  strip.append(b);
-});
-
-const memBox = $('memsize');
-const showMemory = () =>
-  [...memBox.children].forEach((b, i) => b.classList.toggle('on', MEMORIES[i] === memory));
-MEMORIES.forEach(choice => {
-  const b = h('button', '', choice.label);
-  b.onclick = () => {
-    b.blur();
-    if (choice === memory) return;
-    const old = sys;
-    memory = choice;
-    sys = new VirtualSystem(
-      old.procs.map(proc => proc.def),
-      memory,
+  const speedBox = $('speed');
+  const showSpeed = () =>
+    [...speedBox.children].forEach(b =>
+      b.classList.toggle('on', (b as HTMLElement).dataset.i === String(speedIdx)),
     );
-    old.procs.forEach((proc, pid) => {
-      for (const [key, value] of Object.entries(proc.values)) sys.setParam(pid, key, value);
-    });
-    view = new View(sys);
-    showMemory();
-  };
-  memBox.append(b);
-});
-showMemory();
-
-/**
- * With one or two programs the cards scale up, by the largest factor that still fits the window without
- * scrolling (and keeps each card about as wide as its two-column layout wants).
- */
-function fitZoom() {
-  const procs = $('procs');
-  const count = sys.procs.length;
-  procs.style.setProperty('--zoom', '1');
-  if (count === 0 || count >= 3) return;
-  const root = document.documentElement;
-  const real = (root.clientWidth - 32 - 14 * (count - 1)) / count;
-  const max = Math.min(2.2, real / 880);
-  const min = 0.8;
-  const fits = (z: number) => {
-    procs.style.setProperty('--zoom', String(z));
-    return root.scrollHeight <= window.innerHeight;
-  };
-  if (max <= min || fits(max)) return;
-  let lo = min;
-  let hi = max;
-  for (let i = 0; i < 8; i++) {
-    const mid = (lo + hi) / 2;
-    if (fits(mid)) lo = mid;
-    else hi = mid;
-  }
-  procs.style.setProperty('--zoom', String(lo));
-}
-
-let fitted = '';
-
-function frame(t: number) {
-  const dt = Math.min(100, t - last) / 1000;
-  last = t;
-  const ips = SPEEDS[speedIdx];
-  if (ips > 0) {
-    budget += dt * ips;
-    let n = 0;
-    while (budget >= 1 && n < MAX_STEPS_PER_FRAME) {
+  const stepButton = Object.assign(h('button', '', '>|'), {
+    title: 'Step one tick: an instruction of every running program',
+    onclick: () => {
+      speedIdx = 0;
+      budget = 0;
+      showSpeed();
       sys.step();
-      budget--;
-      n++;
-      const hit = sys.procs.some(
-        (p, pid) => p.state === 'running' && p.cpu.next === 'fetch' && breakpoints[pid].has(p.cpu.pc),
+      stepButton.blur();
+    },
+  });
+  speedBox.append(stepButton);
+  SPEEDS.forEach((ips, i) => {
+    const b = h('button', '', String(ips));
+    b.dataset.i = String(i);
+    b.onclick = () => {
+      speedIdx = i;
+      budget = 0;
+      showSpeed();
+      b.blur();
+    };
+    speedBox.append(b);
+  });
+  showSpeed();
+
+  const strip = $('strip');
+  PROCESSES.forEach((def, pid) => {
+    const b = h('button', 'pill');
+    b.append(Object.assign(h('i', 'chip'), {style: `background:${procColor(pid, true)}`}), def.name);
+    b.title = 'Add a process running this program. Shift-click to start it as well. It can be added again.';
+    b.onclick = e => {
+      b.blur();
+      const id = sys.spawn(def);
+      breakpoints.push(new Set());
+      view.addCard(id);
+      if (e.shiftKey) sys.toggle(id);
+    };
+    strip.append(b);
+  });
+
+  const memBox = $('memsize');
+  const showMemory = () =>
+    [...memBox.children].forEach((b, i) => b.classList.toggle('on', MEMORIES[i] === memory));
+  MEMORIES.forEach(choice => {
+    const b = h('button', '', choice.label);
+    b.onclick = () => {
+      b.blur();
+      if (choice === memory) return;
+      const old = sys;
+      memory = choice;
+      sys = new VirtualSystem(
+        old.procs.map(proc => proc.def),
+        memory,
       );
-      if (hit) {
-        speedIdx = 0;
-        showSpeed();
-        budget = 0;
-        break;
-      }
+      old.procs.forEach((proc, pid) => {
+        for (const [key, value] of Object.entries(proc.values)) sys.setParam(pid, key, value);
+      });
+      view = new View(sys, page, breakpoints);
+      showMemory();
+    };
+    memBox.append(b);
+  });
+  showMemory();
+
+  /**
+   * With one or two programs the cards scale up, by the largest factor that still fits the window without
+   * scrolling (and keeps each card about as wide as its two-column layout wants).
+   */
+  function fitZoom() {
+    const procs = $('procs');
+    const count = sys.procs.length;
+    procs.style.setProperty('--zoom', '1');
+    if (count === 0 || count >= 3) return;
+    const doc = document.documentElement;
+    const real = (procs.clientWidth - 14 * (count - 1)) / count;
+    const max = Math.min(2.2, real / 880);
+    const min = 0.8;
+    const fits = (z: number) => {
+      procs.style.setProperty('--zoom', String(z));
+      return doc.scrollHeight <= window.innerHeight;
+    };
+    if (max <= min || fits(max)) return;
+    let lo = min;
+    let hi = max;
+    for (let i = 0; i < 8; i++) {
+      const mid = (lo + hi) / 2;
+      if (fits(mid)) lo = mid;
+      else hi = mid;
     }
-    if (n >= MAX_STEPS_PER_FRAME) budget = 0;
+    procs.style.setProperty('--zoom', String(lo));
   }
-  view.render(t);
-  const crashed = sys.procs.some(p => p.state === 'crashed');
-  const states = sys.procs.map(p => p.state).join();
-  const layout = [sys.procs.length, memory.frames, crashed, states, innerWidth, innerHeight].join();
-  if (layout !== fitted) {
-    fitted = layout;
-    fitZoom();
+
+  let fitted = '';
+
+  function frame(t: number) {
+    if (signal.aborted) return;
+    const dt = Math.min(100, t - last) / 1000;
+    last = t;
+    const ips = SPEEDS[speedIdx];
+    if (ips > 0) {
+      budget += dt * ips;
+      let n = 0;
+      while (budget >= 1 && n < MAX_STEPS_PER_FRAME) {
+        sys.step();
+        budget--;
+        n++;
+        const hit = sys.procs.some(
+          (p, pid) => p.state === 'running' && p.cpu.next === 'fetch' && breakpoints[pid].has(p.cpu.pc),
+        );
+        if (hit) {
+          speedIdx = 0;
+          showSpeed();
+          budget = 0;
+          break;
+        }
+      }
+      if (n >= MAX_STEPS_PER_FRAME) budget = 0;
+    }
+    view.render(t);
+    const crashed = sys.procs.some(p => p.state === 'crashed');
+    const states = sys.procs.map(p => p.state).join();
+    const layout = [sys.procs.length, memory.frames, crashed, states, innerWidth, innerHeight].join();
+    if (layout !== fitted) {
+      fitted = layout;
+      fitZoom();
+    }
+    requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
-}
-requestAnimationFrame(frame);
+};

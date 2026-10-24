@@ -127,7 +127,7 @@
       <div id="controls">
         <div class="speed">
           <div class="dim speed-label">Clock: instructions per second</div>
-          <div class="seg wide" id="speed">
+          <div class="seg wide" id="clock">
             <button
               id="step"
               title="Step one tick: an instruction, or one phase of it while the CPU or RAM is shown"
@@ -140,7 +140,8 @@
           </div>
         </div>
       </div>
-      <iframe class="page" id="page" title="Explainer"></iframe>
+      <div class="page" id="page"></div>
+      <iframe class="page" id="frame" title="Explainer"></iframe>
     </main>
 
     <script type="module" src="/src/main.ts"></script>

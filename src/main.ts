@@ -4,6 +4,7 @@ import {PROC_HUES, procColor} from './demos/concurrency/concurrency.ts';
 import {DEMOS, type DemoKey} from './demos/index.ts';
 import {atBreakpoint, finishKernel, tick, type DemoView, type Session} from './demos/demo.ts';
 import type {Direction} from './machine/keyboard.ts';
+import type {Mount} from './page.ts';
 import {RateChart} from './ui/chart.ts';
 import {CpuPanel} from './ui/cpu.ts';
 import {$, toggleOn} from './ui/dom.ts';
@@ -17,6 +18,10 @@ const DEFAULT_PROCESSES = 1;
 const PANELS = ['vars', 'ins', 'cpu', 'ram'] as const;
 type Panel = (typeof PANELS)[number];
 const DEFAULT_PANELS: Panel[] = ['vars', 'ins'];
+/** The pages built into the shell, by the path of their stand-alone copy. Others load in an iframe. */
+const PAGES: Record<string, () => Promise<{mount: Mount}>> = {
+  'computer/virtual-memory/': () => import('./demos/virtual/page.ts'),
+};
 
 const breakpoints = new Set<number>();
 const listing = new Listing($('listing'));
@@ -32,6 +37,7 @@ listing.onAddressHover = addr => ram.highlight(addr);
 
 let demoKey: DemoKey = 'pong';
 let page: string | null = null;
+let pageStop: AbortController | null = null;
 let processes = DEFAULT_PROCESSES;
 let cores = 1;
 let showKernel = false;
@@ -92,7 +98,7 @@ function setLang(lang: Lang) {
 function setSpeed(i: number) {
   speedIdx = i;
   budget = 0;
-  toggleOn($('speed'), b => Number(b.dataset.i) === i);
+  toggleOn($('clock'), b => Number(b.dataset.i) === i);
 }
 
 function setProcesses(n: number) {
@@ -118,6 +124,7 @@ function switchDemo(key: DemoKey) {
   if (key !== demoKey) breakpoints.clear();
   demoKey = key;
   page = null;
+  unmountPage();
   document.body.dataset.demo = key;
   toggleOn($('tabs'), b => b.dataset.demo === key);
   $('ctl-' + key).appendChild($('controls'));
@@ -125,13 +132,35 @@ function switchDemo(key: DemoKey) {
   restart();
 }
 
+function unmountPage() {
+  pageStop?.abort();
+  pageStop = null;
+  $('page').replaceChildren();
+}
+
+async function mountPage(path: string) {
+  unmountPage();
+  const stop = (pageStop = new AbortController());
+  const {mount} = await PAGES[path]();
+  if (!stop.signal.aborted) mount($('page'), stop.signal);
+}
+
 function showPage(path: string, query: string) {
+  const shown = page;
   page = path;
   setSpeed(0);
   document.body.dataset.demo = 'page';
   toggleOn($('tabs'), b => b.dataset.page === path);
+  const built = path in PAGES;
+  const iframe = $<HTMLIFrameElement>('frame');
+  $('page').hidden = !built;
+  iframe.hidden = built;
+  if (built) {
+    if (shown !== path) void mountPage(path);
+    return;
+  }
+  unmountPage();
   const url = path + (query ? '?' + query : '');
-  const iframe = $<HTMLIFrameElement>('page');
   if (iframe.getAttribute('src') !== url) iframe.src = url;
 }
 
@@ -204,7 +233,7 @@ $('step').onclick = () => {
   tick(session.cores, phasesShown(), showKernel);
   $('step').blur();
 };
-for (const b of buttons('speed').filter(b => b.dataset.i !== undefined))
+for (const b of buttons('clock').filter(b => b.dataset.i !== undefined))
   b.onclick = () => {
     if (demoKey === 'procs') chart.mark(performance.now());
     setSpeed(Number(b.dataset.i));
@@ -242,6 +271,7 @@ const KEY_DIRS = new Map<string, Direction>([
 ]);
 
 addEventListener('keydown', e => {
+  if (page !== null) return;
   const dir = KEY_DIRS.get(e.key);
   if (dir) {
     press(dir);

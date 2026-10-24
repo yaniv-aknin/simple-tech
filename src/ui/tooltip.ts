@@ -1,3 +1,4 @@
+import './tooltip.css';
 import {hex, hex2} from '../machine/format.ts';
 import {opSpec} from '../machine/isa.ts';
 

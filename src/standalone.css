@@ -1,0 +1,7 @@
+@import './theme.css';
+
+body {
+  margin: 0;
+  background: var(--bg);
+  container-type: inline-size;
+}
