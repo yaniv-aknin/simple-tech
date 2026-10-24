@@ -43,7 +43,7 @@ To add a demo, add a folder under `src/demos/` exporting a `DemoSetup` and a `De
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `ai/markov/predict/`    | Word-level Markov chain text generator with next-word bars                                                                                                                        |
 | `ai/markov/build/`      | The same chain being built, step by step                                                                                                                                          |
-| `ai/gpts/2-4-6/`        | Then and Now: one question, five runs each                                                                                                                                        |
+| `ai/gpts/2-4-6/`        | GPT Then and Now: one question, five runs each                                                                                                                                    |
 | `ai/gpts/gpt2-markov/`  | GPT2 vs Markov: three starting texts (made-up animal, capitals pattern, Sherlock Holmes TL;DR), three runs each; the Markov chain is trained on The Adventures of Sherlock Holmes |
 | `ai/gpts/python/`       | Hey do you have a pen?: the maze problem with and without a `run_python` tool (Docker sandbox), showing every request, response and sandbox run                                   |
 | `ai/gpts/wikipedia/`    | GPT6 Luna with a pretend Wikipedia tool: the model just writes `#WIKIPEDIA <title>`, and the page (or you, pasting) supplies the article as the next user turn                    |

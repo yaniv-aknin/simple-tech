@@ -7,6 +7,8 @@ export interface Model {
   id: string;
   name: string;
   sub: string;
+  /** OpenAI's paper or system card for the model: a file under public/ai/papers/. */
+  paper?: string;
   api?: string;
   params?: Json;
   /** Only recorded answers exist: the model cannot be run any more. */
@@ -166,16 +168,37 @@ function mazeOption(size: number, grid: string, maxTokens: number, extra: Partia
 
 export const TASKS: Record<string, Task> = {
   '2-4-6': {
-    title: 'Then and Now',
+    title: 'GPT Then and Now',
     options: [
       {
         id: 'apples',
         prompt: APPLES,
         truth: '3.5',
         models: [
-          {id: 'gpt-2', name: 'GPT-2', sub: '2019', frozen: true},
-          {id: 'gpt-4', name: 'GPT-4', sub: '2023', api: 'gpt-4', params: {max_tokens: 250}, frozen: true},
-          {id: 'gpt-6', name: 'GPT-6', sub: '2026', api: 'gpt-6-sol', params: reasoning(3000)},
+          {
+            id: 'gpt-2',
+            name: 'GPT-2',
+            sub: '2019',
+            paper: 'language_models_are_unsupervised_multitask_learners.pdf',
+            frozen: true,
+          },
+          {
+            id: 'gpt-4',
+            name: 'GPT-4',
+            sub: '2023',
+            paper: 'gpt-4-system-card.pdf',
+            api: 'gpt-4',
+            params: {max_tokens: 250},
+            frozen: true,
+          },
+          {
+            id: 'gpt-6',
+            name: 'GPT-6',
+            sub: '2026',
+            paper: 'gpt-6-astra.pdf',
+            api: 'gpt-6-sol',
+            params: reasoning(3000),
+          },
         ],
       },
     ],

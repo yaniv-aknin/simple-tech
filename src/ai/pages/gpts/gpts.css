@@ -187,6 +187,12 @@ textarea {
   color: var(--dim);
   font-size: 22px;
 }
+a.msub {
+  text-decoration: underline;
+}
+a.msub:hover {
+  color: var(--text);
+}
 .score {
   margin-left: auto;
   color: var(--accent);

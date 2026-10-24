@@ -194,7 +194,18 @@ function renderResults() {
     col.innerHTML =
       '<div class="mhead"><span class="mname"></span><span class="msub"></span><span class="score"></span></div><div class="runs"></div>';
     col.querySelector('.mname')!.textContent = m.name;
-    col.querySelector('.msub')!.textContent = m.sub;
+    const sub = col.querySelector<HTMLElement>('.msub')!;
+    if (m.paper) {
+      const link = document.createElement('a');
+      link.className = 'msub';
+      link.textContent = `${m.sub} Publication`;
+      link.href = asset('papers/' + m.paper);
+      link.target = '_blank';
+      link.rel = 'noopener';
+      sub.replaceWith(link);
+    } else {
+      sub.textContent = m.sub;
+    }
     const runs = col.querySelector<HTMLElement>('.runs')!;
     runs.style.setProperty('--runs', String(m.runs.length));
     for (let r = 0; r < m.runs.length; r++) {
