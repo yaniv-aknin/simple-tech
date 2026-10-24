@@ -18,6 +18,7 @@ const listing = new Listing($('listing'));
 const ram = new RamGrid($('ram'));
 attachTooltip($('listing'));
 listing.breakpoints = breakpoints;
+listing.onAddressHover = addr => ram.highlight(addr);
 
 let demoKey: DemoKey = 'pong';
 let page: string | null = null;

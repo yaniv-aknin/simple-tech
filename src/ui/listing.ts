@@ -67,6 +67,8 @@ export class Listing {
   private followed: HTMLElement | null = null;
   /** Addresses where the clock stops; the owner of the listing keeps the set. */
   breakpoints = new Set<number>();
+  /** Told which address the pointer is on in the listing, or null when it leaves. */
+  onAddressHover: (addr: number | null) => void = () => {};
 
   constructor(el: HTMLElement) {
     this.el = el;
@@ -157,9 +159,12 @@ export class Listing {
         d.children[2].textContent = it.text;
         d.children[3].textContent = commentFor(it) ? '; ' + commentFor(it) : '';
         d.dataset.op = String(it.bytes[0]);
+        d.dataset.arg = String(it.bytes[1]);
         const address = d.children[0] as HTMLElement;
         address.title = 'Click to stop the clock when it gets here. Click again to remove.';
         address.addEventListener('click', () => this.toggleBreakpoint(it.addr));
+        address.addEventListener('mouseenter', () => this.onAddressHover(it.addr));
+        address.addEventListener('mouseleave', () => this.onAddressHover(null));
         this.rowByAddr.set(it.addr, d);
         if (it.addr < kernelEnd) sec?.classList.add('kernel-code');
       }

@@ -54,6 +54,8 @@ interface Hover {
   pid: number;
   page: number;
   addr: number | null;
+  /** How many bytes from `addr`: 2 for an instruction. */
+  len?: number;
 }
 
 class View {
@@ -74,6 +76,12 @@ class View {
   }
 
   private pointAt(e: MouseEvent) {
+    const instruction = (e.target as Element).closest<HTMLElement>('.ad[data-addr]')?.dataset;
+    if (instruction) {
+      const addr = Number(instruction.addr);
+      this.hover = {pid: Number(instruction.pid), page: addr >> 2, addr, len: 2};
+      return;
+    }
     const d = (e.target as Element).closest<HTMLElement>('.c')?.dataset;
     if (d?.kind === 'virtual') {
       this.hover = {pid: Number(d.pid), page: Number(d.addr) >> 2, addr: Number(d.addr)};
@@ -224,6 +232,8 @@ class View {
             if (!breakpoints[pid].delete(it.addr)) breakpoints[pid].add(it.addr);
           },
         });
+        address.dataset.pid = String(pid);
+        address.dataset.addr = String(it.addr);
         row.append(address, h('span', 'asm', it.text), h('span', 'cm', commentFor(it)));
         listing.append(row);
         rows.set(it.addr, row);
@@ -323,7 +333,12 @@ class View {
       if (addr % 4 === 0) cls += ' pg';
       if (loaded && !crashed && addr === cpu.pc) cls += ' pc';
       const hv = this.hover;
-      if (hv?.pid === pid && (hv.addr === null ? hv.page === addr >> 2 : hv.addr === addr)) cls += ' hl';
+      if (
+        hv?.pid === pid &&
+        (hv.addr === null ? hv.page === addr >> 2 : addr >= hv.addr && addr < hv.addr + (hv.len ?? 1))
+      ) {
+        cls += ' hl';
+      }
       if (cell.className !== cls) cell.className = cls;
       setText(
         cell,
@@ -364,7 +379,8 @@ class View {
           hv &&
           (isTable
             ? own.pid === hv.pid && own.part * PAGE_SIZE + i === hv.page
-            : f === hoveredFrame && (hv.addr === null || (hv.addr & 3) === i));
+            : f === hoveredFrame &&
+              (hv.addr === null || (i >= (hv.addr & 3) && i < (hv.addr & 3) + (hv.len ?? 1))));
         const cls = 'c' + (lit ? ' hl' : '');
         if (cell.className !== cls) cell.className = cls;
         setText(cell, own ? hex2(sys.ram[at]) : '');

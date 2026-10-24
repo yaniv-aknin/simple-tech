@@ -13,6 +13,7 @@ export class RamGrid {
   private kernelHidden = false;
   private colors: string[] = [];
   private blanked: boolean[] = [];
+  private lit: {addr: number; len: number} | null = null;
 
   constructor(el: HTMLElement) {
     const div = (className: string, textContent = '') =>
@@ -28,6 +29,11 @@ export class RamGrid {
       const m = this.machine;
       if (addr >= 0 && m) editByte(this.cells[addr], m.mem[addr], value => m.write(addr, value));
     });
+  }
+
+  /** Outlines `len` bytes from `addr`, or nothing for null. */
+  highlight(addr: number | null, len = 2) {
+    this.lit = addr === null ? null : {addr, len};
   }
 
   /** Blanks out the RAM below the demo's `kernelEnd`, which holds the kernel's code and tables. */
@@ -69,6 +75,7 @@ export class RamGrid {
       }
       setText(cell, hex2(m.mem[i]));
       let cls = this.bases[i];
+      if (this.lit && i >= this.lit.addr && i < this.lit.addr + this.lit.len) cls += ' hl';
       for (const {k, pc, ir} of marks) {
         if (i === pc) cls += ` pc${k}`;
         if (ir.includes(i)) cls += ` ir${k}`;

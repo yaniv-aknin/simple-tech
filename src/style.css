@@ -500,6 +500,10 @@ button:hover {
   font: inherit;
   text-align: center;
 }
+#ram .hl {
+  outline: 2px solid var(--text);
+  outline-offset: -2px;
+}
 #ram .hidden {
   background: repeating-linear-gradient(135deg, transparent 0 3px, var(--line) 3px 4px);
 }
