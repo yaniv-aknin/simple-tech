@@ -61,9 +61,7 @@ export class CpuPanel {
     setText(el.mode, m.kernel ? 'KERNEL' : 'USER');
     setText(
       el.timer,
-      m.kernel
-        ? 'the kernel is running; the timer is off'
-        : `timer: ${m.timer} of ${m.interrupt?.quantum ?? 0} instructions`,
+      m.kernel ? 'timer is off' : `timer: ${m.timer} of ${m.interrupt?.quantum ?? 0} instructions`,
     );
     setText(el.pc, hex(m.pc));
     setText(el.ir, `${hex2(m.ir[0])} ${hex2(m.ir[1])}`);
