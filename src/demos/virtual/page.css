@@ -86,20 +86,10 @@
     display: flex;
     gap: 6px;
   }
-  .pill {
+  .strip button {
     display: inline-flex;
     align-items: center;
-    border-radius: 99px;
-  }
-  .pill.on {
-    border-color: var(--strong, var(--blue));
-    box-shadow: inset 0 0 0 1px var(--text);
-  }
-  .pill:not(.on) {
-    opacity: 0.55;
-  }
-  .pill:disabled {
-    cursor: default;
+    gap: 7px;
   }
   .group {
     display: flex;
@@ -243,6 +233,23 @@
     background: var(--error);
     border-color: var(--error);
     color: #fff;
+  }
+  .chead .close {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    margin: -4px -6px -4px 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--dim);
+    font-size: 20px;
+    line-height: 1;
+  }
+  .chead .close:hover {
+    background: var(--button-hover);
+    color: var(--text);
   }
   .blurb {
     color: var(--dim);

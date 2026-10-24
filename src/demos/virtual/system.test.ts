@@ -114,6 +114,21 @@ describe('virtual memory', () => {
     expect(sys.procs[2].state).toBe('running');
   });
 
+  it('closes one process: frees its frames for good, and the others carry on', () => {
+    const sys = new VirtualSystem(PROCESSES, {clock});
+    startAll(sys);
+    run(sys, 20);
+    const counted = sys.peek(0, 0x80)!;
+    sys.close(1);
+    expect(sys.procs[1].closed).toBe(true);
+    expect(sys.procs[1].table.every(f => f < 0)).toBe(true);
+    expect(sys.owner.some(o => o?.pid === 1)).toBe(false);
+    sys.toggle(1);
+    run(sys, 20);
+    expect(sys.procs[1].state).toBe('stopped');
+    expect(sys.peek(0, 0x80)).toBeGreaterThan(counted);
+  });
+
   it('crashes a process that runs code from an unmapped page, and the others carry on', () => {
     const stray: ProcessDef = {name: 'Stray', blurb: '', symbols: {}, watch: [], source: '.org 0\nJMP 128'};
     const sys = new VirtualSystem([stray, PROCESSES[0]], {clock});

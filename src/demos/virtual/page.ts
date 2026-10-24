@@ -24,6 +24,8 @@ const MAX_STEPS_PER_FRAME = 200;
 const STATE_TEXT = {stopped: 'not started', running: 'running', paused: 'paused', crashed: 'crashed'};
 const TOGGLE_TEXT = {stopped: 'Start', running: 'Pause', paused: 'Resume', crashed: 'Start'};
 
+const openCount = (sys: VirtualSystem) => sys.procs.filter(p => !p.closed).length;
+
 const h = <K extends keyof HTMLElementTagNameMap>(tag: K, className = '', text = '') =>
   Object.assign(document.createElement(tag), {className, textContent: text});
 
@@ -136,6 +138,13 @@ class View {
       h('h2', '', `P${pid + 1} ${proc.def.name}`),
     );
     const state = head.appendChild(h('span', 'state'));
+    head.append(
+      Object.assign(h('button', 'close', '×'), {
+        title: 'Close this program and free its frames',
+        ariaLabel: 'Close',
+        onclick: () => this.sys.close(pid),
+      }),
+    );
 
     const controls = h('div', 'controls');
     const toggle = Object.assign(h('button', 'toggle'), {onclick: () => this.sys.toggle(pid)});
@@ -277,7 +286,7 @@ class View {
 
   render(t: number) {
     const {sys} = this;
-    const count = sys.procs.length;
+    const count = openCount(sys);
     if ($('procs').dataset.count !== String(count)) $('procs').dataset.count = String(count);
     sys.procs.forEach((proc, pid) => this.renderCard(proc, pid, t));
     this.renderFrames(t);
@@ -288,6 +297,8 @@ class View {
   private renderCard(proc: Process, pid: number, t: number) {
     const {sys} = this;
     const card = this.cards[pid];
+    card.el.hidden = proc.closed;
+    if (proc.closed) return;
     const loaded = proc.state !== 'stopped';
     const crashed = proc.state === 'crashed';
     card.state.className = 'state ' + proc.state;
@@ -449,15 +460,16 @@ export const mount: Mount = (root, signal) => {
 
   const strip = $('strip');
   PROCESSES.forEach((def, pid) => {
-    const b = h('button', 'pill');
+    const b = h('button');
     b.append(Object.assign(h('i', 'chip'), {style: `background:${procColor(pid, true)}`}), def.name);
-    b.title = 'Add a process running this program. Shift-click to start it as well. It can be added again.';
+    b.title =
+      'Add a process running this program, and start it. Shift-click to only add it. It can be added again.';
     b.onclick = e => {
       b.blur();
       const id = sys.spawn(def);
       breakpoints.push(new Set());
       view.addCard(id);
-      if (e.shiftKey) sys.toggle(id);
+      if (!e.shiftKey) sys.toggle(id);
     };
     strip.append(b);
   });
@@ -478,6 +490,7 @@ export const mount: Mount = (root, signal) => {
       );
       old.procs.forEach((proc, pid) => {
         for (const [key, value] of Object.entries(proc.values)) sys.setParam(pid, key, value);
+        if (proc.closed) sys.close(pid);
       });
       view = new View(sys, page, breakpoints);
       showMemory();
@@ -492,7 +505,7 @@ export const mount: Mount = (root, signal) => {
    */
   function fitZoom() {
     const procs = $('procs');
-    const count = sys.procs.length;
+    const count = openCount(sys);
     procs.style.setProperty('--zoom', '1');
     if (count === 0 || count >= 3) return;
     const real = (procs.clientWidth - 14 * (count - 1)) / count;
@@ -542,7 +555,7 @@ export const mount: Mount = (root, signal) => {
     view.render(t);
     const crashed = sys.procs.some(p => p.state === 'crashed');
     const states = sys.procs.map(p => p.state).join();
-    const layout = [sys.procs.length, memory.frames, crashed, states, innerWidth, innerHeight].join();
+    const layout = [openCount(sys), memory.frames, crashed, states, innerWidth, innerHeight].join();
     if (layout !== fitted) {
       fitted = layout;
       fitZoom();

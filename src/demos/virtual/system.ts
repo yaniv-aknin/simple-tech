@@ -68,6 +68,8 @@ export interface Process {
   crash: string | null;
   /** Its memory as it was when it crashed (null where it had no frame): the frames themselves are given back. */
   frozen: (number | null)[] | null;
+  /** Closed for good: it holds no memory and never runs again. Its pid is not reused. */
+  closed: boolean;
 }
 
 const assembleDef = (def: ProcessDef, values: Record<string, number>) =>
@@ -130,6 +132,7 @@ export class VirtualSystem {
       lastPc: null,
       crash: null,
       frozen: null,
+      closed: false,
     });
     this.resetCpu(pid);
     return pid;
@@ -285,6 +288,7 @@ export class VirtualSystem {
   /** Starts a stopped process (loading it first) or resumes a paused one; pauses a running one. */
   toggle(pid: number) {
     const proc = this.procs[pid];
+    if (proc.closed) return;
     if (proc.state === 'running') proc.state = 'paused';
     else if (proc.state === 'paused') proc.state = 'running';
     else if (proc.state === 'stopped') {
@@ -309,6 +313,12 @@ export class VirtualSystem {
     this.resetCpu(pid);
     Object.assign(proc, {state: 'stopped', lastPc: null, crash: null, frozen: null});
     proc.access.fill(null);
+  }
+
+  /** Stops a process for good and takes its memory back. */
+  close(pid: number) {
+    this.reset(pid);
+    this.procs[pid].closed = true;
   }
 
   /** One instruction on every running process's CPU. */
