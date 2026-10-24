@@ -139,12 +139,12 @@ button:hover {
 .procs {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-template-rows: repeat(9, auto);
+  grid-template-rows: repeat(8, auto);
   gap: 0 14px;
 }
 .card {
   display: grid;
-  grid-row: span 9;
+  grid-row: span 8;
   grid-template-rows: subgrid;
   row-gap: 10px;
   align-content: start;
@@ -359,35 +359,9 @@ button:hover {
   outline: 2px solid var(--accent);
   outline-offset: -2px;
 }
-.c.hl,
-.frame.hl,
-.prow.hl {
+.c.hl {
   outline: 2px solid var(--text);
   outline-offset: -2px;
-}
-
-.ptable {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.no-tables .ptable {
-  height: 0;
-  overflow: hidden;
-}
-.prows {
-  display: flex;
-  flex-direction: column;
-  font: 12px/1.6 var(--mono);
-}
-.prow {
-  display: flex;
-  gap: 8px;
-  padding: 0 6px;
-  border-radius: 4px;
-}
-.prow .arrow {
-  color: var(--dim);
 }
 
 .frames {
@@ -400,6 +374,9 @@ button:hover {
   border: 1px solid var(--line-strong);
   border-radius: 8px;
   background: var(--tone);
+}
+.frame.table {
+  box-shadow: inset 0 0 0 1px var(--strong);
 }
 .frame.free {
   border-style: dashed;

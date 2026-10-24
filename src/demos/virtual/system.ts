@@ -4,7 +4,22 @@ import {Fault, Machine, type Access} from '../../machine/machine.ts';
 
 export const PAGE_SIZE = 4;
 export const PAGES = 256 / PAGE_SIZE;
-export const FRAME_CHOICES = [16, 32];
+export const DEFAULT_FRAMES = 16;
+/** A page table entry is this plus the frame number, or 0 when the page has no frame. */
+export const PRESENT = 0x80;
+/** A page table has one byte per page, so it fills this many frames. */
+export const TABLE_FRAMES = PAGES / PAGE_SIZE;
+
+/** A frame holds either a page of a process's memory or a part of a process's page table. */
+export type FrameOwner =
+  {pid: number; kind: 'page'; page: number} | {pid: number; kind: 'table'; part: number};
+
+export interface SystemOptions {
+  frames?: number;
+  /** Keep the page tables in the shared RAM, taking frames from the programs, instead of out of sight. */
+  tablesInRam?: boolean;
+  clock?: () => number;
+}
 
 export interface Watch {
   label: string;
@@ -43,6 +58,8 @@ export interface Process {
   readonly names: Record<number, string>;
   /** The page table: the frame behind each page of the process's memory, or -1 when it has none. */
   readonly table: Int8Array;
+  /** The frames holding its page table, when the tables are kept in RAM. */
+  tableFrames: number[];
   readonly access: (Access | null)[];
   /** Its own CPU. */
   readonly cpu: Machine;
@@ -68,14 +85,19 @@ const entryOf = (program: Program) => {
  */
 export class VirtualSystem {
   readonly frames: number;
+  readonly tablesInRam: boolean;
   readonly ram: Uint8Array;
   readonly ramAccess: (Access | null)[];
-  readonly owner: ({pid: number; page: number} | null)[];
+  readonly owner: (FrameOwner | null)[];
   readonly procs: Process[];
   private readonly clock: () => number;
 
-  constructor(defs: ProcessDef[], frames = FRAME_CHOICES[0], clock: () => number = () => performance.now()) {
+  constructor(
+    defs: ProcessDef[],
+    {frames = DEFAULT_FRAMES, tablesInRam = false, clock = () => performance.now()}: SystemOptions = {},
+  ) {
     this.frames = frames;
+    this.tablesInRam = tablesInRam;
     this.clock = clock;
     this.ram = new Uint8Array(frames * PAGE_SIZE);
     this.ramAccess = new Array(this.ram.length).fill(null);
@@ -95,6 +117,7 @@ export class VirtualSystem {
         values,
         names,
         table: new Int8Array(PAGES).fill(-1),
+        tableFrames: [],
         access: new Array(256).fill(null),
         cpu: new Machine(new Uint8Array(0), {clock, space}),
         state: 'stopped',
@@ -119,24 +142,49 @@ export class VirtualSystem {
     });
   }
 
-  private map(pid: number, page: number) {
-    const frame = this.owner.indexOf(null);
-    if (frame < 0) {
-      throw new Fault(
-        `it needed a frame for ${hex(page * PAGE_SIZE)}, but all ${this.frames} frames are in use`,
-      );
-    }
-    this.owner[frame] = {pid, page};
+  /** Where in RAM a page's table entry is stored, or null when the tables are out of sight. */
+  entryAddress(pid: number, page: number) {
+    const frame = this.procs[pid].tableFrames[page >> 2];
+    return frame === undefined ? null : frame * PAGE_SIZE + (page & 3);
+  }
+
+  private setEntry(pid: number, page: number, frame: number) {
     this.procs[pid].table[page] = frame;
+    const at = this.entryAddress(pid, page);
+    if (at === null) return;
+    this.ram[at] = frame < 0 ? 0 : PRESENT | frame;
+    this.ramAccess[at] = {kind: 'write', t: this.clock()};
+  }
+
+  private takeFrame(owner: FrameOwner, need: string) {
+    const frame = this.owner.indexOf(null);
+    if (frame < 0) throw new Fault(`it needed a frame for ${need}, but all ${this.frames} frames are in use`);
+    this.owner[frame] = owner;
     this.ram.fill(0, frame * PAGE_SIZE, (frame + 1) * PAGE_SIZE);
     return frame;
   }
 
+  private allocateTable(pid: number) {
+    for (let part = 0; part < TABLE_FRAMES; part++) {
+      this.procs[pid].tableFrames.push(this.takeFrame({pid, kind: 'table', part}, 'its page table'));
+    }
+  }
+
+  private map(pid: number, page: number) {
+    const frame = this.takeFrame({pid, kind: 'page', page}, hex(page * PAGE_SIZE));
+    this.setEntry(pid, page, frame);
+    return frame;
+  }
+
   private free(pid: number) {
-    this.procs[pid].table.fill(-1);
+    const proc = this.procs[pid];
+    proc.table.forEach((frame, page) => {
+      if (frame >= 0) this.setEntry(pid, page, -1);
+    });
     this.owner.forEach((o, f) => {
       if (o?.pid === pid) this.owner[f] = null;
     });
+    proc.tableFrames = [];
   }
 
   /** The loader: gives the program's own pages frames and copies it in, as if reading it from disk. */
@@ -148,6 +196,7 @@ export class VirtualSystem {
       [...program.codeAddrs, ...Object.keys(def.data ?? {}).map(Number)].map(a => a >> 2),
     );
     try {
+      if (this.tablesInRam) this.allocateTable(pid);
       for (const page of [...pages].sort((a, b) => a - b)) {
         const frame = this.map(pid, page);
         this.ram.set(image.subarray(page * PAGE_SIZE, (page + 1) * PAGE_SIZE), frame * PAGE_SIZE);
@@ -160,6 +209,8 @@ export class VirtualSystem {
 
   private translate(pid: number, addr: number, fetch: boolean) {
     const page = addr >> 2;
+    const entry = this.entryAddress(pid, page);
+    if (entry !== null) this.ramAccess[entry] = {kind: 'read', t: this.clock()};
     let frame = this.procs[pid].table[page];
     if (frame < 0) {
       if (fetch) {

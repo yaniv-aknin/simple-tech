@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'vitest';
 import {PROCESSES} from './programs.ts';
-import {VirtualSystem, type ProcessDef} from './system.ts';
+import {PAGES, PRESENT, TABLE_FRAMES, VirtualSystem, type ProcessDef} from './system.ts';
 
 const clock = () => 0;
 const run = (sys: VirtualSystem, steps: number) => {
@@ -12,7 +12,7 @@ const snapshot = (sys: VirtualSystem, pid: number, to: number) =>
 
 describe('virtual memory', () => {
   it('starts with nothing in memory, and loads a program when it is started', () => {
-    const sys = new VirtualSystem(PROCESSES, 16, clock);
+    const sys = new VirtualSystem(PROCESSES, {clock});
     expect(sys.framesInUse).toBe(0);
     expect(sys.procs.map(p => p.state)).toEqual(['stopped', 'stopped', 'stopped']);
     sys.toggle(0);
@@ -23,13 +23,13 @@ describe('virtual memory', () => {
   });
 
   it('gives each process its own frames for the same addresses', () => {
-    const sys = new VirtualSystem(PROCESSES, 16, clock);
+    const sys = new VirtualSystem(PROCESSES, {clock});
     startAll(sys);
     expect(sys.procs[0].table[0]).not.toBe(sys.procs[1].table[0]);
   });
 
   it('fits the three programs into 64 bytes, with a frame to spare', () => {
-    const sys = new VirtualSystem(PROCESSES, 16, clock);
+    const sys = new VirtualSystem(PROCESSES, {clock});
     startAll(sys);
     let peak = 0;
     for (let i = 0; i < 1000; i++) {
@@ -41,7 +41,7 @@ describe('virtual memory', () => {
   });
 
   it('maps other pages the first time they are used', () => {
-    const sys = new VirtualSystem(PROCESSES, 16, clock);
+    const sys = new VirtualSystem(PROCESSES, {clock});
     sys.toggle(0);
     expect(sys.peek(0, 0x80)).toBeNull();
     run(sys, 1);
@@ -50,7 +50,7 @@ describe('virtual memory', () => {
   });
 
   it('lets the scribbler wreck only its own memory, and crash on its own garbage', () => {
-    const sys = new VirtualSystem(PROCESSES, 16, clock);
+    const sys = new VirtualSystem(PROCESSES, {clock});
     startAll(sys);
     const counter = snapshot(sys, 0, 0x08);
     const fib = snapshot(sys, 1, 0x10);
@@ -63,7 +63,7 @@ describe('virtual memory', () => {
   });
 
   it('keeps counting and adding while the scribbler runs', () => {
-    const sys = new VirtualSystem(PROCESSES, 16, clock);
+    const sys = new VirtualSystem(PROCESSES, {clock});
     startAll(sys);
     run(sys, 200);
     const before = [sys.peek(0, 0x80), sys.peek(1, 0x80)];
@@ -73,7 +73,7 @@ describe('virtual memory', () => {
   });
 
   it('computes Fibonacci numbers', () => {
-    const sys = new VirtualSystem(PROCESSES, 16, clock);
+    const sys = new VirtualSystem(PROCESSES, {clock});
     sys.toggle(1);
     const seen: number[] = [];
     for (let i = 0; i < 70; i++) {
@@ -84,7 +84,7 @@ describe('virtual memory', () => {
   });
 
   it('pauses and resumes without losing memory', () => {
-    const sys = new VirtualSystem(PROCESSES, 16, clock);
+    const sys = new VirtualSystem(PROCESSES, {clock});
     sys.toggle(0);
     run(sys, 40);
     sys.toggle(0);
@@ -98,7 +98,7 @@ describe('virtual memory', () => {
   });
 
   it('resets one process: frees its frames, leaves the others, and reloads it afresh', () => {
-    const sys = new VirtualSystem(PROCESSES, 16, clock);
+    const sys = new VirtualSystem(PROCESSES, {clock});
     startAll(sys);
     run(sys, 1000);
     const fib = snapshot(sys, 1, 0x10);
@@ -116,7 +116,7 @@ describe('virtual memory', () => {
 
   it('crashes a process that runs code from an unmapped page, and the others carry on', () => {
     const stray: ProcessDef = {name: 'Stray', blurb: '', symbols: {}, watch: [], source: '.org 0\nJMP 128'};
-    const sys = new VirtualSystem([stray, PROCESSES[0]], 16, clock);
+    const sys = new VirtualSystem([stray, PROCESSES[0]], {clock});
     startAll(sys);
     run(sys, 40);
     expect(sys.procs[0].state).toBe('crashed');
@@ -136,7 +136,7 @@ describe('virtual memory', () => {
       watch: [],
       source: '.org 0\nLDI A, 128\nLDI B, 4\nloop:\nSTX [0], B\nADD A, B\nJMP loop',
     };
-    const sys = new VirtualSystem([hog], 16, clock);
+    const sys = new VirtualSystem([hog], {clock});
     sys.toggle(0);
     run(sys, 100);
     expect(sys.procs[0].state).toBe('crashed');
@@ -145,7 +145,7 @@ describe('virtual memory', () => {
 
   describe('the scribbler', () => {
     const scribble = (start: number, value: number, steps = 1000) => {
-      const sys = new VirtualSystem(PROCESSES, 16, clock);
+      const sys = new VirtualSystem(PROCESSES, {clock});
       sys.setParam(2, 'start', start);
       sys.setParam(2, 'value', value);
       startAll(sys);
@@ -154,7 +154,7 @@ describe('virtual memory', () => {
     };
 
     it('shows the start and value in its program', () => {
-      const sys = new VirtualSystem(PROCESSES, 16, clock);
+      const sys = new VirtualSystem(PROCESSES, {clock});
       sys.setParam(2, 'start', 0x20);
       sys.setParam(2, 'value', 0xaa);
       expect(sys.procs[2].program.items.map(i => (i.kind === 'ins' ? i.text : '')).join()).toContain(
@@ -163,7 +163,7 @@ describe('virtual memory', () => {
     });
 
     it('can only be changed while stopped', () => {
-      const sys = new VirtualSystem(PROCESSES, 16, clock);
+      const sys = new VirtualSystem(PROCESSES, {clock});
       sys.toggle(2);
       sys.setParam(2, 'value', 7);
       expect(sys.procs[2].values.value).toBe(0xff);
@@ -211,7 +211,7 @@ describe('virtual memory', () => {
 
   describe('when the memory is full', () => {
     const hog = () => {
-      const sys = new VirtualSystem(PROCESSES, 16, clock);
+      const sys = new VirtualSystem(PROCESSES, {clock});
       sys.setParam(2, 'start', 0x20);
       sys.toggle(2);
       return sys;
@@ -250,7 +250,7 @@ describe('virtual memory', () => {
 });
 
 function scribbleUntilCrash() {
-  const sys = new VirtualSystem(PROCESSES, 16, clock);
+  const sys = new VirtualSystem(PROCESSES, {clock});
   startAll(sys);
   run(sys, 1000);
   return sys;
@@ -258,7 +258,7 @@ function scribbleUntilCrash() {
 
 describe('with 128 bytes of physical memory', () => {
   it('has twice the frames, and the hog needs twice as many to run out', () => {
-    const sys = new VirtualSystem(PROCESSES, 32, clock);
+    const sys = new VirtualSystem(PROCESSES, {frames: 32, clock});
     expect(sys.frames).toBe(32);
     sys.setParam(2, 'start', 0x20);
     startAll(sys);
@@ -270,5 +270,76 @@ describe('with 128 bytes of physical memory', () => {
     expect(peak).toBe(32);
     expect(sys.procs[2].crash).toMatch(/all 32 frames are in use/);
     expect(sys.procs[0].state).toBe('running');
+  });
+});
+
+describe('page tables in RAM', () => {
+  const inRam = () => new VirtualSystem(PROCESSES, {frames: 64, tablesInRam: true, clock});
+  const tableFramesOf = (sys: VirtualSystem, pid: number) =>
+    sys.owner.flatMap((o, f) => (o?.pid === pid && o.kind === 'table' ? [f] : []));
+
+  it('takes frames for the table of a program when it starts, from the same RAM as its pages', () => {
+    const sys = inRam();
+    expect(sys.framesInUse).toBe(0);
+    sys.toggle(1);
+    expect(tableFramesOf(sys, 1)).toHaveLength(TABLE_FRAMES);
+    expect(sys.framesInUse).toBe(TABLE_FRAMES + 5);
+    expect(tableFramesOf(sys, 0)).toHaveLength(0);
+  });
+
+  it('keeps each entry as 0x80 plus the frame, and 0 for a page with no frame', () => {
+    const sys = inRam();
+    sys.toggle(1);
+    for (let page = 0; page < PAGES; page++) {
+      const frame = sys.procs[1].table[page];
+      expect(sys.ram[sys.entryAddress(1, page)!]).toBe(frame < 0 ? 0 : PRESENT | frame);
+    }
+    expect(sys.ram[sys.entryAddress(1, 0x80 / 4)!]).toBe(PRESENT | sys.procs[1].table[0x80 / 4]);
+  });
+
+  it('reads the entry on every access, and writes it on a page fault', () => {
+    const sys = inRam();
+    sys.toggle(0);
+    const data = sys.entryAddress(0, 0x80 / 4)!;
+    expect(sys.ramAccess[data]).toBeNull();
+    sys.step();
+    expect(sys.ramAccess[sys.entryAddress(0, 0)!]?.kind).toBe('read');
+    expect(sys.ramAccess[data]?.kind).toBe('write');
+  });
+
+  it('gives the table frames back when the program is reset or crashes', () => {
+    const sys = inRam();
+    startAll(sys);
+    run(sys, 1000);
+    expect(sys.procs[2].state).toBe('crashed');
+    expect(tableFramesOf(sys, 2)).toHaveLength(0);
+    sys.reset(1);
+    expect(tableFramesOf(sys, 1)).toHaveLength(0);
+    expect(sys.entryAddress(1, 0)).toBeNull();
+  });
+
+  it('leaves little room for programs: the tables alone take 48 of the 64 frames', () => {
+    const sys = inRam();
+    sys.setParam(2, 'start', 0x20);
+    startAll(sys);
+    run(sys, 1000);
+    expect(sys.procs[2].state).toBe('crashed');
+    expect(sys.procs[2].crash).toMatch(/all 64 frames are in use/);
+  });
+
+  it('crashes a program whose table does not fit', () => {
+    const sys = new VirtualSystem(PROCESSES, {frames: 20, tablesInRam: true, clock});
+    sys.toggle(0);
+    sys.toggle(1);
+    expect(sys.procs[1].state).toBe('crashed');
+    expect(sys.procs[1].crash).toMatch(/page table/);
+    expect(tableFramesOf(sys, 1)).toHaveLength(0);
+  });
+
+  it('keeps the entries out of RAM when the tables are out of sight', () => {
+    const sys = new VirtualSystem(PROCESSES, {clock});
+    sys.toggle(0);
+    expect(sys.entryAddress(0, 0)).toBeNull();
+    expect(sys.framesInUse).toBe(2);
   });
 });

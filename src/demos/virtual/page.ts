@@ -7,7 +7,14 @@ import {flashLevel} from '../../ui/flash.ts';
 import {initTheme} from '../../theme.ts';
 import {procColor} from '../concurrency/concurrency.ts';
 import {PROCESSES} from './programs.ts';
-import {FRAME_CHOICES, PAGE_SIZE, PAGES, VirtualSystem, type Process} from './system.ts';
+import {DEFAULT_FRAMES, PAGE_SIZE, VirtualSystem, type Process} from './system.ts';
+
+/** The physical memory choices. In the last, the page tables are kept in the RAM itself, where they can be seen. */
+const MEMORIES = [
+  {label: '64 bytes', frames: DEFAULT_FRAMES, tablesInRam: false},
+  {label: '128 bytes', frames: 2 * DEFAULT_FRAMES, tablesInRam: false},
+  {label: '256 bytes with page tables', frames: 4 * DEFAULT_FRAMES, tablesInRam: true},
+];
 
 const SPEEDS = [0, 1, 5, 10, 50, 100, 500];
 const MAX_STEPS_PER_FRAME = 200;
@@ -36,14 +43,13 @@ interface Card {
   regs: Record<'pc' | 'a' | 'b', HTMLElement>;
   rows: Map<number, HTMLElement>;
   cells: HTMLElement[];
-  tableBody: HTMLElement;
-  tableCount: HTMLElement;
-  tableKey: string;
 }
 
+/** The byte under the pointer, in whichever memory it is; `addr` is null when it is a page table entry. */
 interface Hover {
   pid: number;
   page: number;
+  addr: number | null;
 }
 
 class View {
@@ -56,14 +62,28 @@ class View {
     this.sys = sys;
     $('procs').replaceChildren(...sys.procs.map((p, i) => this.buildCard(p, i)));
     this.buildFrames();
-    $('procs').onmouseover = e => this.pointAt(e);
-    $('frames').onmouseover = e => this.pointAt(e);
-    for (const id of ['procs', 'frames']) $(id).onmouseleave = () => (this.hover = null);
+    document.onmouseover = e => this.pointAt(e);
+    document.documentElement.onmouseleave = () => (this.hover = null);
   }
 
   private pointAt(e: MouseEvent) {
-    const target = (e.target as Element).closest<HTMLElement>('[data-pid]');
-    this.hover = target ? {pid: Number(target.dataset.pid), page: Number(target.dataset.page)} : null;
+    const d = (e.target as Element).closest<HTMLElement>('.c')?.dataset;
+    if (d?.kind === 'virtual') {
+      this.hover = {pid: Number(d.pid), page: Number(d.addr) >> 2, addr: Number(d.addr)};
+    } else if (d?.kind === 'frame') {
+      const own = this.sys.owner[Number(d.frame)];
+      const off = Number(d.off);
+      if (!own) this.hover = null;
+      else if (own.kind === 'page') {
+        this.hover = {pid: own.pid, page: own.page, addr: own.page * PAGE_SIZE + off};
+      } else this.hover = {pid: own.pid, page: own.part * PAGE_SIZE + off, addr: null};
+    } else this.hover = null;
+  }
+
+  /** The frame behind the hovered address, if it has one. */
+  private hoveredFrame() {
+    const h = this.hover;
+    return h ? this.sys.procs[h.pid].table[h.page] : -1;
   }
 
   private buildCard(proc: Process, pid: number) {
@@ -127,8 +147,9 @@ class View {
       for (let c = 0; c < 16; c++) {
         const addr = r * 16 + c;
         const cell = h('div', 'c');
+        cell.dataset.kind = 'virtual';
         cell.dataset.pid = String(pid);
-        cell.dataset.page = String(addr >> 2);
+        cell.dataset.addr = String(addr);
         cells.push(cell);
         grid.append(cell);
       }
@@ -136,10 +157,6 @@ class View {
 
     const memory = h('div', 'memory');
     memory.append(h('h3', '', 'Its memory: 256 bytes, addresses 0x00 to 0xFF'), grid);
-
-    const table = h('div', 'ptable');
-    const tableCount = table.appendChild(h('h3'));
-    const body = table.appendChild(h('div', 'prows'));
 
     card.append(
       head,
@@ -149,7 +166,6 @@ class View {
       regs,
       memory,
       crash,
-      table,
       listing,
     );
     card.querySelector('.watches')!.append(...watches);
@@ -164,9 +180,6 @@ class View {
       regs: regEls,
       rows,
       cells,
-      tableBody: body,
-      tableCount,
-      tableKey: '',
     });
     return card;
   }
@@ -192,7 +205,13 @@ class View {
         const head = h('div', 'fhead');
         head.append(h('b', '', `F${f}`), h('span', 'fowner'));
         const bytes = h('div', 'fbytes');
-        const cells = Array.from({length: PAGE_SIZE}, () => bytes.appendChild(h('div', 'c')));
+        const cells = Array.from({length: PAGE_SIZE}, (_, i) => {
+          const cell = bytes.appendChild(h('div', 'c'));
+          cell.dataset.kind = 'frame';
+          cell.dataset.frame = String(f);
+          cell.dataset.off = String(i);
+          return cell;
+        });
         box.append(head, bytes);
         this.frames.push({box, owner: head.lastElementChild as HTMLElement, cells});
         return box;
@@ -263,7 +282,8 @@ class View {
       else cls += ' u';
       if (addr % 4 === 0) cls += ' pg';
       if (loaded && !crashed && addr === cpu.pc) cls += ' pc';
-      if (this.hover?.pid === pid && this.hover.page === addr >> 2) cls += ' hl';
+      const hv = this.hover;
+      if (hv?.pid === pid && (hv.addr === null ? hv.page === addr >> 2 : hv.addr === addr)) cls += ' hl';
       if (cell.className !== cls) cell.className = cls;
       setText(
         cell,
@@ -281,59 +301,42 @@ class View {
         if (cell.title !== title) cell.title = title;
       }
     });
-
-    const key = proc.table.join(',');
-    if (key !== card.tableKey) {
-      card.tableKey = key;
-      this.buildTable(proc, pid, card);
-    }
-    card.tableBody.querySelectorAll<HTMLElement>('.prow').forEach(row => {
-      row.classList.toggle('hl', this.hover?.pid === pid && this.hover.page === Number(row.dataset.page));
-    });
-  }
-
-  private buildTable(proc: Process, pid: number, card: Card) {
-    const rows: HTMLElement[] = [];
-    proc.table.forEach((frame, page) => {
-      if (frame < 0) return;
-      const row = h('div', 'prow');
-      row.dataset.pid = String(pid);
-      row.dataset.page = String(page);
-      const from = page * PAGE_SIZE;
-      row.append(
-        h('span', '', `${hex(from)}–${hex(from + 3)}`),
-        h('span', 'arrow', '→'),
-        h('span', '', `frame ${frame}`),
-        h('span', 'dim', `(${hex(frame * PAGE_SIZE)}–${hex(frame * PAGE_SIZE + 3)})`),
-      );
-      rows.push(row);
-    });
-    setText(card.tableCount, `Page table: ${rows.length} of ${PAGES} pages have a frame`);
-    card.tableBody.replaceChildren(...rows);
   }
 
   private renderFrames(t: number) {
     const {sys} = this;
+    const hv = this.hover;
+    const hoveredFrame = this.hoveredFrame();
     this.frames.forEach((fr, f) => {
       const own = sys.owner[f];
-      const hovered = this.hover && own && own.pid === this.hover.pid && own.page === this.hover.page;
-      const cls = 'frame' + (own ? '' : ' free') + (hovered ? ' hl' : '');
+      const isTable = own?.kind === 'table';
+      const cls = 'frame' + (own ? '' : ' free') + (isTable ? ' table' : '');
       if (fr.box.className !== cls) fr.box.className = cls;
       fr.box.style.setProperty('--tone', own ? procColor(own.pid) : 'transparent');
       fr.box.style.setProperty('--strong', own ? procColor(own.pid, true) : 'transparent');
-      if (own) {
-        fr.box.dataset.pid = String(own.pid);
-        fr.box.dataset.page = String(own.page);
-      } else {
-        delete fr.box.dataset.pid;
-        delete fr.box.dataset.page;
-      }
-      setText(fr.owner, own ? `P${own.pid + 1} · ${hex(own.page * PAGE_SIZE)}` : 'free');
+      setText(
+        fr.owner,
+        !own ? 'free' : isTable ? `P${own.pid + 1} table` : `P${own.pid + 1} · ${hex(own.page * PAGE_SIZE)}`,
+      );
       fr.cells.forEach((cell, i) => {
         const at = f * PAGE_SIZE + i;
+        const lit =
+          hv &&
+          (isTable
+            ? own.pid === hv.pid && own.part * PAGE_SIZE + i === hv.page
+            : f === hoveredFrame && (hv.addr === null || (hv.addr & 3) === i));
+        const cls = 'c' + (lit ? ' hl' : '');
+        if (cell.className !== cls) cell.className = cls;
         setText(cell, own ? hex2(sys.ram[at]) : '');
         const sh = own ? shadow(sys.ramAccess[at], t) : '';
         if (cell.style.boxShadow !== sh) cell.style.boxShadow = sh;
+        let title = '';
+        if (isTable) {
+          const page = own.part * PAGE_SIZE + i;
+          const entry = sys.ram[at];
+          title = `P${own.pid + 1} page table, entry for ${hex(page * PAGE_SIZE)}–${hex(page * PAGE_SIZE + 3)}: ${entry ? `frame ${entry & 0x7f}` : 'no frame'}`;
+        }
+        if (cell.title !== title) cell.title = title;
       });
     });
   }
@@ -344,8 +347,8 @@ class View {
 initTheme();
 
 let speedIdx = 3;
-let frames = FRAME_CHOICES[0];
-let sys = new VirtualSystem(PROCESSES, frames);
+let memory = MEMORIES[0];
+let sys = new VirtualSystem(PROCESSES, memory);
 let view = new View(sys);
 let budget = 0;
 let last = 0;
@@ -365,17 +368,16 @@ SPEEDS.forEach((ips, i) => {
 showSpeed();
 
 const memBox = $('memsize');
-const showMemory = () => {
-  [...memBox.children].forEach((b, i) => b.classList.toggle('on', FRAME_CHOICES[i] === frames));
-};
-FRAME_CHOICES.forEach(choice => {
-  const b = h('button', '', `${choice * PAGE_SIZE} bytes`);
+const showMemory = () =>
+  [...memBox.children].forEach((b, i) => b.classList.toggle('on', MEMORIES[i] === memory));
+MEMORIES.forEach(choice => {
+  const b = h('button', '', choice.label);
   b.onclick = () => {
     b.blur();
-    if (choice === frames) return;
+    if (choice === memory) return;
     const old = sys;
-    frames = choice;
-    sys = new VirtualSystem(PROCESSES, frames);
+    memory = choice;
+    sys = new VirtualSystem(PROCESSES, memory);
     old.procs.forEach((proc, pid) => {
       for (const [key, value] of Object.entries(proc.values)) sys.setParam(pid, key, value);
     });
@@ -385,12 +387,6 @@ FRAME_CHOICES.forEach(choice => {
   memBox.append(b);
 });
 showMemory();
-
-$('tables').onclick = () => {
-  const hidden = document.body.classList.toggle('no-tables');
-  $('tables').textContent = hidden ? 'Show page tables' : 'Hide page tables';
-  $('tables').blur();
-};
 
 function frame(t: number) {
   const dt = Math.min(100, t - last) / 1000;
