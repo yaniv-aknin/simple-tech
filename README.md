@@ -13,6 +13,10 @@ pnpm check      # typecheck, formatting, tests
 pnpm build      # static site in dist/; `pnpm preview` serves it
 ```
 
+Pushing to `main` deploys the site to GitHub Pages (`.github/workflows/pages.yml`); in the repository's settings,
+set Pages to deploy from GitHub Actions. The site works under any path, so a project page
+(`https://<user>.github.io/<repo>/`) needs nothing else.
+
 ## Layout
 
 ```
