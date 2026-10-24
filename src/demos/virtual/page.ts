@@ -1,5 +1,5 @@
 import './page.css';
-import {hex, hex2} from '../../machine/format.ts';
+import {commentFor, hex, hex2} from '../../machine/format.ts';
 import type {Program} from '../../machine/assembler.ts';
 import type {Access} from '../../machine/machine.ts';
 import {$, setText} from '../../ui/dom.ts';
@@ -216,7 +216,7 @@ class View {
       if (it.kind === 'label') listing.append(h('div', 'lbl', it.name + ':'));
       else if (it.kind === 'ins') {
         const row = h('div', 'ins');
-        row.append(h('span', 'ad', hex(it.addr)), h('span', 'asm', it.text), h('span', 'cm', it.comment));
+        row.append(h('span', 'ad', hex(it.addr)), h('span', 'asm', it.text), h('span', 'cm', commentFor(it)));
         listing.append(row);
         rows.set(it.addr, row);
       }

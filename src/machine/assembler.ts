@@ -3,7 +3,16 @@ import {Op} from './isa.ts';
 export type Item =
   | {kind: 'note'; text: string}
   | {kind: 'label'; name: string}
-  | {kind: 'ins'; addr: number; text: string; comment: string; bytes: [number, number]; tag: string | null};
+  | {
+      kind: 'ins';
+      addr: number;
+      text: string;
+      comment: string;
+      bytes: [number, number];
+      tag: string | null;
+      /** The named address in a `[NAME]` operand, which the listing spells out. */
+      symbol?: {name: string; addr: number};
+    };
 
 export interface Program {
   items: Item[];
@@ -105,6 +114,8 @@ export function assemble(src: string, symbols: Record<string, number>): Program 
   for (const it of items) {
     if (it.kind !== 'ins') continue;
     it.bytes = encode(it.text);
+    const named = it.text.match(/\[([A-Za-z_]\w*)\]/)?.[1];
+    if (named !== undefined && named in symbols) it.symbol = {name: named, addr: symbols[named]};
     bytes.set(it.bytes, it.addr);
     codeAddrs.add(it.addr);
     codeAddrs.add(it.addr + 1);

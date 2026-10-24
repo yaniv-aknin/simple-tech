@@ -53,4 +53,12 @@ describe('assemble', () => {
     expect(() => assemble('FOO', {})).toThrow('unknown instruction: FOO');
     expect(() => assemble('JMP nowhere', {})).toThrow('bad operand: nowhere');
   });
+
+  it('notes the address behind a named operand, but not behind a number or a label', () => {
+    const p = assemble('loop:\n  LOAD A, [COUNT]\n  LDX A, [4]\n  JMP loop', {COUNT: 0x50});
+    const ins = p.items.flatMap(i => (i.kind === 'ins' ? [i] : []));
+    expect(ins[0].symbol).toEqual({name: 'COUNT', addr: 0x50});
+    expect(ins[1].symbol).toBeUndefined();
+    expect(ins[2].symbol).toBeUndefined();
+  });
 });

@@ -1,7 +1,7 @@
 import {parseC} from '../demos/c-source.ts';
 import type {Session} from '../demos/demo.ts';
 import type {Program} from '../machine/assembler.ts';
-import {hex, hex2} from '../machine/format.ts';
+import {commentFor, hex, hex2} from '../machine/format.ts';
 import type {Machine} from '../machine/machine.ts';
 
 export type Lang = 'asm' | 'c';
@@ -142,7 +142,7 @@ export class Listing {
         d.className = 'ins';
         d.innerHTML = `<span class="ad">${hex(it.addr)}</span><span class="by">${hex2(it.bytes[0])} ${hex2(it.bytes[1])}</span><span class="asm"></span><span class="cm"></span>`;
         d.children[2].textContent = it.text;
-        d.children[3].textContent = it.comment ? '; ' + it.comment : '';
+        d.children[3].textContent = commentFor(it) ? '; ' + commentFor(it) : '';
         d.dataset.op = String(it.bytes[0]);
         this.rowByAddr.set(it.addr, d);
         if (it.addr < kernelEnd) sec?.classList.add('kernel-code');
