@@ -23,8 +23,36 @@ body {
     sans-serif;
   padding: 16px;
   min-height: 100vh;
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 14px;
+}
+main {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+}
+.sidebar {
+  position: sticky;
+  top: 16px;
+  align-self: start;
+}
+.sidebar h1 {
+  margin-bottom: 14px;
+}
+.tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.tabs button {
+  text-align: left;
+  background: none;
+  border-color: transparent;
+}
+.tabs button.on {
+  background: #0a84ff;
+  border-color: #0a84ff;
 }
 header,
 .layout {
@@ -499,7 +527,7 @@ td.n {
 #ptab tr.tot td {
   color: var(--dim);
 }
-@media (max-width: 1120px) {
+@media (max-width: 1320px) {
   .layout {
     grid-template-columns: 1fr;
     flex: none;
@@ -510,5 +538,16 @@ td.n {
   #listing {
     flex: none;
     height: 560px;
+  }
+}
+@media (max-width: 700px) {
+  body {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    position: static;
+  }
+  .tabs {
+    flex-direction: row;
   }
 }

@@ -6,131 +6,136 @@
     <title>Simple Tech</title>
   </head>
   <body data-mode="vars" data-demo="pong">
-    <header>
+    <nav class="sidebar">
       <h1>Simple Tech</h1>
-      <div class="seg" id="tabs">
+      <div class="tabs" id="tabs">
         <button data-demo="pong" class="on">Pong</button>
         <button data-demo="procs">Concurrency</button>
       </div>
-      <div class="seg" id="modes">
-        <button data-mode="vars" class="on">Variables</button>
-        <button data-mode="instr">Variables + instructions</button>
-        <button data-mode="ram">RAM</button>
-      </div>
-      <button id="rst" class="reset">Reset</button>
-    </header>
+    </nav>
 
-    <div class="layout">
-      <div class="col">
-        <section class="panel demo-pong">
-          <h2>Screen</h2>
-          <div class="scorebar">
-            <span class="score" id="score">0</span><span class="dim">score = RAM 0xF6</span>
-          </div>
-          <canvas id="screen" width="384" height="288"></canvas>
-          <div id="ctl-pong"></div>
-          <div class="dim" style="margin-top: 6px">
-            The keyboard wires the ← / → keys to RAM 0xF0: 255 or 1 while held, else 0. A quick tap stays
-            until the CPU reads it.
-          </div>
-        </section>
+    <main>
+      <header>
+        <div class="seg" id="modes">
+          <button data-mode="vars" class="on">Variables</button>
+          <button data-mode="instr">Variables + instructions</button>
+          <button data-mode="ram">RAM</button>
+        </div>
+        <button id="rst" class="reset">Reset</button>
+      </header>
 
-        <section class="panel demo-procs">
-          <h2>Processes</h2>
-          <div class="nrow">
-            <div>Number of processes</div>
-            <div class="seg wide" id="nsel">
-              <button data-n="1">1</button><button data-n="2">2</button><button data-n="4">4</button
-              ><button data-n="8">8</button>
+      <div class="layout">
+        <div class="col">
+          <section class="panel demo-pong">
+            <h2>Screen</h2>
+            <div class="scorebar">
+              <span class="score" id="score">0</span><span class="dim">score = RAM 0xF6</span>
+            </div>
+            <canvas id="screen" width="384" height="288"></canvas>
+            <div id="ctl-pong"></div>
+            <div class="dim" style="margin-top: 6px">
+              The keyboard wires the ← / → keys to RAM 0xF0: 255 or 1 while held, else 0. A quick tap stays
+              until the CPU reads it.
+            </div>
+          </section>
+
+          <section class="panel demo-procs">
+            <h2>Processes</h2>
+            <div class="nrow">
+              <div>Number of processes</div>
+              <div class="seg wide" id="nsel">
+                <button data-n="1">1</button><button data-n="2">2</button><button data-n="4">4</button
+                ><button data-n="8">8</button>
+              </div>
+            </div>
+            <table id="ptab"></table>
+            <button
+              id="nearWrap"
+              style="margin-top: 10px"
+              title="Poke 65520 into every counter, to watch 16-bit wrap-around"
+            >
+              Set counters to 65520
+            </button>
+            <div id="ctl-procs"></div>
+          </section>
+
+          <section class="panel">
+            <h2 id="varsTitle"></h2>
+            <table id="vars"></table>
+          </section>
+        </div>
+
+        <div class="col">
+          <section class="panel cpu">
+            <h2>CPU</h2>
+            <div class="phases">
+              <span id="ph-fetch">1 FETCH</span><span id="ph-execute">2 EXECUTE</span
+              ><span id="ph-timer">TIMER</span>
+            </div>
+            <div class="reg r-mode">
+              <span class="rn">MODE</span><span class="rv" id="cmode"></span
+              ><span class="rx" id="ctimer"></span>
+            </div>
+            <div class="reg r-pc">
+              <span class="rn">PC</span><span class="rv" id="pc"></span
+              ><span class="rx">address of the next instruction</span>
+            </div>
+            <div class="reg r-ir">
+              <span class="rn">IR</span><span class="rv" id="ir"></span><span class="rx" id="irx"></span>
+            </div>
+            <div class="reg">
+              <span class="rn">A</span><span class="rv" id="a"></span><span class="rx bits" id="abits"></span>
+            </div>
+            <div class="reg">
+              <span class="rn">B</span><span class="rv" id="b"></span><span class="rx bits" id="bbits"></span>
+            </div>
+            <div class="flags">
+              <span class="flag" id="fz"><i>Z</i>A is zero</span>
+              <span class="flag" id="fn"><i>N</i>A is negative (128+)</span>
+            </div>
+            <div id="msg"></div>
+            <div class="dim" style="margin-top: 8px" id="stats"></div>
+          </section>
+
+          <section class="panel ram">
+            <h2>RAM &mdash; 256 bytes</h2>
+            <div id="ram"></div>
+            <div class="legend">
+              <span><b style="background: var(--code)"></b>program</span>
+              <span><b style="background: var(--var)"></b>variables</span>
+              <span class="demo-procs"
+                ><b style="background: hsl(205 45% 27%)"></b>each process has its own colour</span
+              >
+              <span><b style="background: var(--read)"></b>just read</span>
+              <span><b style="background: var(--write)"></b>just written</span>
+              <span><b style="outline: 2px solid var(--accent); background: none"></b>PC</span>
+              <span><b style="outline: 2px solid #6fd48a; background: none"></b>IR</span>
+            </div>
+          </section>
+        </div>
+
+        <section class="panel prog">
+          <div class="proghead">
+            <h2>Program (stored in RAM)</h2>
+            <div class="seg" id="lang">
+              <button data-lang="asm" class="on">Assembly</button><button data-lang="c">C</button>
             </div>
           </div>
-          <table id="ptab"></table>
-          <button
-            id="nearWrap"
-            style="margin-top: 10px"
-            title="Poke 65520 into every counter, to watch 16-bit wrap-around"
-          >
-            Set counters to 65520
-          </button>
-          <div id="ctl-procs"></div>
-        </section>
-
-        <section class="panel">
-          <h2 id="varsTitle"></h2>
-          <table id="vars"></table>
+          <div id="listing"></div>
         </section>
       </div>
 
-      <div class="col">
-        <section class="panel cpu">
-          <h2>CPU</h2>
-          <div class="phases">
-            <span id="ph-fetch">1 FETCH</span><span id="ph-execute">2 EXECUTE</span
-            ><span id="ph-timer">TIMER</span>
-          </div>
-          <div class="reg r-mode">
-            <span class="rn">MODE</span><span class="rv" id="cmode"></span
-            ><span class="rx" id="ctimer"></span>
-          </div>
-          <div class="reg r-pc">
-            <span class="rn">PC</span><span class="rv" id="pc"></span
-            ><span class="rx">address of the next instruction</span>
-          </div>
-          <div class="reg r-ir">
-            <span class="rn">IR</span><span class="rv" id="ir"></span><span class="rx" id="irx"></span>
-          </div>
-          <div class="reg">
-            <span class="rn">A</span><span class="rv" id="a"></span><span class="rx bits" id="abits"></span>
-          </div>
-          <div class="reg">
-            <span class="rn">B</span><span class="rv" id="b"></span><span class="rx bits" id="bbits"></span>
-          </div>
-          <div class="flags">
-            <span class="flag" id="fz"><i>Z</i>A is zero</span>
-            <span class="flag" id="fn"><i>N</i>A is negative (128+)</span>
-          </div>
-          <div id="msg"></div>
-          <div class="dim" style="margin-top: 8px" id="stats"></div>
-        </section>
-
-        <section class="panel ram">
-          <h2>RAM &mdash; 256 bytes</h2>
-          <div id="ram"></div>
-          <div class="legend">
-            <span><b style="background: var(--code)"></b>program</span>
-            <span><b style="background: var(--var)"></b>variables</span>
-            <span class="demo-procs"
-              ><b style="background: hsl(205 45% 27%)"></b>each process has its own colour</span
-            >
-            <span><b style="background: var(--read)"></b>just read</span>
-            <span><b style="background: var(--write)"></b>just written</span>
-            <span><b style="outline: 2px solid var(--accent); background: none"></b>PC</span>
-            <span><b style="outline: 2px solid #6fd48a; background: none"></b>IR</span>
-          </div>
-        </section>
-      </div>
-
-      <section class="panel prog">
-        <div class="proghead">
-          <h2>Program (stored in RAM)</h2>
-          <div class="seg" id="lang">
-            <button data-lang="asm" class="on">Assembly</button><button data-lang="c">C</button>
+      <div id="controls">
+        <div class="speed">
+          <div class="dim speed-label">Clock: instructions per second</div>
+          <div class="seg wide" id="speed">
+            <button data-i="0">0</button><button data-i="1">1</button><button data-i="2">5</button
+            ><button data-i="3">10</button><button data-i="4">50</button><button data-i="5">100</button
+            ><button data-i="6">500</button>
           </div>
         </div>
-        <div id="listing"></div>
-      </section>
-    </div>
-
-    <div id="controls">
-      <div class="speed">
-        <div class="dim speed-label">Clock: instructions per second</div>
-        <div class="seg wide" id="speed">
-          <button data-i="0">0</button><button data-i="1">1</button><button data-i="2">5</button
-          ><button data-i="3">10</button><button data-i="4">50</button><button data-i="5">100</button
-          ><button data-i="6">500</button>
-        </div>
       </div>
-    </div>
+    </main>
 
     <script type="module" src="/src/main.ts"></script>
   </body>
