@@ -419,9 +419,24 @@ let budget = 0;
 let last = 0;
 
 const speedBox = $('speed');
-const showSpeed = () => [...speedBox.children].forEach((b, i) => b.classList.toggle('on', i === speedIdx));
+const showSpeed = () =>
+  [...speedBox.children].forEach(b =>
+    b.classList.toggle('on', (b as HTMLElement).dataset.i === String(speedIdx)),
+  );
+const stepButton = Object.assign(h('button', '', '>|'), {
+  title: 'Step one tick: an instruction of every running program',
+  onclick: () => {
+    speedIdx = 0;
+    budget = 0;
+    showSpeed();
+    sys.step();
+    stepButton.blur();
+  },
+});
+speedBox.append(stepButton);
 SPEEDS.forEach((ips, i) => {
   const b = h('button', '', String(ips));
+  b.dataset.i = String(i);
   b.onclick = () => {
     speedIdx = i;
     budget = 0;

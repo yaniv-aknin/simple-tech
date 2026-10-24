@@ -30,6 +30,18 @@ export function finishKernel(core: Machine) {
   for (let i = 0; core.kernel && i < 100; i++) core.stepInstruction();
 }
 
+/**
+ * One tick of every core: an instruction, or just a phase of one (fetch or execute) when those are being watched.
+ * With the kernel hidden, a core that enters the kernel runs it to its end, so a tick never ends inside it.
+ */
+export function tick(cores: Machine[], byPhase: boolean, kernelVisible: boolean) {
+  for (const core of cores) {
+    if (byPhase) core.stepPhase();
+    else core.stepInstruction();
+    if (!kernelVisible) finishKernel(core);
+  }
+}
+
 /** True when a core is about to run an instruction that has a breakpoint on it. */
 export const atBreakpoint = (cores: Machine[], breakpoints: Set<number>) =>
   cores.some(core => core.next === 'fetch' && breakpoints.has(core.pc));

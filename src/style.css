@@ -73,6 +73,10 @@ h1 {
 .seg.wide {
   width: 100%;
 }
+.seg.wide #step {
+  flex: 0 0 44px;
+  font-family: var(--mono);
+}
 .seg.wide button {
   flex: 1;
   padding-left: 0;

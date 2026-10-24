@@ -2,7 +2,7 @@ import './style.css';
 import {initTheme, mountThemeToggle} from './theme.ts';
 import {PROC_HUES, procColor} from './demos/concurrency/concurrency.ts';
 import {DEMOS, type DemoKey} from './demos/index.ts';
-import {atBreakpoint, finishKernel, type DemoView, type Session} from './demos/demo.ts';
+import {atBreakpoint, finishKernel, tick, type DemoView, type Session} from './demos/demo.ts';
 import type {Direction} from './machine/keyboard.ts';
 import {RateChart} from './ui/chart.ts';
 import {CpuPanel} from './ui/cpu.ts';
@@ -154,6 +154,9 @@ function route() {
   writeDemoHash();
 }
 
+/** Whether the fetch and execute phases can be seen, which makes a tick one phase and not a whole instruction. */
+const phasesShown = () => shown.has('cpu') || shown.has('ram');
+
 function frame(t: number) {
   if (!session) {
     requestAnimationFrame(frame);
@@ -163,15 +166,11 @@ function frame(t: number) {
   lastT = t;
   const ips = SPEEDS[speedIdx];
   if (ips > 0) {
-    const byPhase = (shown.has('cpu') || shown.has('ram')) && ips <= 10;
+    const byPhase = phasesShown() && ips <= 10;
     budget += dt * ips * (byPhase ? 2 : 1);
     let n = 0;
     while (budget >= 1 && n < MAX_STEPS_PER_FRAME) {
-      for (const core of session.cores) {
-        if (byPhase) core.stepPhase();
-        else core.stepInstruction();
-        if (!showKernel) finishKernel(core);
-      }
+      tick(session.cores, byPhase, showKernel);
       budget--;
       n++;
       if (atBreakpoint(session.cores, breakpoints)) {
@@ -200,7 +199,12 @@ for (const b of buttons('views'))
   };
 for (const b of buttons('tabs')) b.onclick = () => (location.hash = b.dataset.page ?? b.dataset.demo!);
 for (const b of buttons('lang')) b.onclick = () => setLang(b.dataset.lang as Lang);
-for (const b of buttons('speed'))
+$('step').onclick = () => {
+  setSpeed(0);
+  tick(session.cores, phasesShown(), showKernel);
+  $('step').blur();
+};
+for (const b of buttons('speed').filter(b => b.dataset.i !== undefined))
   b.onclick = () => {
     if (demoKey === 'procs') chart.mark(performance.now());
     setSpeed(Number(b.dataset.i));

@@ -2,7 +2,7 @@ import {describe, expect, it} from 'vitest';
 import {SLOT_SIZE, TABLE, concurrencySetup, coreOf, curAddr, procBase} from './concurrency/concurrency.ts';
 import {Keyboard} from '../machine/keyboard.ts';
 import {parseC} from './c-source.ts';
-import {atBreakpoint, boot, finishKernel} from './demo.ts';
+import {atBreakpoint, boot, finishKernel, tick} from './demo.ts';
 import {ADDR, pongSetup} from './pong/pong.ts';
 
 const clock = () => 0;
@@ -156,6 +156,44 @@ describe('breakpoints', () => {
     cores[1].pc = 0x62;
     cores[1].next = 'fetch';
     expect(atBreakpoint(cores, new Set([0x62]))).toBe(true);
+  });
+});
+
+describe('a tick', () => {
+  it('is an instruction, or one phase of it when the phases are shown', () => {
+    const {cores} = boot(pongSetup(), clock);
+    const m = cores[0];
+    tick(cores, true, true);
+    expect(m.lastPhase).toBe('fetch');
+    expect(m.instrCount).toBe(0);
+    tick(cores, true, true);
+    expect(m.lastPhase).toBe('execute');
+    expect(m.instrCount).toBe(1);
+    tick(cores, false, true);
+    expect(m.instrCount).toBe(2);
+    expect(m.next).toBe('fetch');
+  });
+
+  it('includes the kernel only while the kernel is shown', () => {
+    const hidden = boot(concurrencySetup(2), clock);
+    finishKernel(hidden.machine);
+    const shown = boot(concurrencySetup(2), clock);
+    let kernelTicks = 0;
+    let hiddenKernelTicks = 0;
+    for (let i = 0; i < 200; i++) {
+      tick(shown.cores, false, true);
+      if (shown.machine.kernel) kernelTicks++;
+      tick(hidden.cores, false, false);
+      if (hidden.machine.kernel) hiddenKernelTicks++;
+    }
+    expect(kernelTicks).toBeGreaterThan(0);
+    expect(hiddenKernelTicks).toBe(0);
+  });
+
+  it('moves every core on', () => {
+    const {cores} = boot(concurrencySetup(4, 2), clock);
+    tick(cores, false, true);
+    expect(cores.map(c => c.instrCount)).toEqual([1, 1]);
   });
 });
 
