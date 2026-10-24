@@ -102,31 +102,37 @@ export class VirtualSystem {
     this.ram = new Uint8Array(frames * PAGE_SIZE);
     this.ramAccess = new Array(this.ram.length).fill(null);
     this.owner = new Array(frames).fill(null);
-    this.procs = defs.map((def, pid) => {
-      const values = Object.fromEntries((def.params ?? []).map(p => [p.key, p.initial]));
-      const program = assembleDef(def, values);
-      const names: Record<number, string> = {};
-      for (const [name, addr] of Object.entries(def.symbols)) names[addr] = name;
-      const space = {
-        read: (addr: number, fetch: boolean) => this.read(pid, addr, fetch),
-        write: (addr: number, value: number) => this.write(pid, addr, value),
-      };
-      return {
-        def,
-        program,
-        values,
-        names,
-        table: new Int8Array(PAGES).fill(-1),
-        tableFrames: [],
-        access: new Array(256).fill(null),
-        cpu: new Machine(new Uint8Array(0), {clock, space}),
-        state: 'stopped',
-        lastPc: null,
-        crash: null,
-        frozen: null,
-      };
+    this.procs = [];
+    defs.forEach(def => this.spawn(def));
+  }
+
+  /** Adds a stopped process running `def`: the same program can be added any number of times. */
+  spawn(def: ProcessDef) {
+    const pid = this.procs.length;
+    const values = Object.fromEntries((def.params ?? []).map(p => [p.key, p.initial]));
+    const program = assembleDef(def, values);
+    const names: Record<number, string> = {};
+    for (const [name, addr] of Object.entries(def.symbols)) names[addr] = name;
+    const space = {
+      read: (addr: number, fetch: boolean) => this.read(pid, addr, fetch),
+      write: (addr: number, value: number) => this.write(pid, addr, value),
+    };
+    this.procs.push({
+      def,
+      program,
+      values,
+      names,
+      table: new Int8Array(PAGES).fill(-1),
+      tableFrames: [],
+      access: new Array(256).fill(null),
+      cpu: new Machine(new Uint8Array(0), {clock: this.clock, space}),
+      state: 'stopped',
+      lastPc: null,
+      crash: null,
+      frozen: null,
     });
-    this.procs.forEach((_, pid) => this.resetCpu(pid));
+    this.resetCpu(pid);
+    return pid;
   }
 
   private resetCpu(pid: number) {
