@@ -19,6 +19,8 @@ const MEMORIES = [
 
 const SPEEDS = [0, 1, 5, 10, 50, 100, 500];
 const MAX_STEPS_PER_FRAME = 200;
+/** Where each program has a breakpoint: the clock stops when any of them is about to run that address. */
+const breakpoints = PROCESSES.map(() => new Set<number>());
 const STATE_TEXT = {stopped: 'not started', running: 'running', paused: 'paused', crashed: 'crashed'};
 const TOGGLE_TEXT = {stopped: 'Start', running: 'Pause', paused: 'Resume', crashed: 'Start'};
 
@@ -160,7 +162,7 @@ class View {
 
     const listing = h('div', 'listing');
     const rows = new Map<number, HTMLElement>();
-    this.fillListing(proc.program, listing, rows);
+    this.fillListing(pid, proc.program, listing, rows);
 
     const grid = h('div', 'vgrid');
     grid.append(h('div', 'hd'));
@@ -209,14 +211,20 @@ class View {
     return card;
   }
 
-  private fillListing(program: Program, listing: HTMLElement, rows: Map<number, HTMLElement>) {
+  private fillListing(pid: number, program: Program, listing: HTMLElement, rows: Map<number, HTMLElement>) {
     listing.replaceChildren();
     rows.clear();
     for (const it of program.items) {
       if (it.kind === 'label') listing.append(h('div', 'lbl', it.name + ':'));
       else if (it.kind === 'ins') {
         const row = h('div', 'ins');
-        row.append(h('span', 'ad', hex(it.addr)), h('span', 'asm', it.text), h('span', 'cm', commentFor(it)));
+        const address = Object.assign(h('span', 'ad', hex(it.addr)), {
+          title: 'Click to stop the clock when this program gets here. Click again to remove.',
+          onclick: () => {
+            if (!breakpoints[pid].delete(it.addr)) breakpoints[pid].add(it.addr);
+          },
+        });
+        row.append(address, h('span', 'asm', it.text), h('span', 'cm', commentFor(it)));
         listing.append(row);
         rows.set(it.addr, row);
       }
@@ -287,6 +295,7 @@ class View {
     for (const [addr, row] of card.rows) {
       const cls =
         'ins' +
+        (breakpoints[pid].has(addr) ? ' bp' : '') +
         (loaded && !crashed && addr === cpu.pc ? ' next' : '') +
         (proc.state === 'running' && addr === proc.lastPc ? ' cur' : '');
       if (row.className !== cls) row.className = cls;
@@ -294,7 +303,7 @@ class View {
 
     if (card.program !== proc.program) {
       card.program = proc.program;
-      this.fillListing(proc.program, card.listing, card.rows);
+      this.fillListing(pid, proc.program, card.listing, card.rows);
     }
     for (const input of card.inputs) {
       input.disabled = proc.state !== 'stopped';
@@ -486,6 +495,15 @@ function frame(t: number) {
       sys.step();
       budget--;
       n++;
+      const hit = sys.procs.some(
+        (p, pid) => p.state === 'running' && p.cpu.next === 'fetch' && breakpoints[pid].has(p.cpu.pc),
+      );
+      if (hit) {
+        speedIdx = 0;
+        showSpeed();
+        budget = 0;
+        break;
+      }
     }
     if (n >= MAX_STEPS_PER_FRAME) budget = 0;
   }

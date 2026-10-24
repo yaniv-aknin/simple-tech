@@ -31,6 +31,10 @@ export function finishKernel(core: Machine) {
   for (let i = 0; core.kernel && i < 100; i++) core.stepInstruction();
 }
 
+/** True when a core is about to run an instruction that has a breakpoint on it. */
+export const atBreakpoint = (cores: Machine[], breakpoints: Set<number>) =>
+  cores.some(core => core.next === 'fetch' && breakpoints.has(core.pc));
+
 export interface Session {
   setup: DemoSetup;
   program: Program;

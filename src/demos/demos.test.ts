@@ -2,7 +2,7 @@ import {describe, expect, it} from 'vitest';
 import {SLOT_SIZE, TABLE, concurrencySetup, coreOf, curAddr, procBase} from './concurrency/concurrency.ts';
 import {Keyboard} from '../machine/keyboard.ts';
 import {parseC} from './c-source.ts';
-import {boot, finishKernel} from './demo.ts';
+import {atBreakpoint, boot, finishKernel} from './demo.ts';
 import {ADDR, pongSetup} from './pong/pong.ts';
 
 const clock = () => 0;
@@ -131,6 +131,31 @@ describe('hiding the kernel', () => {
   it('marks the kernel as the RAM below the processes', () => {
     expect(concurrencySetup(2).kernelEnd).toBe(procBase(0));
     expect(pongSetup().kernelEnd).toBeUndefined();
+  });
+});
+
+describe('breakpoints', () => {
+  it('stop when a core is about to run the address, and not before', () => {
+    const {machine: m, program} = boot(pongSetup(), clock);
+    const at = program.labels.loop;
+    const breakpoints = new Set([at]);
+    expect(atBreakpoint([m], new Set())).toBe(false);
+    let stopped = false;
+    for (let i = 0; i < 5000 && !stopped; i++) {
+      m.stepInstruction();
+      stopped = atBreakpoint([m], breakpoints);
+      if (!stopped) expect(m.pc).not.toBe(at);
+    }
+    expect(stopped).toBe(true);
+    expect(m.pc).toBe(at);
+    expect(m.next).toBe('fetch');
+  });
+
+  it('look at every core', () => {
+    const {cores} = boot(concurrencySetup(4, 2), clock);
+    cores[1].pc = 0x62;
+    cores[1].next = 'fetch';
+    expect(atBreakpoint(cores, new Set([0x62]))).toBe(true);
   });
 });
 

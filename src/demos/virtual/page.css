@@ -352,7 +352,14 @@ button:hover {
   white-space: nowrap;
 }
 .ad {
+  justify-self: start;
   color: var(--bytes);
+  cursor: pointer;
+}
+.ins.bp .ad {
+  background: var(--write);
+  color: #fff;
+  border-radius: 3px;
 }
 .cm {
   overflow: hidden;

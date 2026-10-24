@@ -65,6 +65,8 @@ export class Listing {
     cNext: Marker<string>;
   }[] = [];
   private followed: HTMLElement | null = null;
+  /** Addresses where the clock stops; the owner of the listing keeps the set. */
+  breakpoints = new Set<number>();
 
   constructor(el: HTMLElement) {
     this.el = el;
@@ -101,6 +103,16 @@ export class Listing {
     this.el.style.overflow = '';
   }
 
+  /** Sets or clears the breakpoint on an address. */
+  toggleBreakpoint(addr: number) {
+    if (!this.breakpoints.delete(addr)) this.breakpoints.add(addr);
+    this.showBreakpoints();
+  }
+
+  private showBreakpoints() {
+    for (const [addr, row] of this.rowByAddr) row.classList.toggle('bp', this.breakpoints.has(addr));
+  }
+
   /** Redraws the columns after parts of the listing were hidden or shown. */
   refit() {
     this.fit();
@@ -119,6 +131,7 @@ export class Listing {
     }));
     this.buildAsm(program, setup.kernelEnd ?? 0);
     this.buildC(setup.cSource, program, setup.kernelEnd ?? 0);
+    this.showBreakpoints();
     this.el.scrollTop = 0;
     this.followed = null;
     this.fit();
@@ -144,6 +157,9 @@ export class Listing {
         d.children[2].textContent = it.text;
         d.children[3].textContent = commentFor(it) ? '; ' + commentFor(it) : '';
         d.dataset.op = String(it.bytes[0]);
+        const address = d.children[0] as HTMLElement;
+        address.title = 'Click to stop the clock when it gets here. Click again to remove.';
+        address.addEventListener('click', () => this.toggleBreakpoint(it.addr));
         this.rowByAddr.set(it.addr, d);
         if (it.addr < kernelEnd) sec?.classList.add('kernel-code');
       }

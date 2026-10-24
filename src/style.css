@@ -432,6 +432,15 @@ button:hover {
 .ins .by {
   color: var(--bytes);
 }
+.ins .ad {
+  justify-self: start;
+  cursor: pointer;
+}
+.ins.bp .ad {
+  background: var(--write);
+  color: #fff;
+  border-radius: 3px;
+}
 .ins .cm {
   color: var(--faint);
   white-space: normal;

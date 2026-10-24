@@ -1,7 +1,7 @@
 import './style.css';
 import {initTheme, mountThemeToggle} from './theme.ts';
 import {DEMOS, type DemoKey} from './demos/index.ts';
-import {finishKernel, type DemoView, type Session, type ViewMode} from './demos/demo.ts';
+import {atBreakpoint, finishKernel, type DemoView, type Session, type ViewMode} from './demos/demo.ts';
 import type {Direction} from './machine/keyboard.ts';
 import {CpuPanel} from './ui/cpu.ts';
 import {$, toggleOn} from './ui/dom.ts';
@@ -13,9 +13,11 @@ const SPEEDS = [0, 1, 5, 10, 50, 100, 500];
 const MAX_STEPS_PER_FRAME = 400;
 const DEFAULT_PROCESSES = 2;
 
+const breakpoints = new Set<number>();
 const listing = new Listing($('listing'));
 const ram = new RamGrid($('ram'));
 attachTooltip($('listing'));
+listing.breakpoints = breakpoints;
 
 let demoKey: DemoKey = 'pong';
 let page: string | null = null;
@@ -90,6 +92,7 @@ function setCores(n: number) {
 }
 
 function switchDemo(key: DemoKey) {
+  if (key !== demoKey) breakpoints.clear();
   demoKey = key;
   page = null;
   document.body.dataset.demo = key;
@@ -149,6 +152,10 @@ function frame(t: number) {
       }
       budget--;
       n++;
+      if (atBreakpoint(session.cores, breakpoints)) {
+        setSpeed(0);
+        break;
+      }
     }
     if (n >= MAX_STEPS_PER_FRAME) budget = 0;
   }
