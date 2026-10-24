@@ -366,9 +366,6 @@ button:hover {
   text-overflow: ellipsis;
   color: var(--dim);
 }
-.cm:not(:empty)::before {
-  content: '; ';
-}
 .ins.next {
   background: var(--next);
 }
