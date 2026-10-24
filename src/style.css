@@ -289,6 +289,33 @@ button:hover {
   background: var(--read);
   color: #222;
 }
+.chartbox {
+  margin-top: 12px;
+  font-size: 12px;
+}
+.chart {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+}
+.chart text {
+  fill: var(--dim);
+  font: 9px var(--mono);
+}
+.chart .grid {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+.chart path {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+.chart .mark {
+  stroke: var(--dim);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
 .cpus {
   display: grid;
   gap: 14px;

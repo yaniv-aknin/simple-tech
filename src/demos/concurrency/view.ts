@@ -1,6 +1,7 @@
 import {hex} from '../../machine/format.ts';
 import type {Machine} from '../../machine/machine.ts';
 import {$, setText} from '../../ui/dom.ts';
+import type {RateChart} from '../../ui/chart.ts';
 import {bindFlash} from '../../ui/flash.ts';
 import type {DemoView, Session} from '../demo.ts';
 import {PROC_SIZE, SLOT_SIZE, TABLE, coreOf, curAddr, procBase, slotAddr, procColor} from './concurrency.ts';
@@ -16,8 +17,9 @@ function fmtSlot(field: number, v: number) {
 interface ProcRow {
   tr: HTMLElement;
   count: Element;
-  rate: Element;
 }
+
+const SAMPLE_MS = 250;
 
 export class ConcurrencyView implements DemoView {
   private readonly m: Machine;
@@ -28,13 +30,16 @@ export class ConcurrencyView implements DemoView {
   private readonly tally: number[];
   private readonly lastSeen: number[];
   private hist: {t: number; tally: number[]}[] = [];
+  private readonly chart: RateChart;
+  private lastSample = -Infinity;
 
-  constructor({machine, cores}: Session, n: number) {
+  constructor({machine, cores}: Session, n: number, chart: RateChart) {
     this.m = machine;
     this.cores = cores;
     this.n = n;
     this.tally = Array(n).fill(0);
     this.lastSeen = Array(n).fill(0);
+    this.chart = chart;
     this.buildSlots();
     this.buildProcs();
     $('nearWrap').onclick = () => {
@@ -84,21 +89,15 @@ export class ConcurrencyView implements DemoView {
   private buildProcs() {
     const table = $('ptab');
     const multi = this.cores.length > 1;
-    const header = multi
-      ? '<tr><th>Process</th><th>Memory</th><th>Core</th><th>Count</th><th>Counts / sec</th></tr>'
-      : '<tr><th>Process</th><th>Memory</th><th>Count</th><th>Counts / sec</th></tr>';
-    table.innerHTML = header;
-    const extra = multi ? 1 : 0;
-    for (let i = 0; i <= this.n; i++) {
-      const total = i === this.n;
+    table.innerHTML = multi
+      ? '<tr><th>Process</th><th>Memory</th><th>Core</th><th>Count</th></tr>'
+      : '<tr><th>Process</th><th>Memory</th><th>Count</th></tr>';
+    for (let i = 0; i < this.n; i++) {
       const tr = document.createElement('tr');
-      tr.className = total ? 'tot' : '';
-      const core = multi ? `<td>${total ? '' : `Core ${coreOf(i, this.cores.length) + 1}`}</td>` : '';
-      tr.innerHTML = total
-        ? `<td>All</td><td></td>${core}<td></td><td class="n"></td>`
-        : `<td>${chip(i)}P${i + 1}</td><td class="mem">${hex(procBase(i))}–${hex(procBase(i) + PROC_SIZE - 3)}</td>${core}<td class="n big"></td><td class="n"></td>`;
+      const core = multi ? `<td>Core ${coreOf(i, this.cores.length) + 1}</td>` : '';
+      tr.innerHTML = `<td>${chip(i)}P${i + 1}</td><td class="mem">${hex(procBase(i))}–${hex(procBase(i) + PROC_SIZE - 3)}</td>${core}<td class="n big"></td>`;
       table.appendChild(tr);
-      this.rows.push({tr, count: tr.children[2 + extra], rate: tr.children[3 + extra]});
+      this.rows.push({tr, count: tr.lastElementChild!});
     }
   }
 
@@ -118,16 +117,18 @@ export class ConcurrencyView implements DemoView {
     while (hist.length > 1 && t - hist[0].t > 2500) hist.shift();
     const old = hist[0];
     const secs = (t - old.t) / 1000;
-    let totalRate = 0;
+    const rates: number[] = [];
     for (let i = 0; i < n; i++) {
-      const rate = secs > 0.3 ? (tally[i] - old.tally[i]) / secs : 0;
+      rates.push(secs > 0.3 ? (tally[i] - old.tally[i]) / secs : 0);
       const row = this.rows[i];
       row.tr.classList.toggle('on', running.has(i));
       setText(row.count, String(m.mem[procBase(i)]));
-      setText(row.rate, rate.toFixed(1));
-      totalRate += rate;
     }
-    setText(this.rows[n].rate, totalRate.toFixed(1));
+    if (t - this.lastSample >= SAMPLE_MS) {
+      this.lastSample = t;
+      this.chart.push(t, rates);
+    }
+    this.chart.render(t);
     for (const f of this.updaters) f(t);
   }
 }

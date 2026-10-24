@@ -12,9 +12,9 @@ export const DEMOS = {
     },
   },
   procs: {
-    start({processes, cores}) {
+    start({processes, cores, chart}) {
       const session = boot(concurrencySetup(processes, cores));
-      return {session, view: new ConcurrencyView(session, processes)};
+      return {session, view: new ConcurrencyView(session, processes, chart)};
     },
   },
 } satisfies Record<string, Demo>;

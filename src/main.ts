@@ -1,8 +1,10 @@
 import './style.css';
 import {initTheme, mountThemeToggle} from './theme.ts';
+import {PROC_HUES, procColor} from './demos/concurrency/concurrency.ts';
 import {DEMOS, type DemoKey} from './demos/index.ts';
 import {atBreakpoint, finishKernel, type DemoView, type Session} from './demos/demo.ts';
 import type {Direction} from './machine/keyboard.ts';
+import {RateChart} from './ui/chart.ts';
 import {CpuPanel} from './ui/cpu.ts';
 import {$, toggleOn} from './ui/dom.ts';
 import {Listing, type Lang} from './ui/listing.ts';
@@ -19,6 +21,11 @@ const DEFAULT_PANELS: Panel[] = ['vars', 'ins'];
 const breakpoints = new Set<number>();
 const listing = new Listing($('listing'));
 const ram = new RamGrid($('ram'));
+/** The counts per second of the concurrency demo, which go on across restarts until Reset. */
+const chart = new RateChart(
+  $('rateChart'),
+  PROC_HUES.map((_, i) => procColor(i, true)),
+);
 attachTooltip($('listing'));
 listing.breakpoints = breakpoints;
 listing.onAddressHover = addr => ram.highlight(addr);
@@ -37,7 +44,8 @@ let budget = 0;
 let lastT = 0;
 
 function restart() {
-  ({session, view} = DEMOS[demoKey].start({processes, cores}));
+  if (demoKey === 'procs') chart.mark(performance.now());
+  ({session, view} = DEMOS[demoKey].start({processes, cores, chart}));
   budget = 0;
   const count = session.cores.length;
   $('cpus').dataset.cores = String(count);
@@ -192,7 +200,11 @@ for (const b of buttons('views'))
   };
 for (const b of buttons('tabs')) b.onclick = () => (location.hash = b.dataset.page ?? b.dataset.demo!);
 for (const b of buttons('lang')) b.onclick = () => setLang(b.dataset.lang as Lang);
-for (const b of buttons('speed')) b.onclick = () => setSpeed(Number(b.dataset.i));
+for (const b of buttons('speed'))
+  b.onclick = () => {
+    if (demoKey === 'procs') chart.mark(performance.now());
+    setSpeed(Number(b.dataset.i));
+  };
 for (const b of buttons('nsel'))
   b.onclick = () => {
     setProcesses(Number(b.dataset.n));
@@ -201,6 +213,7 @@ for (const b of buttons('nsel'))
   };
 for (const b of buttons('ksel'))
   b.onclick = () => {
+    chart.mark(performance.now());
     setKernel(b.dataset.k === '1');
     writeDemoHash();
   };
@@ -211,6 +224,7 @@ for (const b of buttons('csel'))
     writeDemoHash();
   };
 $('rst').onclick = () => {
+  chart.clear();
   setSpeed(0);
   restart();
 };

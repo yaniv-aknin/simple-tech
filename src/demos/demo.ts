@@ -1,4 +1,5 @@
 import {assemble, type Program} from '../machine/assembler.ts';
+import type {RateChart} from '../ui/chart.ts';
 import type {Keyboard} from '../machine/keyboard.ts';
 import {Machine, type Interrupt} from '../machine/machine.ts';
 
@@ -63,5 +64,5 @@ export interface DemoView {
 }
 
 export interface Demo {
-  start(options: {processes: number; cores: number}): {session: Session; view: DemoView};
+  start(options: {processes: number; cores: number; chart: RateChart}): {session: Session; view: DemoView};
 }
