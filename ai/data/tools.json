@@ -1,0 +1,3313 @@
+{
+ "speed": "1.0",
+ "entries": {
+  "16/astra/plain": {
+   "started_at": "2026-10-02T06:48:07.117+00:00",
+   "total_ms": 12507.4,
+   "turns": [
+    {
+     "started_at": "2026-10-02T06:48:07.118+00:00",
+     "latency_ms": 12507.1,
+     "request": {
+      "url": "https://api.openai.com/v1/responses",
+      "body": {
+       "model": "gpt-6-astra",
+       "input": [
+        {
+         "role": "user",
+         "content": "In this 16x16 grid, '#' is a wall and '.' is open. Starting at the top-left cell and moving only right or down, how many different paths reach the bottom-right cell?\n...##.......#...\n.....##.......#.\n#...#.........#.\n................\n..#.............\n..#...#.#....#..\n.....#.#.#.#.#..\n##..#.##...#.#..\n.........#..#...\n#....#.#####....\n...........##.#.\n.##.............\n#..##........#.#\n...#.....#...#.#\n.....###....#...\n................\nAnswer with just the number."
+        }
+       ],
+       "reasoning": {
+        "effort": "low"
+       },
+       "max_output_tokens": 16000
+      }
+     },
+     "response": {
+      "status": 200,
+      "body": {
+       "id": "resp_0d75d1c927658111006abf53a77e4487d1a8242cefd4d8179e",
+       "object": "response",
+       "created_at": 1790923687,
+       "status": "completed",
+       "access_programs": null,
+       "background": false,
+       "billing": {
+        "payer": "developer"
+       },
+       "completed_at": 1790923699,
+       "error": null,
+       "frequency_penalty": 0.0,
+       "incomplete_details": null,
+       "instructions": null,
+       "max_output_tokens": 16000,
+       "max_tool_calls": null,
+       "model": "gpt-6-astra",
+       "moderation": null,
+       "output": [
+        {
+         "id": "rs_0d75d1c927658111006abf53a8ae4c87d18a4ce95322d9f987",
+         "type": "reasoning",
+         "content": [],
+         "encrypted_content": "gAAAAABqv1OzH39FWqEGgRPkH0IQLYuOthRHcitgJ9q1GWlJ95vZv0HuNoSE8EOKHc_-EpezJwYFRGpHtn5PqyBn1-AFyJgSp2VL10po-h204Ye4COLSldRVB_PE0tTotMwCiRVwEbkZSb7FFCoHlyvHCbvTTj2N8DqQcc6suN-TEU5kg3FEAN3v8lVEi6c73i_5tXQ3Aiwg8hVLGiREpn-J_rcpauNcEn4U-8aoevuUdgq6_T-P8cUsOLjcv8jmX6hzArUWYpORE8nJXcXKnzDR2ZIMnrSHeK4uu5pO7Lp3WGDFS7AWizLTL3ZzONQYcL0qdYZMQcruvrb0kaKn-o81u2mGuGqORx5GAhMaYe_k0u7DdrjOW_KqaxxzfyK7byzGHEEjLfPpS6BkdQWzOlcti_LBc1k4YWPyeRXjA_MpTBturU3Gn52Eod5-2lB1NRJJdKhdwKexD67LWZg7Bf3RvxSn32sKq2vST_EIoWIvYWLr0HFtOwGJEIy9PnrulbpgBbWhcS3Xm4P9keTRSkgQvkinLZgX2mEvPvnrS1vcC6gn6e-c7LEJHSy3zP86GxnBEfqnyFwE7JURN4JOvWMpEtGT7_xtB0ehWdj-apJVtWv2-GWU3knF19l3siNCBqpqp4YqBDuf1VM928WtIR5Nlk8Uabor04oc0ZIcB6EpsGzvNx7dE6KISaf6mt2kCAnzug29G-6-oxMcJCXR6-vpNrxdAOAj-QhcgchCrPjItOtUbNFK0O2mnVpDhV1Ua6RjQQ8KuuxfPuQzvBJ6Bsmddb4-Ovd5k8IJ8Z6WUCaYaRslNlHeCQgeQuqWMIvvrXF5VlqeYmdn8e19h27AzNnsZV0qHThfX3EYI_BWd9cmhFjGxE2rcOEL59ccBOJIWYWqakpn_X1Sg00STSR-dB0wcMJ6RZzw8I-F_NfHirRIo8hH3Hs2f7UUMuiMJZ8bhIMu8B9Xos3vPMp7poiMX8nB5ywXQp476-YqNEuCQBa9NwBlI59EXfnzloL63B_o6W7Saie_xPtsXh9BDgtA7hyVmYpqprqIEQEuvL6tHdIoDJHFL9Olzd-2u_eAPqRn-aKIoT7j9TXRvrNeZCY2WKgEb3jryKpaTJeH4ju9xT11RPE6VnAH4EVValRCkFqKAOnPvBZcwLyIPvcy0RnKmLkTWiEtXWM3k7BfFGyVnJXD5hatZtyuZeV39etbhok6td7eqh_5btb_IDqqU4B_6goJT8bAmsHosP8uAvgNHPGJ_CP_ZPOO9b7Ft3Xhl3xd7ZyqwKi5YtrdDIL8BMxkPeGBTXf6Ph6cKsh8eRBj_T1C2bC1sPDMlKjg0sZwV3eOMiUvBq7ZKH06pPxZ4BpkHZhVvqfH1Q7ZtjtcTd7AS9z4l7-DVrHnzXW5v3c8ZpiJe2x7zz-CHFB9XhAagjpX0BUlq0QgDPW5ItlGF2WpGWOcgPsNfV3DVr6yUMo_XOC0q2z9Zt7FAt2qpZpR-CdXoT1tuyCeA9HknEpyhb0qh3W5-AIoThZBzrH3SYQkzgiV-u28MyZ6NbN55xFqBmgLDrOLEUa5IutLcnWaqDgrG_31YBQFvlmFCHs1xrIvdQEYnncd7JYZ_exL8DF-S4IkHnn125XUchjnJjxa-h4Uo3R3LHDs3mhKuqZp7azoG29C_SP-yF6gnoI5QGNT9FGtqZ22IQR3sJ3N0CU9Gas6OCME_AGZACoJzUo2Ly-IbT2w6G3f1Gm6tdfMzrl8tNJmCkUsJoE-3-9IUomBOGjQGzY3eAKdxuAl2lwNJxowxLFQmRMPTMSX8cX24_Do7bYGpabXMBZJbkQGKiQaeheylYcu_5NNpJz-LdZUOlPj3xqQRtEebfvACKDxmBQLxCANEXrVGgExJfF-FEYKUL1sGDHN46vVp2pxL1z8wXl5PmlIbmInjHThaeqBpM6niVnmmnnfCubA1CR9DReVQvu7vlUifm9yrV1gc2n9Qp23NVJqOw2y0wRO2F0JI3ijCApEctp4mJHP3CuTWp7Ap9St0e2yrNw1fndPZgxuxP1niI9d8bQA1fOjcOVdyn3QdQQ5enRfWZGMrcRASfBv-NtWzaEjgAKgEhwMfiQRc7B-ZLvvb8LKBK4TgVrvTcc3BKW5qCkVXqxZ6TwOEwZIvGjTcmN_bNYDVsL3ZAJd4SmZt2jrd8cGao4eX5lh4ZMt8jH8VdfIwDEP3wplPSA_TvwYjw5brF8cWrMo7Hk5LijZb3svTDDU3CdPSuLu_v630UFK25Z_ezxq69ObYdY-SkOyySB1tc7vYrD5fX8kTzt8F2J9sgJ-fD3Jgxl1vrqJ8CiuTQSSjRplkLubsQ==",
+         "summary": []
+        },
+        {
+         "id": "rs_0d75d1c927658111006abf53af6b6887d187d9478b4e872664",
+         "type": "reasoning",
+         "content": [],
+         "encrypted_content": "gAAAAABqv1Oz338sDiezUnRRgUCq2_XvjtG14ocGDDy-bGHKXqIZ3oMtWMbmb0uFjE4Gt-OrwHtLk1l7ulVWbjWzh544AlTnr8a7enE1jzXh2qVVRv-OafFmXSrIToGnw3aoISt86dJXC48Ko2c8cbnTgWdLFUF1iqcFZIBr28Gp4cVudShVSH6lra89_237ciu2NA5inTQEgh5xnLmPAHNvUvpf5GWgWZ8TSEkwtQeMQa57eQd196CcXpdvJKyOMMQPiP_aeOtKGDUSz0UodL4B5uLh92-jUHDc-Yh6Zfx-njSuJgetlA8Xi2mxAP1k65ZIsdUdxXY7ovIrNfEbXKcVbcFwEKbxia_NFTFp1WCJ_1ZpKaGny_dToBHsXBy9k8poVJ3ensHVsahZCbtNdqY-UC-pE3cpKhJCa_RhDMlNwi4eELyVy92u-p7Z5CpCWALpbYpe2Y59D_1fCmvmpNhcJlQIiLhGfIBZ3WA4Q2ngB26unCVmgp4rNDhpX38Lc9ItWUuId4BXVal7dXd0VMSqn_GNWefjrTscT2DmGW7mcVNMQ6c0209naukgtRV4k1YvqhUf4mvWepcULiT1YKLe7uEss-V-bf-mYv5gABYY2nWJu_SaFVtsI62YLlWIbJp5UJWDwsNZyNTR4JHCNMdf2vTzKemaMn1L9FnRrxODr9fCukw4MD6RtKQVEdaXK9EHCtwxTEahRSP0e8ssliVBM3swW41CPvnCSNiJdcPRLpIVP0qLdiUV7IE9Pij5L9cbxcDD6o3x9bbj9D3T56x0l65nt4y1nw5zM0ih5sFlcKtqdukD94Q3SpdrdAadk5Gj5geyLcbcS8k66czHtOkrw52WSF7UCnRl8ENz7ISaiYy8xTVVMrRbCBIAuLh5u4q9PAYs0Qx1QtM7YXdEBEt3rRT0-hbTE_CEHe0JPejKqArqN9bXpJtnlWDe1pZ7rNYWg23RSmLzRdygG_6imv8I25CfLN1liVEaUAgjeKv7Uqy9wJJkE9bE3G1lUPGFu7RnKmDvMa0znBAIpk_eBveYZtSF0hUfhBIfF78wPGrO1xXFZifrf2tAUZZLtrkjsu2pPWPvs5t7s0RaXV1tQFl55gdL0NLaq2TNUUsNIGFb8YJ1eph8oG957I5BL2o-tO1KuUMwFiMf4-MJXtzbo_1P_65_jV1dBYP_7GZampRoMl5omC3co7IRh16nUn5yEuldWDJYV9-ezFcICNemM2CYnBz9B7EEfC8TeSMzT01P12x2N8sZGZjLhegAck3sPVhiHRzp-lA7jIapom9kkRT3IzTCxfYcND7isq8RfJ3cEzSSW7nA-yT4vVatYuTn9ydDtep03_kX3oF0ao8czczAbN_U_CM_MWfGv90AwDIB4wtA6PSdaR6WRgDES_KxZI9J17Oey-2VR5Ahj4pCefHImq1_2kbjb0f2aBp6p8jJvVp_6gvDJjF_0kqtLg3Yh6jsyHVNB-HU89cEvs6eiU0wVfSAh3uoEBZ47PRcR5mNUVooyHbonk8I8IZcVU4HBE6HzsknbbspLTLsT57AwkNRXx1u62TbYlNUecnlKEHnmyltm-aTUs3k5Gu6TMxFYVcSY3DGpCImpbJY4Gsf6Qfb8TCSHIXo-1HkckgsTQOjOlpSREZeCsUW67Bu1QUK9XO2yr8U6G6WcGV048ZC9gPQV-xNfpGVKAAEoE8eG5bB8j7D5Qql1fR_imfKzhMWrJdzxFZxOctWPUGQqWSc18jKSMqJgh2hjFDtZKglnSxVlqBD8EPSVBUUYPN-5MYnl2SjEYZsRjy0G0bRzk8B7VtMFI7z4-X0ekPEfGNUqST7XBoBLbdNmzg13ZQIlIw2qrSGbEUsSy8_",
+         "summary": []
+        },
+        {
+         "id": "msg_0d75d1c927658111006abf53b3533487d1b42e0b4fdc2cee05",
+         "type": "message",
+         "status": "completed",
+         "content": [
+          {
+           "type": "output_text",
+           "annotations": [],
+           "logprobs": [],
+           "text": "21271"
+          }
+         ],
+         "phase": "final_answer",
+         "role": "assistant"
+        }
+       ],
+       "parallel_tool_calls": true,
+       "presence_penalty": 0.0,
+       "previous_response_id": null,
+       "prompt_cache_key": null,
+       "prompt_cache_retention": "24h",
+       "reasoning": {
+        "context": "all_turns",
+        "effort": "low",
+        "mode": "standard",
+        "summary": null
+       },
+       "safety_identifier": null,
+       "service_tier": "default",
+       "store": true,
+       "temperature": 1.0,
+       "text": {
+        "format": {
+         "type": "text"
+        },
+        "verbosity": "medium"
+       },
+       "tool_choice": "auto",
+       "tool_usage": {
+        "image_gen": {
+         "input_tokens": 0,
+         "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "output_tokens": 0,
+         "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "total_tokens": 0
+        },
+        "web_search": {
+         "num_requests": 0
+        }
+       },
+       "tools": [],
+       "top_logprobs": 0,
+       "top_p": 0.98,
+       "truncation": "disabled",
+       "usage": {
+        "input_tokens": 136,
+        "input_tokens_details": {
+         "cache_write_tokens": 0,
+         "cached_tokens": 0
+        },
+        "output_tokens": 808,
+        "output_tokens_details": {
+         "reasoning_tokens": 800
+        },
+        "total_tokens": 944
+       },
+       "user": null,
+       "metadata": {}
+      }
+     },
+     "tool_runs": []
+    }
+   ]
+  },
+  "16/astra/tools": {
+   "started_at": "2026-10-02T06:48:07.117+00:00",
+   "total_ms": 6726.4,
+   "turns": [
+    {
+     "started_at": "2026-10-02T06:48:07.118+00:00",
+     "latency_ms": 4867.3,
+     "request": {
+      "url": "https://api.openai.com/v1/responses",
+      "body": {
+       "model": "gpt-6-astra",
+       "input": [
+        {
+         "role": "user",
+         "content": "In this 16x16 grid, '#' is a wall and '.' is open. Starting at the top-left cell and moving only right or down, how many different paths reach the bottom-right cell?\n...##.......#...\n.....##.......#.\n#...#.........#.\n................\n..#.............\n..#...#.#....#..\n.....#.#.#.#.#..\n##..#.##...#.#..\n.........#..#...\n#....#.#####....\n...........##.#.\n.##.............\n#..##........#.#\n...#.....#...#.#\n.....###....#...\n................\nAnswer with just the number."
+        }
+       ],
+       "reasoning": {
+        "effort": "low"
+       },
+       "max_output_tokens": 16000,
+       "tools": [
+        {
+         "type": "function",
+         "name": "run_python",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code"
+          ]
+         }
+        }
+       ]
+      }
+     },
+     "response": {
+      "status": 200,
+      "body": {
+       "id": "resp_0afc247ae5f54907006abf53a77d0487d19cd90ad32dbea884",
+       "object": "response",
+       "created_at": 1790923687,
+       "status": "completed",
+       "access_programs": null,
+       "background": false,
+       "billing": {
+        "payer": "developer"
+       },
+       "completed_at": 1790923691,
+       "error": null,
+       "frequency_penalty": 0.0,
+       "incomplete_details": null,
+       "instructions": null,
+       "max_output_tokens": 16000,
+       "max_tool_calls": null,
+       "model": "gpt-6-astra",
+       "moderation": null,
+       "output": [
+        {
+         "id": "fc_0afc247ae5f54907006abf53a8d5a887d186195321e8d523bc",
+         "type": "function_call",
+         "status": "completed",
+         "arguments": "{\"code\":\"def main(input):\\n s='''...##.......#...\\n.....##.......#.\\n#...#.........#.\\n................\\n..#.............\\n..#...#.#....#..\\n.....#.#.#.#.#..\\n##..#.##...#.#..\\n.........#..#...\\n#....#.#####....\\n...........##.#.\\n.##.............\\n#..##........#.#\\n...#.....#...#.#\\n.....###....#...\\n................'''\\n d=[0]*16;d[0]=1\\n for row in s.splitlines():\\n  for j,c in enumerate(row):\\n   if c=='#':d[j]=0\\n   elif j:d[j]+=d[j-1]\\n return d[-1]\",\"input\":null}",
+         "call_id": "call_hDbqZ8qLw3q67Z69dckT6IDd",
+         "name": "run_python"
+        }
+       ],
+       "parallel_tool_calls": true,
+       "presence_penalty": 0.0,
+       "previous_response_id": null,
+       "prompt_cache_key": null,
+       "prompt_cache_retention": "24h",
+       "reasoning": {
+        "context": "all_turns",
+        "effort": "low",
+        "mode": "standard",
+        "summary": null
+       },
+       "safety_identifier": null,
+       "service_tier": "default",
+       "store": true,
+       "temperature": 1.0,
+       "text": {
+        "format": {
+         "type": "text"
+        },
+        "verbosity": "medium"
+       },
+       "tool_choice": "auto",
+       "tool_usage": {
+        "image_gen": {
+         "input_tokens": 0,
+         "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "output_tokens": 0,
+         "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "total_tokens": 0
+        },
+        "web_search": {
+         "num_requests": 0
+        }
+       },
+       "tools": [
+        {
+         "type": "function",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "name": "run_python",
+         "output_schema": null,
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code",
+           "input"
+          ],
+          "additionalProperties": false
+         },
+         "strict": true
+        }
+       ],
+       "top_logprobs": 0,
+       "top_p": 0.98,
+       "truncation": "disabled",
+       "usage": {
+        "input_tokens": 246,
+        "input_tokens_details": {
+         "cache_write_tokens": 0,
+         "cached_tokens": 0
+        },
+        "output_tokens": 195,
+        "output_tokens_details": {
+         "reasoning_tokens": 0
+        },
+        "total_tokens": 441
+       },
+       "user": null,
+       "metadata": {}
+      }
+     },
+     "tool_runs": [
+      {
+       "call_id": "call_hDbqZ8qLw3q67Z69dckT6IDd",
+       "arguments": {
+        "code": "def main(input):\n s='''...##.......#...\n.....##.......#.\n#...#.........#.\n................\n..#.............\n..#...#.#....#..\n.....#.#.#.#.#..\n##..#.##...#.#..\n.........#..#...\n#....#.#####....\n...........##.#.\n.##.............\n#..##........#.#\n...#.....#...#.#\n.....###....#...\n................'''\n d=[0]*16;d[0]=1\n for row in s.splitlines():\n  for j,c in enumerate(row):\n   if c=='#':d[j]=0\n   elif j:d[j]+=d[j-1]\n return d[-1]",
+        "input": null
+       },
+       "started_at": "2026-10-02T06:48:11.985+00:00",
+       "duration_ms": 225.3,
+       "container": {
+        "image": "python:3.13-alpine",
+        "command": [
+         "docker",
+         "run",
+         "--rm",
+         "-i",
+         "--name",
+         "models101-7065b3b40b99",
+         "--network",
+         "none",
+         "--memory",
+         "128m",
+         "--cpus",
+         "1",
+         "--pids-limit",
+         "64",
+         "--read-only",
+         "--cap-drop",
+         "ALL",
+         "--security-opt",
+         "no-new-privileges",
+         "--user",
+         "65534",
+         "python:3.13-alpine",
+         "timeout",
+         "-s",
+         "KILL",
+         "5",
+         "python",
+         "-I",
+         "-c",
+         "<runner>"
+        ]
+       },
+       "exit_code": 0,
+       "timed_out": false,
+       "stdout": "21271",
+       "stderr": "",
+       "output": "21271"
+      }
+     ]
+    },
+    {
+     "started_at": "2026-10-02T06:48:12.211+00:00",
+     "latency_ms": 1633.2,
+     "request": {
+      "url": "https://api.openai.com/v1/responses",
+      "body": {
+       "model": "gpt-6-astra",
+       "input": [
+        {
+         "role": "user",
+         "content": "In this 16x16 grid, '#' is a wall and '.' is open. Starting at the top-left cell and moving only right or down, how many different paths reach the bottom-right cell?\n...##.......#...\n.....##.......#.\n#...#.........#.\n................\n..#.............\n..#...#.#....#..\n.....#.#.#.#.#..\n##..#.##...#.#..\n.........#..#...\n#....#.#####....\n...........##.#.\n.##.............\n#..##........#.#\n...#.....#...#.#\n.....###....#...\n................\nAnswer with just the number."
+        },
+        {
+         "id": "fc_0afc247ae5f54907006abf53a8d5a887d186195321e8d523bc",
+         "type": "function_call",
+         "status": "completed",
+         "arguments": "{\"code\":\"def main(input):\\n s='''...##.......#...\\n.....##.......#.\\n#...#.........#.\\n................\\n..#.............\\n..#...#.#....#..\\n.....#.#.#.#.#..\\n##..#.##...#.#..\\n.........#..#...\\n#....#.#####....\\n...........##.#.\\n.##.............\\n#..##........#.#\\n...#.....#...#.#\\n.....###....#...\\n................'''\\n d=[0]*16;d[0]=1\\n for row in s.splitlines():\\n  for j,c in enumerate(row):\\n   if c=='#':d[j]=0\\n   elif j:d[j]+=d[j-1]\\n return d[-1]\",\"input\":null}",
+         "call_id": "call_hDbqZ8qLw3q67Z69dckT6IDd",
+         "name": "run_python"
+        },
+        {
+         "type": "function_call_output",
+         "call_id": "call_hDbqZ8qLw3q67Z69dckT6IDd",
+         "output": "21271"
+        }
+       ],
+       "reasoning": {
+        "effort": "low"
+       },
+       "max_output_tokens": 16000,
+       "tools": [
+        {
+         "type": "function",
+         "name": "run_python",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code"
+          ]
+         }
+        }
+       ]
+      }
+     },
+     "response": {
+      "status": 200,
+      "body": {
+       "id": "resp_0afc247ae5f54907006abf53ac709487d1aed77f7bbd25a167",
+       "object": "response",
+       "created_at": 1790923692,
+       "status": "completed",
+       "access_programs": null,
+       "background": false,
+       "billing": {
+        "payer": "developer"
+       },
+       "completed_at": 1790923693,
+       "error": null,
+       "frequency_penalty": 0.0,
+       "incomplete_details": null,
+       "instructions": null,
+       "max_output_tokens": 16000,
+       "max_tool_calls": null,
+       "model": "gpt-6-astra",
+       "moderation": null,
+       "output": [
+        {
+         "id": "msg_0afc247ae5f54907006abf53ad7aac87d18a003e2b28c36481",
+         "type": "message",
+         "status": "completed",
+         "content": [
+          {
+           "type": "output_text",
+           "annotations": [],
+           "logprobs": [],
+           "text": "21271"
+          }
+         ],
+         "phase": "final_answer",
+         "role": "assistant"
+        }
+       ],
+       "parallel_tool_calls": true,
+       "presence_penalty": 0.0,
+       "previous_response_id": null,
+       "prompt_cache_key": null,
+       "prompt_cache_retention": "24h",
+       "reasoning": {
+        "context": "all_turns",
+        "effort": "low",
+        "mode": "standard",
+        "summary": null
+       },
+       "safety_identifier": null,
+       "service_tier": "default",
+       "store": true,
+       "temperature": 1.0,
+       "text": {
+        "format": {
+         "type": "text"
+        },
+        "verbosity": "medium"
+       },
+       "tool_choice": "auto",
+       "tool_usage": {
+        "image_gen": {
+         "input_tokens": 0,
+         "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "output_tokens": 0,
+         "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "total_tokens": 0
+        },
+        "web_search": {
+         "num_requests": 0
+        }
+       },
+       "tools": [
+        {
+         "type": "function",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "name": "run_python",
+         "output_schema": null,
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code",
+           "input"
+          ],
+          "additionalProperties": false
+         },
+         "strict": true
+        }
+       ],
+       "top_logprobs": 0,
+       "top_p": 0.98,
+       "truncation": "disabled",
+       "usage": {
+        "input_tokens": 454,
+        "input_tokens_details": {
+         "cache_write_tokens": 0,
+         "cached_tokens": 0
+        },
+        "output_tokens": 6,
+        "output_tokens_details": {
+         "reasoning_tokens": 0
+        },
+        "total_tokens": 460
+       },
+       "user": null,
+       "metadata": {}
+      }
+     },
+     "tool_runs": []
+    }
+   ]
+  },
+  "16/luna/plain": {
+   "started_at": "2026-10-02T06:48:07.117+00:00",
+   "total_ms": 22682.9,
+   "turns": [
+    {
+     "started_at": "2026-10-02T06:48:07.117+00:00",
+     "latency_ms": 22682.7,
+     "request": {
+      "url": "https://api.openai.com/v1/responses",
+      "body": {
+       "model": "gpt-6-luna",
+       "input": [
+        {
+         "role": "user",
+         "content": "In this 16x16 grid, '#' is a wall and '.' is open. Starting at the top-left cell and moving only right or down, how many different paths reach the bottom-right cell?\n...##.......#...\n.....##.......#.\n#...#.........#.\n................\n..#.............\n..#...#.#....#..\n.....#.#.#.#.#..\n##..#.##...#.#..\n.........#..#...\n#....#.#####....\n...........##.#.\n.##.............\n#..##........#.#\n...#.....#...#.#\n.....###....#...\n................\nAnswer with just the number."
+        }
+       ],
+       "reasoning": {
+        "effort": "low"
+       },
+       "max_output_tokens": 16000
+      }
+     },
+     "response": {
+      "status": 200,
+      "body": {
+       "id": "resp_0f2e21d5f84effae006abf53a77c4087d19d24ef4d07543269",
+       "object": "response",
+       "created_at": 1790923687,
+       "status": "completed",
+       "access_programs": null,
+       "background": false,
+       "billing": {
+        "payer": "developer"
+       },
+       "completed_at": 1790923709,
+       "error": null,
+       "frequency_penalty": 0.0,
+       "incomplete_details": null,
+       "instructions": null,
+       "max_output_tokens": 16000,
+       "max_tool_calls": null,
+       "model": "gpt-6-luna",
+       "moderation": null,
+       "output": [
+        {
+         "id": "rs_0f2e21d5f84effae006abf53a7f26487d1a7da3a58ad7e1df4",
+         "type": "reasoning",
+         "content": [],
+         "encrypted_content": "gAAAAABqv1O9wMSHqQjRkaSlgdk6OSYpNF0B2qqakOOySVsBqHVPFzofUnRrOMddsvuUCFNfQJUrmu8PGXRpq0ykGPKxqQRqNpsO6TKiVSff1etEMPBvkH3xOTWC20dZOBpQPca3sNC_LrnpZCWZJ8ADkez1r_9QG28s6NUYPFFH3iE5acRfgkTp--NYTBRs-o-h2jOJkDaX3qeHZBw4VGHU8pswtEtQpS535vHRyjZehimqa4vxk2PvuE2XaL0YT7hMgNzCeW_iBp-mLpzlYiDPF6RCx3ppnmnvrR9wkM_iP6E9QGoAm-wAsgIjGyU6LoG_W8g4YCo6KBRyltzK15ZZdhJDMGyTKPHKgK-lgTvdZpHbeZr3FEd6gV75T02-GBwoeq6s2zXw5rfTS4W5l6fvrUj0dUmOUlW-RKXacWL1-V2gu9unjtEomxYC_P2ItyPI8d0Zr-2ihYL1SuPLeWvJ1yN7e0rQt91bQ9iqjf0TATF0GRthCKIz94hksH7Zl47_5U_fvHkn_ooH9oWbZMCkswIqGnGn-BcjWmN7HDiKNkOto1oiofq8ZMEJc2EF2tnUOHOoyiFiUp3W5sRGfpvi-3LtJGbsFwmBxTzllD7qUu74ciotOQCDoN1NvV4At8av9bX-keTRJK8_hXsCwiieIsXzKVdL62-3OPuBVILySpx6f8sQKArTBEpLtPtS4UjUwwD_DUB8iD1qqC-DtxHRxRGfM4Rd5lHhz737lnLaWrpd34lPnH3IZCBg7JteFxF8VLgew3FCBdfWlTFunLihpM-ZIbd23F8UZWVRUntrq3gbhrnPrLWphniL5YfMRBJ9e2kwZ0ptA0p4IobvN3qVfHi1Ns0ElaIqmTbKRCjKlrPNh0Etr0xXNizRo_b-qMd0ty88vX3C3XVrUvLV5D60HUpSXIQaR2XoCs4jdPfH7muoAILMccw154jWz36W8eiFmmFD5eSsOVmbziqN3w_gVGkgldjJ4MxFqYNYfq5b_ZJU9TSTpPj3-pvmmSXNfMokvwugesshI1Lxt3OpJPPz5JROqurCpWV8p_KRu9yyQR28SEYEqbl97MpfstpXf81uG_ORmI0TN4nWb36y0ypy-8MkEdcdUlUmIe3h5vF6GTQmJIDM6N7GrUPTjpJlqViTNSCg8w8ZN__ugASyK8FEvgm202NVxrMBrXiEiCDlKq72c4AtvW-sNxbUh1iGPepVh82H2QWPGVIzJ7akf_lXGwaqYy4lPP8_tcsDGHkfvO7OLDl_Qw4BEJIdS5BpCVBbXHeUYdAmARGfrDW1m42bXLUNnF6suxNxhinBBq3MuX8cIj4HtME_xrfKBTqouSq_6J0eiiwqHstYJ8APwLDzrygS_O6aBKY_9RUfXW64ZFU2yEV2yiTV80855BcLNhBmtn7Jvz_QRCtLfLqQrcDPE3ksSboInGwjirBszU4FtM56M9uXh1dSUaRQ3OtWBjnAJ3adrf9vtLIDKOu2koxcIqL6PVPsz3dgG25_FBcUFU_2OaSEZidKSFlJM49ZOVL4FfOWNURDRYeSeHKEkvLAWdBLVP7omPSoCST7eoiq1FuimbWQIRqT39VNupedAbjB7elHviSvTk61rUYZshBCWaGQJzrMCLf8AqM8yYMYB8468TC5zcdDxb_04zs0_nIIxF8d2vDo1Un2L_olxuwlNRtXUYrHI3tq-trFKk0wRLeANjjMbnjtGwdHSP33bqe1wXAyuTV45THBBV_hWWtcPhch59rwhcD9taY9wWIufMXP80NFP6yLpTtOyinH-yl42KOet0y_yGZrIRMEFEj3e7ORTsY3sZz7aXlFsCG0ErpTs8FzG8sf5PgCv-LIqCsp_-EKlCvKijP3I09lOSpK3-K-d4X_XXXjMC2A4z1N12rb_nA302mQGaNAacBI1a5W2itJkPCEFGaF6KiJWxU4Q6pN2-F71fYmvyZ3PMfr19j-EuwNyAKR4Oxf2Rll7kb1LuAb8EZK7_yVXP5sT_HGTy7t5ZtTph69UJR-6jFWNwyvIIqxBbI9jZgPCffeKgBouNcBt4RB1HG6dr9riCv2NqVJ1rQByIOjs7xNYgGn1XEZ0Vi1TpYnvJvQYcQxcUxiIrTMtInPTNshSJGxwY1G5KqnduepQMTNWRDamCHiuxKQzbhj6Wn4seJTKSnq8Dk0vX4_gwg__XjKHdLNwPhFzXwuJM7CpvR7lvaYynjDqLYR55DqA-gzWERsuv3iLQgHrIUpAIZvr6idP-UEtwWswyfTGA7E5rtgXHPAKqeGCtS5PRzoTf9f4hZsMwa7OjEbuv7jh62-k_yZfAx9Mnxrpbk7Gx2P4t9RV86PYYYN0u7C3nlcCoEpwahj9mOFXsALJo3zbakDy35K88i-uwmTAGGq9RyFNEPgiBZNZjlR_rFmS10eyoU2RyP9p17fW26Af99TxssF9MA4AqMGcKYN2XNDKq0qFUaZ3aWNfSzUTlxnGOr6VIlfq9RLHZ4CS50RgsSGY70KECqEHoW8ij3RIMQ_fWJZPXEAVX1t4Me29G783OG0hcRT3cSWl8KwqaZyHUvZjdpYF3f68LKEaU8Bk5oW1MdX-dSAaAHI7gHUheftjcnqcumPXIQmm67JnKi_iA5vPRwQmRkYh6xmBCWdLbqW6cvdFHZ3AcoWL_i0SMyWdYBkxdYHn49ja6DQUXK5sDNX9Ux559Y2g-4DC_HyTSR38hSArSnK43GSwddQU43W8kZTTNVoZC8jsnzkUeWvlRyAAlcqn0ndnQzh99ffZp993CQNu6AgMma3g8TVNOtCzMMDb9pnpyMEmKKsj6JdmT3px3p8BZAd20gX1kesqHUBLNOMXz6V4GdSMOghSfr0j-6-q4-Jp_aU2_YQear4TUyzg9eji6wHyzoXI6E4auAqQEXdfQi4x39Spitl9qSnRN2AEbd3BphnasS-QueJVelmb_KnQUG9-Hgs9Hba41VcKCFHNBEIiJW02iAIPg7_u_lRAUGjM3tg_Ayj6v0_Pqcl1iGL7u8_0EaG3oF44aVFyKcEaA==",
+         "summary": []
+        },
+        {
+         "id": "rs_0f2e21d5f84effae006abf53acc76487d1ae1cdf1952b3bb7d",
+         "type": "reasoning",
+         "content": [],
+         "encrypted_content": "gAAAAABqv1O9r9xAFkiqsEJ6wowVzAL1BJDAWk2BERzq6Y1wlrddvE-aSZ2nYhzL8ffG5oYcruv9Hpkcol39FQU4Ul8iDmWGnDfq0Y9aZy58DjPwGvQF_Mui6GuxeuSoOX4qcF_ZrIsMteWgYvmSX2HE7P5tl7N-XTssX-bKPGn9N-bh27boIzXhltJm4e4mo4HITY2KyvR4BEKoa4dh0-KAqeHAj4yntQzvnfKvKsd48PgLnM-gxEQaJ1rrAyzPE5ZeGPs0yrWQ4cVSToJNrYcK5cYVeWeGP6eKCScPqucjiN0tuRkc4-J2sgzYoG2BekyJqXx5xY0ANB5STHGw8aL04--s2YqwDMyS2RGuyqCfSmuAD7LTHty83Ro_RBUpOlA3GmhIP2IPlwoP6JdGLrIeqRaxr1dCWCpNxmEd1YM8S0-zwrn2aU6GEvt1wNX7L80SJ2CIsLj-fJ2z5jJKo79xdreFonGp_ivV_nyfek40lIWNvnkHH-t5zl6E69mH2wgZs8M6NKU_vZygIuvw5Pu20AYBni5YS1fDxCY3oSWLOx7XruBABcA6QEii38JS9WUilpY1MWz26VUI_ugB8-mGPtcHOJyBiH4xA-VhwE7OAs_r1fBXz7vFyFFmqwW5Xj2qslkHv0gOfPbsl1GdKQ-LDv-oGovbSbJCgJfhYsD7llzvpfZS-hOZTIh4YFzUA7e0xJJ2Pbnrm9MWr7Nbe3qcJQ0eednUyiKh-0sj4Jkaj6VIh5mFQ7nI7rgSyV0bFO1bybY4HaD61mBJxny-36JjoIbJR2Z85SLJEqteH6rP8u9ZJ81pKL6xEV26ln_6C5wZWKBd5VmLUiZagQHNB6ODRy2z9aZ9a4_JVzbjXZuJKVr4UMmaX7gUr-rAaAL-fjhLj26M3MUVXfTCrXNsmUxsXtBWp68LZwgOXw4E87-1EvpZG4M8DysuJ924wizGiXr_KbbGB4gGVUdsm8mAJyFDrBZyYTbVRAVYfbz2S59MROowHnsVINtX5xzdZla9a96KWuuOQcPWrkKRd3WBZGgGwV3pnL43-49IxOksYwGOZee8AYXWJT0E4jnuDXzqOJRfvl_vBKKlz1jCFksGQRhGil2yHzGt663cmauPfDQt0htj_iNbn9GvzTpzsgA_pwUW5ZkbraZRZGmDIHfMVnUXf1_M-rWaXS6kYpo7_d8ppeMKrnG3AvlfwcogbK9Qut5sbTKpk8dgUsJzMEtmY0zsC-5yoTnkpQ0p1LF_O6gT19jE8JqRj-yw298q1Utd6nsYh3FUNHx3gKZjm1UhTTISTvnOqBpLg9N9XdgWbtfrIRYBuGZv_rBVE4G5BMTnd0ezcXvrTcFc_tgL9hIWRpbm-miyTnB1t_Biim7Tbg8cbQKfd8S4flEN909pJ6_iu2bL9t4JMR1hv3wAsGfFQyxqGo0zxwqgADykzhphlTaezW3XYv9qz1t3_4gwGWdq2g0cdc9qEPD5dTYIHIQ08wumTpfkyimKP6vA4Hu038lbHFFhbZuhWuT-eXBxUT7q5seayLsBoCAQF15rniN1vpr81RsiJcFEVDokL8-7zFunr1z0HDlklOiAokUYATHH31k182paQ2Gz7ZdBEMOIJYsFzE_nFU_sXwla4b8GzzKJaKBj2mkNvXVlUgyqLl-lcTjH_LX7q9thXZuopeSidlVVGnvuU-Y33FOy9nOerDBRuKK2Lh6XmZ3HxCPQvWGbhOLqyGmQMAzyxFA_y0FmCe3CbRcp0ObyCaql_6udHJgDflOeW0JaR3wm1rbXoajdrCknSpgfUgR_xgPGNgR0EP76erYvlJhwzFvXhkcTtX12ImLMMc-hkSdYVTFmj3nDwFzpusN1xj32qAhkHynJBBtiQexEEpShEMqS3C2VyOK1N9xqKKsbeImkJ0S0DoJogRWdP5IvJoSjYmlYxTIelmjOi5EHlsuPv8RlOKsdmBWDlWSJKzi8Fx_RlfI4ZjgSnXJMvKZsDXyYsPRR6bBPc4PXlFQ8lnZbOVHKWPDLEzu5Qk0JINfajLcRBtDEwJb49FXvUxsWBTltS5sd0JkzechvntRyMXPem5N-bUMHY-T8hM5WZrAV9j9LebnWhoPEZooguUwrv0CiOkAGLb9FINW0RBFlCeL5k3mvNGAFb4J4vDnR6fDppGnLKBG9_r_6q0_cZNhTkvKOMqZ3oiUbKuXsoyBxA2Ug9NAGQUhToUIwCraKEtn9sOTiQ4d7ybVVUwmsZPqWn0zwnSntFjlenk0I8Sxq_GTsYxA39MZot6e0IGdHr7xxOM6mQ707H0KvdbR2M-Nhg_JDac_1rhWgMdVXdYL4mf5mJpd24F8fGYjQX1b5yQFN95PGXE8efKVFBqBJ4IEa3zyXmHZG7K9oylY3SzVuzn8sdJFO07pfRZaxQcBdd4fkcHtrFYo_N3yh6tH3y0LZgjW1EWVIj0DWYfxW4jpubsuuG7vb-XR1teHEiILjBpzc2lvQwa2NuWQW787A7HEb1yA4",
+         "summary": []
+        },
+        {
+         "id": "rs_0f2e21d5f84effae006abf53b1519887d1994a1c4c40f81cd0",
+         "type": "reasoning",
+         "content": [],
+         "encrypted_content": "gAAAAABqv1O9rby1B8lOGp45FICG8vk4gnF04p0wD40Afz_7VWTAMp0ia2ftfKdmQp1DFO79hmu8PlX5lqK_ukfeF6RRO9NJkkU4YVtwRjGRMjRizQNBNCMIADAXVriL1ikM0PZZCFnJ_tSCQFgmz5TWBLjUgwpAkIPHEvCWjQ9EcrzdLsDzpO80_74yu9Tz-u1DW5KfrO26orQF_xywdQfBdN1QFK9_PUmbaw-_UBX-SrlwI27gtjPOUr-y39pJUlNb-tHYtcdEoDTmTY-7YIfP4NrZlKMMgN4Qsebcwug3HVGtKszxMjAgOCZKk-fJWN__eMG4-RCJAgSNruW7Q3vA6OpOrzSirrioqtsJi0H4-4dcSUicBq8gVxxU6C895QXtaivCZ9Jz-wgcQzVTGY_zqEogDMZ4XTdNbF5M0RGil9OIc3i1odCy8bStY8PhDsYccJaEA8OX9pLWzFSSChp1xlA8P1CRI6wfBZ2Z77HgkCWZKSysnCmfoHd7uMcvYsDTds7jIm1Q3Z89VF-vRnwSxjEhZwOy-Ntbng4fbxItghxOkjjQJVX9xziCC67BBweamvjLveSc6vNVf6fMbG10bOIxzJiZSz8JAh0143e0Whxb25b0Y0DnlU5EY_n5I9TZC1bcLj_s4e4Fyk3OuZcG3t78l57JK18_NcRMBVj-pBRKe90Eh10KGpg8vqjRoPLp6p8fTRH3iTpMXk_hiiHd0_OsDyEkJtHekfEt7I-9JwKZfOuh9V9Y9NzRq3LQI7zvaQ7ruYWtIgiCfO3Y41U15JBorB4B6zRP_wC7nQ0LSnLivDSn3x-lWCyFOwqPUJTxVlu1n7o0Ur6bIQwYphxmgFDBvmUdgZihUPot0QGyPBkedqxpm-ztWIL_mDtdVQ_DobrbY7IpjCredPfWt4FF9ockbYOHqb8Kn6qfemrCFX656g3pMvDdeUP3Qtzs3TmDSZBTl4Uie6yRkDWCDSsQCPDVle6St10_k1EMvk6DR4tDgPDBUzYcXVHkBPrTu0Rx3Zw4mY6Ha5kf-xALR0F7DzUDp5Kb-K-81O-IFc86Md4sc19JyyGxKdPVBePcjyQy-qvQWYEbbKZYoJPf1i0acnZHyuzaG-E3ZPzvCd4eqPveVjz-yi94js6j-m5YDBkCSpThNXaoS2xIA1FMdNObVOSk-VFpekEPXHY6E9VIwLomMhzQk86OXRQWP12JD-QLv9IidIUmXdA-7VhxDghxyRyXVVJUf1w6Mo62GsZXMV3lOBkxyW8g6VSS1yRuyb0Tw13uHxs054z7AcZmgXE2bRTLrde-DT4a8H5e3muXtojFNWAl5yGwnoFrdMpO0J_4LrcvqjDBNeECDifqA3tfF-yp0UVfdns4M1vVrOx6rrR0uG-kPYKnmprJB_UN4q9Efxb5ddt2BpA1ug0GjxYdDe3hwEsdiiMjtgJa8wKMBHVhu7mCQ5o6zx18Q0rmD8SQVIqTfX64ZAROwVQwZDKaWbN-H21FA9Q1IzRv-NK9wIij4los-CM69SKij6fHnoDaXrgNviJZcrl-EjI0yexhVZjZTGMe30VaLwJcJ_axoDP1GW9nAJv52OpmYWJcPOly0wcQb4kSLY8DOMUbMYnG_d0VQWUz4lmiCDLMGFDHO5wCYmEo9v7_kr9Jtrh_LKwP5HDf1td1887T7IWN7tMvY-PPSw-vwxl7rlhX0yYp1VvUCedyZR3m89JEXKtRcPKV7zGN2Xbi9EbL5sJzCYAJ0hDAq2yaF0qw1Whs-EPN85x_XLe_taIulG4ls0xqAp7iTBG4404is6CLhLfDmmWeRD3uWMSGuFj0TobSklo3Eyru2B1yaaqWhUomafZj5ooMzJ9SHszU9dU7fc-4A9IZ54uwaBtWGoRejP8H5G7LzMjhYI57nObPInWWsah4_efi5z7sowBfcJaM9_KKHsTrNToDSIf9U8KEBuNv_iJXPg8XnO1RuqpUQ1v64hBUWEtiFVu3dTpA1q7pVOgyxItYNBMR0kKEICh3uyoOfbOtrFPhcHccYOzmg2cuuZl5N1_33oTq02Ya1HqBo9re0wUeAwvSrhHwWKyR8ApO0252tC_guzoHnTFYGIDtqzY1X7YHY5sGAQsdK52WtSSJC0U64h9f_ppkBkXoMASjBdEUpshBJ0Vy8PbNZ7m3Z52ZtFX3Rc8MTmh6vEzPc0R9i2xWGn-BItoCZNVFw5-8po6kGkzUvap6cc5qVg1jn41MvSxFKp6EDKuDOk5oxiq2z8vddHdcL-4PkF7I1vfrkujp6y5Job5rB2c73pQjin6eQDUs-RDzZwKdIyt6JE7QrUe75id5Ua6OoqrsUrOrXm1cl2liaTeeX60bU1fwYx7l90D_Zd0jh9LdjKVBsmT-Hzm3l_fIJuniLvtK2-_zrHGhm7RBMukuZU7Lb2-Gyx1THAYo_YRxL_2v-4GC95rYnyQarfoOtMYrtIIo9Wgc671aHLIQhUJl8DJLLserOG1eH6ehCdM6cnRhM4ZmPF91x7C58FkcBXr85A==",
+         "summary": []
+        },
+        {
+         "id": "rs_0f2e21d5f84effae006abf53b5da5487d1943fc04be9a06030",
+         "type": "reasoning",
+         "content": [],
+         "encrypted_content": "gAAAAABqv1O9RilnC0od7QrIJN-hir1RnKJ3__OU9Q2RprbDmeefrStRf_cCvZ7YkX9diakMeyh5ZXOgnKi8EAfgw5HEz26Z3aVLp6ZnLtUVkvT4tNWBqO8T_SkgX7si_0HW8EZTJiWyu0fFfT91nsgDbHL2XCkmtRB11IFWQnLXZl1_d6SKB9WEnhTMSRsV5dVEsieEF1ibMpqr2Z7g4qvXxDUBNycRe2DTgEePT4VLfkGsf85ugjcwONG6nfoc6UWM0mfL2tGFwGsP9jG1U7R3bs06f5ZF93AWq_Y_hzYAg5i6SI9l1--3vbokVTSajWkUWlQ32Ih3n05yZ3_WuZfnrIAsq2So9k5SjkxkmlLZnxu0WodovwbLo2sAjCenTuYq_Gi-QRpfJ1abq_z7V8KWDkNbPyS3tNhBdUzonWtqFz4UmGd55cHWZInnNuBWoss0fThBFB5xXJG7cq0JiSl8-M5s1bxs7LYNemL6uvfmLVlikNcBU9bQ6qr498bx2SfFYux8fC4HQNlZHMnUnhrFiXtKA5hVYOCHXAuwecEEQq6n0BJPwrHFw1DRbJXYU727w2TRQun9Yq4oJq574dwqa5GqQg15uyHFbU5Bi5UMx05V9KTZi-7C-V-Q8TJm2uvlWebWJhN6i-6SjGm86Vzehbeg1N2ySGjN0vAkQbmrjnD5wH8r-MT_UcziwV4thbGFh8e9d2yBprA5tQrykt-Mj58i04_a5jzVx2Q_WzqKCzUkh4eRs8rKgNUPABjYjC-0po0VHdVqr25qRbBM_neBekl3FkmlADIZBBWWVnRilifCEoBEKj9IMaRnop81vGHlEC4p1FqJ88LRlUdo-11_n2CTGvTXcxjIuH7kzHwso8a2S1j05j1edK8rtIbIBfqtn2_LSpw8Q5CYN0C1bN-x3LuF8C0rxrzuTpfFClj6yTnN7hJlpMvuFoha1cOUWB77SD4zhh7JXnmO-AXnNQhpJDg4NYrpaEuGrDMLW0OiPdDAFEO7q6NtPCFrt8DQos3Ug8GFihIHTF97G0elLgZoHfUny-t_FcjfaIe8jACddcor7EiBP_Dfk8l8OVA5hUZUr0B01h8aTQcRLAYAm5yAddnOKIga18XGxVQsbVSQdgfVVFFKwmt1rbfVe0DNsM11ha-da07RuUDlhVb_uaDYvI7uF8AKlqqwqeSmnVdYYV4NTCoyLktIEBu97quhG-_Us6dSEg1B7Bty5eN2_vamo6e_7CqGdxEkT638PUY19kThZa9tp0Vuztkdx4g_6pp6AuOBBRqmTJqLmIKBIYlLytE4zNKeVtZpUoQyNee2rvGN7oLTSo43fDsRn6CVHbe3hLjvvANTSHC9npaw1qJJQ0nxT0K8OtXg12LE1-owgIXuSjUQpiVcXOEDTPyBf1WCL_VyeRLnZzPF6abzF_wkc1W-peSuNd690Ah3Xoi9nTIa3uzGrOlR_gLKmtDyyJgufi5iwZzBnoguZP02_QvKoVBUssrD9tX5tVet11RoEIS-4G0Tk_4ORiPMX218D33kH8hA8QI7DVId3PPFpy3wh_BQscYeyLMvdQAu3NfLsaSvnl3e_GxcJ7hadujPruY_fSUqPN-lDWK7n0SaZL5pg6xIWHiOLUtCbx35QHNFp5zK6lXaiv6OIchGXe8PEYAEoRncGnyCWgWj5mdQC9rVqDz_PmwIMDLuPMjVm844r1wH-1APNx-VlaG-9Lp-JLI14I1IP3r3D4SqsKJsLP0cyT9K92iAfh3mHxqj70XiP4hQK92aqvaIsDLPPcOy-CvujtbIsrD7yxY5rHP55awFHrs4uhsPZfDRGphc676PNl02gS3k8Uf3vNpVm9bzex3G73Hp1Xe4EWuMJpdARRm919mVf0jOc9ESAGpqgpwJ6krtXGShhKTywsHPP0kwPBvjRfUYKhZjLO6XVF6pfnQF987KcYA-LJkdax9rmtOt7sn_GFiFeLbA3jAj9S_nPdRFVUcEXpRoykjCf_1s6D3PuMMC1H2LAVyE0Vw2d3os1vWddWVZrwSQnsHtmtow9CRwjDKpllfjekFzXLoshtDFryFc7ju4ovkclOdd-5wPM3c4fKI3Pj7ZVj3HXfS_bY5JBHsQ0w2TzMJ4IwqBVSet7CGs96YBMawHhO2-kKA6_yifzj3ZV6rkRD9LUQ0gE_HOSEbCjzHuWWv5LdQ_B8d_yZRTM-IaRzLgo8EfOnfIPMyvYOboqHpS-W4osr77taZnwlFn6SSZp3KehFUFGMrYY-u1Qx7Yp8-1D1SFI28mcNBrR-DZRQACx7SxmMNDTmOHekquhAyAWOeprJ-9uT_fkPwyH1HucQGJKXn-Aw117caqaRw0UD79VQfc8skMNRh1aQnNRy3s548dj5oojLQiOoAi02DluzmHu4dG52EoCc6ZGoegK3En_DwPBRhtmnU9Hv_JNkcvdN8PbU1Lmgjmu4B_s8KsO1T0fpTO3U50jjVtR1rQ_ca_thIjYxisnBegqJUACJ1cx8H5LXPoFLvzUHA_DsFAb_ugq1aIcQP6OvEbSPHi94U=",
+         "summary": []
+        },
+        {
+         "id": "rs_0f2e21d5f84effae006abf53ba597c87d1be0ed2cd62248298",
+         "type": "reasoning",
+         "content": [],
+         "encrypted_content": "gAAAAABqv1O9F5mLIxq_5tM1bhkWcGvuW4og_CR-ItWArP4oax3hkBE0zTUKuERdtt3Xs-S5AH9t-qsgT3Jq3YBWX4K3W69EnF4ew69sV0EOh5ot_Ppocyp5pk9El63YcvDwV_LR7e1jesoS8ZRItUB0Mmt3hzvem4CpzVYpS6ecVPetrXiY2lWl8n6di_9QaBrBTiR2eTO35iCavMEqmR_PfXZJKm0HXStvmsTYmlssC5kD7x11xY4e6k-D9CLBHNp4jLs7A3kb_aaC2nDX5TBqwFBrrogeI6Ov9sEQhWBowhosBgK_dJUQwmEuwE_qxjuc22t5v6dl98Rnb9OqgLKamCKYncUg0iOcmEovnviI26RAtouaMp8BaS5JkTfBh0f5bZs8xdxdKI0nbKD9R_02kXQOgR1LMEJdklGxznJY6a4du3URjKMHreDe8dkatDgpoWilnoKU0YaoTbaJaaJs5JVcRxInp1gl4zZGYJIg270UfPIH4RpGtcCb20aDnM9E8xclP6G5avKnqov43mVPU3HLB88H0JWn-dvN4wNFh5fYS6bJFVRO2E5QL5lmzceHVoOBEdYS9EFD65y3J7TtlpSSB5FQEr1kAfi9PL_4jSlE8qridYo3aRpAoXGYNNQi7CpGccPKY9j0FFS5fAUnBAa0BSLzVn-jLfIjmDhWCI1j9JZ1zmL0_CigbFO-2Lquj2KaFDk8EyDDxISfxtcSqjZhgqGdEbjJpmIMaGAiN2RHUzgsoR-d3YHAXgfmSIl-zR2Tv5YM9HqWbK7OtK6vSZjYOhqqw8fLQLHCoMOjmNBA5JWUx7_BDCdNKSu2ZRfaATuMma8-LH5tlHhj2ivEUkM1U8ss2oA0N16WbBPrTfnxcxXpbR4qXWJ6_240aKzZxlW-9MTX8diVgwBx8PeHTBs1rExgIZJa9W4_mVXQ2gZgIRi5o10SJfw0ZvohlEAfSYHfG0IqGXTmBP24_hWs77AaDG_6VRgcqjhJkuU0opR0inVmbYRobaE011vo78QqvKovc2cYMY-DneexlwnzblA6HplhJ7fQrKdyXQLlwaN1WzzZEV4Xa4S4Hx1KztHVYVLMW2aQj_qehOy9xoW4Ma82Y7lz2O6DlLaL15PoBIjyvX_PikgRoELhqnycKBUogVYUUMLEm6WGvOQTXpHCzV8rmbaPwvqy26AilpPkR007yLRIs_9JeejdaKD62IAea3KSb5zMZSgsPU2tTAN4Ja_hnSjIvIMHIF0j09ixSKLwkUnK9oK8ZAt_pdRhGa9Xups6Pgrzz9xWx6VLshMhclCookNp141lIn2McnrlQLT6SrCPjtm3dvHeA1Fwtc5Lj059eHnUSGaxSQZChy1MeZz5m6JQghWSF69xJbHDjzpxMhNNYVfAucj7Qk3_HS440lZyiJqxK2OwmtjkfoUoHGnZrWCouOos69fJB8ue-KvrT-wwSNH6g3TzeuL2t1KfXTwY8gyAWfmoEAFncbA4JKg0MUDUybQcngLWZ9cwAGhW2DuELN8xkE9qOxNLAfjly8mZgEu18GOvVniv1o9mp0PSJf9EAV2JpfQLUe08nh5L1hH3HiWg7RtoSMAtbonGAEOT7nWWrJh1DmSidW4en5k1tSHcSYeRhtZT6uq7GjQdzbq2B9_VVWOqUfWJxW9M3H-M-jkEp2xHIWRisHfl0xNdpnAu5-zFYif1V_nleqZx5V2NuWLBqvANcQFS_kTlv2ZYJo0hxknDDglT6CEjc0pmwEKuqz6xtcmBArKADcHgqCdNH0kNlFsyQrDtOrPW_PrGeCKoMXEmBYQI2ptkinrAxUPurpVoPhoEUb35TMV_nRgpfAA32ICP0yBgvLtzUegMjvA43nKCNYcxHsxNIvettbqvZKM8ZO1SUFYuU72fs8Hvj-EWD7aOR0cERzomwhesc-eOF8MVpwraS71NEG-CPjIHo9Tb1dUet6VAYDXOz0L3CHHXgAFnYSf4yenfgnpa63OjOfnw4u3Z_Ns5rh7tcrt_JjHAyW9FJ9obn2F4i71qI9bsr4qYB1NsLufbrl5i9-Vi3LvVUg_ms4-ntQcqWCFimk0vdXrSdsN6qCs-x9dZYnnZ58OoMVPBIwlVXEk_U2F0UF-CRaV-0pj6aV5wZDKgwIG25h9kFqz0kmUX7GY82ffgIuDLZu33sCu9bUTEx0jYbJE_DHIb1B_etMPjkvEcHlzMJSFVR5uA7_jRoEn9enz34UQwdJq2Xo10GMcBw32Kfu2ExgvYZrf9KuZD_2wS8lbKTZVZG-be61AduX648v54g6oaxIBqts2E7k89hyQtW0nHeIIpLQldHRLd1Eg0OvaLnk9EbmWhQUDcZlhmepOn4wi0SnsTL0BoTfI_3M2f",
+         "summary": []
+        },
+        {
+         "id": "msg_0f2e21d5f84effae006abf53bd3c2087d1975a4cbbb91a412e",
+         "type": "message",
+         "status": "completed",
+         "content": [
+          {
+           "type": "output_text",
+           "annotations": [],
+           "logprobs": [],
+           "text": "30871"
+          }
+         ],
+         "phase": "final_answer",
+         "role": "assistant"
+        }
+       ],
+       "parallel_tool_calls": true,
+       "presence_penalty": 0.0,
+       "previous_response_id": null,
+       "prompt_cache_key": null,
+       "prompt_cache_retention": "24h",
+       "reasoning": {
+        "context": "all_turns",
+        "effort": "low",
+        "mode": "standard",
+        "summary": null
+       },
+       "safety_identifier": null,
+       "service_tier": "default",
+       "store": true,
+       "temperature": 1.0,
+       "text": {
+        "format": {
+         "type": "text"
+        },
+        "verbosity": "medium"
+       },
+       "tool_choice": "auto",
+       "tool_usage": {
+        "image_gen": {
+         "input_tokens": 0,
+         "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "output_tokens": 0,
+         "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "total_tokens": 0
+        },
+        "web_search": {
+         "num_requests": 0
+        }
+       },
+       "tools": [],
+       "top_logprobs": 0,
+       "top_p": 0.98,
+       "truncation": "disabled",
+       "usage": {
+        "input_tokens": 136,
+        "input_tokens_details": {
+         "cache_write_tokens": 0,
+         "cached_tokens": 0
+        },
+        "output_tokens": 2424,
+        "output_tokens_details": {
+         "reasoning_tokens": 2416
+        },
+        "total_tokens": 2560
+       },
+       "user": null,
+       "metadata": {}
+      }
+     },
+     "tool_runs": []
+    }
+   ]
+  },
+  "16/luna/tools": {
+   "started_at": "2026-10-02T06:48:07.117+00:00",
+   "total_ms": 4709.1,
+   "turns": [
+    {
+     "started_at": "2026-10-02T06:48:07.117+00:00",
+     "latency_ms": 3358.7,
+     "request": {
+      "url": "https://api.openai.com/v1/responses",
+      "body": {
+       "model": "gpt-6-luna",
+       "input": [
+        {
+         "role": "user",
+         "content": "In this 16x16 grid, '#' is a wall and '.' is open. Starting at the top-left cell and moving only right or down, how many different paths reach the bottom-right cell?\n...##.......#...\n.....##.......#.\n#...#.........#.\n................\n..#.............\n..#...#.#....#..\n.....#.#.#.#.#..\n##..#.##...#.#..\n.........#..#...\n#....#.#####....\n...........##.#.\n.##.............\n#..##........#.#\n...#.....#...#.#\n.....###....#...\n................\nAnswer with just the number."
+        }
+       ],
+       "reasoning": {
+        "effort": "low"
+       },
+       "max_output_tokens": 16000,
+       "tools": [
+        {
+         "type": "function",
+         "name": "run_python",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code"
+          ]
+         }
+        }
+       ]
+      }
+     },
+     "response": {
+      "status": 200,
+      "body": {
+       "id": "resp_070bca2796166464006abf53a77a6087d18199895f1120ea31",
+       "object": "response",
+       "created_at": 1790923687,
+       "status": "completed",
+       "access_programs": null,
+       "background": false,
+       "billing": {
+        "payer": "developer"
+       },
+       "completed_at": 1790923690,
+       "error": null,
+       "frequency_penalty": 0.0,
+       "incomplete_details": null,
+       "instructions": null,
+       "max_output_tokens": 16000,
+       "max_tool_calls": null,
+       "model": "gpt-6-luna",
+       "moderation": null,
+       "output": [
+        {
+         "id": "rs_070bca2796166464006abf53a82db487d1ae20f4363103ec34",
+         "type": "reasoning",
+         "content": [],
+         "encrypted_content": "gAAAAABqv1OqHvWs3IQ6EB46n7-UlWdMTpzjFkiXwopAJkEamOgET0iEGaPB1J3YZklT5dvp6fU-LcLVv2aA1-KC33Zrk_HxB4iOmj66r9rTIs9wpIQZdK1YKazaMdsErQWwQDiX8oNjsPLFLikpxDSIrTpokIxtdlFfD5E1Z4NtFo2FrS63uAxa09LJPfGUQOfv07fVLNEDire_jkw4LKn2ZryfB4VOq7Wt45vt1JHqvLBpIdlC34074OujBvpte3jPK-4oJ9MU6ECa7ah-dQmbT6wuG62v8qLNoq8830kcu9I2CVH3Eck3cA6jJtP_kN4DZHnJrKMHiBK1CSKOCbsely_Z3UvqbsGgYEOJEbQbNov39yHVG4lt5PBDIYJLSIYWV8jp5T87m6fjxag3tFT1e8Ab3IHMk6anHmIRxnAVMMWJIQmPbJbZW8HLZ_Og8RYPFoXbyIG7An9GOvCYnglsZSNVB5Y3GnfR_uVayeUJYd-Bj6y0sAri3M4S_cG1S8EqVcNr5ADgZybkSW2dRd7eKq48wGMFVsANSmJe_jFyvxdYK95VoQooYvHKrfhroWQD6OMdgnY15xTA2z4_jDDHQGdYECwgz6eU9KSiE_Ve4d6Bk6JUrIg1zmEHRnF5OQCNFFdvdxN3UtKmxl34-zlfhktgSzK4dGjk7ZW7o4e90NR9g4iz6WAT8WfuYhw88z1sAQMsU0c1FN_yYKoeV0I6MwBBYUBFJSMhk07l63vO910iIVay3qb22e8C7TGzC1BdSHerwQsiHoJLL-mpO6TUej-AClT3aI0xSxBOaavuZxR4QS4U2-Sh1Er0UnldXr4hj9mqZSH4VjbSPVAbisnqfF1HZ_aYRPaXD_X0l0fR517x3wUjqSD-HADjAZk9SLfM83uTVGsQQhe0vr_MW3nwKutjx49Zm-pktoIya6pegesbRk3qGfmqmuDUPDUMZRAp5TA9ajmZG49egnd0lzLabB9JI1UWl1drwhn13KCUQFyd1g1vJNsTSffNxsnJwQWNUjNBtc9t-gWL3BQ6QAmQZOnZKuRA0jabcGmqrXcAYs2Wl0rEfgnncKDLun5JdjzoJ-QEHFI431EBEiIFa9wKTJDqn-E7IuBwkUB3P7TMHmcSZ-Pjx2VImq8mO2covkUtPOObTH_QlSPibKAj2QLeLY7tKPnJI8fYq1bMTvLg8G1SbN6fZIo3QYY_6Tjrj2WAunYgzSpAITacxyiViDwINTStUblrHdVYH2-u1Kp02I4goHQZ_zg=",
+         "summary": []
+        },
+        {
+         "id": "fc_070bca2796166464006abf53a87e5887d19c50c01716b90770",
+         "type": "function_call",
+         "status": "completed",
+         "arguments": "{\"code\":\"def main(input):\\n g='''...##.......#...\\n.....##.......#.\\n#...#.........#.\\n................\\n..#.............\\n..#...#.#....#..\\n.....#.#.#.#.#..\\n##..#.##...#.#..\\n.........#..#...\\n#....#.#####....\\n...........##.#.\\n.##.............\\n#..##........#.#\\n...#.....#...#.#\\n.....###....#...\\n................'''.splitlines()\\n d=[[0]*16 for _ in range(16)]\\n for i in range(16):\\n  for j in range(16):\\n   if g[i][j]=='#': continue\\n   d[i][j]=1 if (i==j==0) else (d[i-1][j] if i else 0)+(d[i][j-1] if j else 0)\\n return str(d[-1][-1])\\n\",\"input\":null}",
+         "call_id": "call_JFVIHXxrLiTG8dDuBEjuVt64",
+         "name": "run_python"
+        }
+       ],
+       "parallel_tool_calls": true,
+       "presence_penalty": 0.0,
+       "previous_response_id": null,
+       "prompt_cache_key": null,
+       "prompt_cache_retention": "24h",
+       "reasoning": {
+        "context": "all_turns",
+        "effort": "low",
+        "mode": "standard",
+        "summary": null
+       },
+       "safety_identifier": null,
+       "service_tier": "default",
+       "store": true,
+       "temperature": 1.0,
+       "text": {
+        "format": {
+         "type": "text"
+        },
+        "verbosity": "medium"
+       },
+       "tool_choice": "auto",
+       "tool_usage": {
+        "image_gen": {
+         "input_tokens": 0,
+         "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "output_tokens": 0,
+         "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "total_tokens": 0
+        },
+        "web_search": {
+         "num_requests": 0
+        }
+       },
+       "tools": [
+        {
+         "type": "function",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "name": "run_python",
+         "output_schema": null,
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code",
+           "input"
+          ],
+          "additionalProperties": false
+         },
+         "strict": true
+        }
+       ],
+       "top_logprobs": 0,
+       "top_p": 0.98,
+       "truncation": "disabled",
+       "usage": {
+        "input_tokens": 246,
+        "input_tokens_details": {
+         "cache_write_tokens": 0,
+         "cached_tokens": 0
+        },
+        "output_tokens": 257,
+        "output_tokens_details": {
+         "reasoning_tokens": 18
+        },
+        "total_tokens": 503
+       },
+       "user": null,
+       "metadata": {}
+      }
+     },
+     "tool_runs": [
+      {
+       "call_id": "call_JFVIHXxrLiTG8dDuBEjuVt64",
+       "arguments": {
+        "code": "def main(input):\n g='''...##.......#...\n.....##.......#.\n#...#.........#.\n................\n..#.............\n..#...#.#....#..\n.....#.#.#.#.#..\n##..#.##...#.#..\n.........#..#...\n#....#.#####....\n...........##.#.\n.##.............\n#..##........#.#\n...#.....#...#.#\n.....###....#...\n................'''.splitlines()\n d=[[0]*16 for _ in range(16)]\n for i in range(16):\n  for j in range(16):\n   if g[i][j]=='#': continue\n   d[i][j]=1 if (i==j==0) else (d[i-1][j] if i else 0)+(d[i][j-1] if j else 0)\n return str(d[-1][-1])\n",
+        "input": null
+       },
+       "started_at": "2026-10-02T06:48:10.476+00:00",
+       "duration_ms": 271.5,
+       "container": {
+        "image": "python:3.13-alpine",
+        "command": [
+         "docker",
+         "run",
+         "--rm",
+         "-i",
+         "--name",
+         "models101-691d41c5733b",
+         "--network",
+         "none",
+         "--memory",
+         "128m",
+         "--cpus",
+         "1",
+         "--pids-limit",
+         "64",
+         "--read-only",
+         "--cap-drop",
+         "ALL",
+         "--security-opt",
+         "no-new-privileges",
+         "--user",
+         "65534",
+         "python:3.13-alpine",
+         "timeout",
+         "-s",
+         "KILL",
+         "5",
+         "python",
+         "-I",
+         "-c",
+         "<runner>"
+        ]
+       },
+       "exit_code": 0,
+       "timed_out": false,
+       "stdout": "21271",
+       "stderr": "",
+       "output": "21271"
+      }
+     ]
+    },
+    {
+     "started_at": "2026-10-02T06:48:10.748+00:00",
+     "latency_ms": 1078.3,
+     "request": {
+      "url": "https://api.openai.com/v1/responses",
+      "body": {
+       "model": "gpt-6-luna",
+       "input": [
+        {
+         "role": "user",
+         "content": "In this 16x16 grid, '#' is a wall and '.' is open. Starting at the top-left cell and moving only right or down, how many different paths reach the bottom-right cell?\n...##.......#...\n.....##.......#.\n#...#.........#.\n................\n..#.............\n..#...#.#....#..\n.....#.#.#.#.#..\n##..#.##...#.#..\n.........#..#...\n#....#.#####....\n...........##.#.\n.##.............\n#..##........#.#\n...#.....#...#.#\n.....###....#...\n................\nAnswer with just the number."
+        },
+        {
+         "id": "rs_070bca2796166464006abf53a82db487d1ae20f4363103ec34",
+         "type": "reasoning",
+         "content": [],
+         "encrypted_content": "gAAAAABqv1OqHvWs3IQ6EB46n7-UlWdMTpzjFkiXwopAJkEamOgET0iEGaPB1J3YZklT5dvp6fU-LcLVv2aA1-KC33Zrk_HxB4iOmj66r9rTIs9wpIQZdK1YKazaMdsErQWwQDiX8oNjsPLFLikpxDSIrTpokIxtdlFfD5E1Z4NtFo2FrS63uAxa09LJPfGUQOfv07fVLNEDire_jkw4LKn2ZryfB4VOq7Wt45vt1JHqvLBpIdlC34074OujBvpte3jPK-4oJ9MU6ECa7ah-dQmbT6wuG62v8qLNoq8830kcu9I2CVH3Eck3cA6jJtP_kN4DZHnJrKMHiBK1CSKOCbsely_Z3UvqbsGgYEOJEbQbNov39yHVG4lt5PBDIYJLSIYWV8jp5T87m6fjxag3tFT1e8Ab3IHMk6anHmIRxnAVMMWJIQmPbJbZW8HLZ_Og8RYPFoXbyIG7An9GOvCYnglsZSNVB5Y3GnfR_uVayeUJYd-Bj6y0sAri3M4S_cG1S8EqVcNr5ADgZybkSW2dRd7eKq48wGMFVsANSmJe_jFyvxdYK95VoQooYvHKrfhroWQD6OMdgnY15xTA2z4_jDDHQGdYECwgz6eU9KSiE_Ve4d6Bk6JUrIg1zmEHRnF5OQCNFFdvdxN3UtKmxl34-zlfhktgSzK4dGjk7ZW7o4e90NR9g4iz6WAT8WfuYhw88z1sAQMsU0c1FN_yYKoeV0I6MwBBYUBFJSMhk07l63vO910iIVay3qb22e8C7TGzC1BdSHerwQsiHoJLL-mpO6TUej-AClT3aI0xSxBOaavuZxR4QS4U2-Sh1Er0UnldXr4hj9mqZSH4VjbSPVAbisnqfF1HZ_aYRPaXD_X0l0fR517x3wUjqSD-HADjAZk9SLfM83uTVGsQQhe0vr_MW3nwKutjx49Zm-pktoIya6pegesbRk3qGfmqmuDUPDUMZRAp5TA9ajmZG49egnd0lzLabB9JI1UWl1drwhn13KCUQFyd1g1vJNsTSffNxsnJwQWNUjNBtc9t-gWL3BQ6QAmQZOnZKuRA0jabcGmqrXcAYs2Wl0rEfgnncKDLun5JdjzoJ-QEHFI431EBEiIFa9wKTJDqn-E7IuBwkUB3P7TMHmcSZ-Pjx2VImq8mO2covkUtPOObTH_QlSPibKAj2QLeLY7tKPnJI8fYq1bMTvLg8G1SbN6fZIo3QYY_6Tjrj2WAunYgzSpAITacxyiViDwINTStUblrHdVYH2-u1Kp02I4goHQZ_zg=",
+         "summary": []
+        },
+        {
+         "id": "fc_070bca2796166464006abf53a87e5887d19c50c01716b90770",
+         "type": "function_call",
+         "status": "completed",
+         "arguments": "{\"code\":\"def main(input):\\n g='''...##.......#...\\n.....##.......#.\\n#...#.........#.\\n................\\n..#.............\\n..#...#.#....#..\\n.....#.#.#.#.#..\\n##..#.##...#.#..\\n.........#..#...\\n#....#.#####....\\n...........##.#.\\n.##.............\\n#..##........#.#\\n...#.....#...#.#\\n.....###....#...\\n................'''.splitlines()\\n d=[[0]*16 for _ in range(16)]\\n for i in range(16):\\n  for j in range(16):\\n   if g[i][j]=='#': continue\\n   d[i][j]=1 if (i==j==0) else (d[i-1][j] if i else 0)+(d[i][j-1] if j else 0)\\n return str(d[-1][-1])\\n\",\"input\":null}",
+         "call_id": "call_JFVIHXxrLiTG8dDuBEjuVt64",
+         "name": "run_python"
+        },
+        {
+         "type": "function_call_output",
+         "call_id": "call_JFVIHXxrLiTG8dDuBEjuVt64",
+         "output": "21271"
+        }
+       ],
+       "reasoning": {
+        "effort": "low"
+       },
+       "max_output_tokens": 16000,
+       "tools": [
+        {
+         "type": "function",
+         "name": "run_python",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code"
+          ]
+         }
+        }
+       ]
+      }
+     },
+     "response": {
+      "status": 200,
+      "body": {
+       "id": "resp_070bca2796166464006abf53ab05b087d194b709418735fff0",
+       "object": "response",
+       "created_at": 1790923691,
+       "status": "completed",
+       "access_programs": null,
+       "background": false,
+       "billing": {
+        "payer": "developer"
+       },
+       "completed_at": 1790923691,
+       "error": null,
+       "frequency_penalty": 0.0,
+       "incomplete_details": null,
+       "instructions": null,
+       "max_output_tokens": 16000,
+       "max_tool_calls": null,
+       "model": "gpt-6-luna",
+       "moderation": null,
+       "output": [
+        {
+         "id": "msg_070bca2796166464006abf53ab7af087d19dfad27d4c346936",
+         "type": "message",
+         "status": "completed",
+         "content": [
+          {
+           "type": "output_text",
+           "annotations": [],
+           "logprobs": [],
+           "text": "21271"
+          }
+         ],
+         "phase": "final_answer",
+         "role": "assistant"
+        }
+       ],
+       "parallel_tool_calls": true,
+       "presence_penalty": 0.0,
+       "previous_response_id": null,
+       "prompt_cache_key": null,
+       "prompt_cache_retention": "24h",
+       "reasoning": {
+        "context": "all_turns",
+        "effort": "low",
+        "mode": "standard",
+        "summary": null
+       },
+       "safety_identifier": null,
+       "service_tier": "default",
+       "store": true,
+       "temperature": 1.0,
+       "text": {
+        "format": {
+         "type": "text"
+        },
+        "verbosity": "medium"
+       },
+       "tool_choice": "auto",
+       "tool_usage": {
+        "image_gen": {
+         "input_tokens": 0,
+         "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "output_tokens": 0,
+         "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "total_tokens": 0
+        },
+        "web_search": {
+         "num_requests": 0
+        }
+       },
+       "tools": [
+        {
+         "type": "function",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "name": "run_python",
+         "output_schema": null,
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code",
+           "input"
+          ],
+          "additionalProperties": false
+         },
+         "strict": true
+        }
+       ],
+       "top_logprobs": 0,
+       "top_p": 0.98,
+       "truncation": "disabled",
+       "usage": {
+        "input_tokens": 516,
+        "input_tokens_details": {
+         "cache_write_tokens": 0,
+         "cached_tokens": 0
+        },
+        "output_tokens": 6,
+        "output_tokens_details": {
+         "reasoning_tokens": 0
+        },
+        "total_tokens": 522
+       },
+       "user": null,
+       "metadata": {}
+      }
+     },
+     "tool_runs": []
+    }
+   ]
+  },
+  "16/sol/plain": {
+   "started_at": "2026-10-02T06:48:07.117+00:00",
+   "total_ms": 10807.1,
+   "turns": [
+    {
+     "started_at": "2026-10-02T06:48:07.118+00:00",
+     "latency_ms": 10806.6,
+     "request": {
+      "url": "https://api.openai.com/v1/responses",
+      "body": {
+       "model": "gpt-6-sol",
+       "input": [
+        {
+         "role": "user",
+         "content": "In this 16x16 grid, '#' is a wall and '.' is open. Starting at the top-left cell and moving only right or down, how many different paths reach the bottom-right cell?\n...##.......#...\n.....##.......#.\n#...#.........#.\n................\n..#.............\n..#...#.#....#..\n.....#.#.#.#.#..\n##..#.##...#.#..\n.........#..#...\n#....#.#####....\n...........##.#.\n.##.............\n#..##........#.#\n...#.....#...#.#\n.....###....#...\n................\nAnswer with just the number."
+        }
+       ],
+       "reasoning": {
+        "effort": "low"
+       },
+       "max_output_tokens": 16000
+      }
+     },
+     "response": {
+      "status": 200,
+      "body": {
+       "id": "resp_0a2eca53fc410561006abf53a77bf487d1a3304c1cca43c3e4",
+       "object": "response",
+       "created_at": 1790923687,
+       "status": "completed",
+       "access_programs": null,
+       "background": false,
+       "billing": {
+        "payer": "developer"
+       },
+       "completed_at": 1790923697,
+       "error": null,
+       "frequency_penalty": 0.0,
+       "incomplete_details": null,
+       "instructions": null,
+       "max_output_tokens": 16000,
+       "max_tool_calls": null,
+       "model": "gpt-6-sol",
+       "moderation": null,
+       "output": [
+        {
+         "id": "rs_0a2eca53fc410561006abf53a84bcc87d18a3fb0562acbff26",
+         "type": "reasoning",
+         "content": [],
+         "encrypted_content": "gAAAAABqv1OxTIy44W9zfrw7Jua_k17-e9-rRy3aorHUEZ-L2pqK0hQx0oyuglPE7zcsS_mtk4nRN-QgnmGCLeVHs5cemsHHYqUepoyhvEREuLXhcjufgYvhqtymQg5LdZ6bUkrB5fb90mBZN48JZmvris3vTCB8XMgyyYwk6QGZqRbuqUjqofnZaclFYwePWhmdQKyjPzcMeSCb1pKXUpshMRIcSRw5xzANouQMh7AWIPaDo2GEUof2FSBG_kNutUO26YjYMc0TgIUOYULBPm4ZI-401WdkAzb4TPHkDTyP0W90e60Uns35Y8s7SD5sRAhm-zCIGEIZ_yY5fWsnw0qQhvEcKZfmaEXCo0wvt6uHwwdYUVS2Taqw8N7l-EXacMLWmj7GKCh4zot055vVn8SSy_bOCrGfLYOpPyROpctaRytL7WTOo4oTQucHT6god88e9w5PPKBbb-dLZETUb7ECXw8JmiFpG5EE6wvCWF5UhkpwH34rrY4q_QxJqKQY5XRsMq7F3yqAcNR8PdS2aU_c3Y5BFrhoXNu5bh6dXV3w1fiYD-PG6CyflYS4NYPa1DzKY2XJ7mrqFf9ye868aSEBG38Mjk71i7JXCNazsBZNxehxXe4LOcSEpv4afL5gqIz6izu3sp7h_RdDV8yxpp3lPUriLAr7EWEcACAOTwWXaqCVd1ZZvXmJP9YiE-fZyFCo_XxHx_8i-uB1ROC4GyEs4FrnqNaNozYf0boaAYr4NJnDYvf6cvD3S12l8f_gXxmjA2GdetLsYnEm9d8nZHAouaPIDQ_8UoOe75egF_XjANfnRmF2VbJ1fgIlWNcVKXl9AuH2ygcUG9SLpv4xZ4AO_0H3hSLL9HKzPoRlv512sCNpZyu9wVs-q7WX5OIQqhH93grvSKSuuWDBx0ZUEv211X2YmlpyJXQdl36gsYrhYtHDB4FCrq_aOh_x9_HEowwAlIpudBsmBOQ-X9-ifgsEX-FJhYL8PKnDulNsn9Hz1HhS5jmpx_Oh3hiWayPcUufnIFWuWk0kwvBv1QbQvvh57zqKi_Bp1xjNyafv2_AkrkP42CuXVXtYOgCRK4TSK3t1q9Rl9rB0JXzap09B5_TJVGR1aLue8rVNbDbx2FUakqqAs3lYDjkkMu-GxRV5tsEuPJ6NqeVABO-JBdJo6rT7TwaTH4dqjZvWKAkSVHw2gaws6JYlxESAJy93oTwEJBa6NiNV1kpmv9WPIxsGXOKNAE91RY4LSJEEXLSaHs_-qsLknKSmxhpkqSQX6NFj5jTjYs8xU5Ypb7pZUSpQl6xS9eTIgf9qnVpVsSdYxX5gnEgwxlDU7v8ZlwyUSpnGQjY-50UsedNul8RQRBRu6qMaNYfnfkFlJoSjAD2NVI1BCRHqBLi3M3BkSukDUYYSIJW7WaCfoNMFJ1MQhDzXvdCUtZLRc2jJSzfxqwQV7yh9SVrEOkASZoL5BfXPPK3RIIc3UmCIVBGPq-deEYhry_ingHCLqAbcRoYPEfpSxq-L3vWeF5DRSsHj1BMuaOKMoj3Jz_5KHMZ6z_HgaugqDqzDyYBpzrRW0eW9wvBiIdji2JxpYWEGazoX37FR8yavmLunUNiq4WJPwHK4STee2B89gZLoudsYyi9Y2JKfIJN3vmP3thKgcm80yScnOhqYNNl1uU3b4EQQm0WbjWwLCSuKFjMRUpqslvPpNcXsBsLfAcjL9AaQohYTx7ofUogzVyoCV0pBA-74Z2oX5s70s0CeyQoJpQ-egDJHOHCbTe8QG6uK60lsie_Xl2eZGN-mWRitO9U0460GTj5nXRv2R0nYbxuQt_lHXBuxC7-GxaDrNgC7EGGyoEql1GEGeIOumAI4VS9fkP8CrDWS-ykGwQX10YTqOE-gRqYQB-Q1i8vWEYCgeTu6Z4x_Y36hHwfmO8bc-1qMiGaNO6FCX_-d4MhgsZWtT-VrhBIORk_LBts2hAOiHT3dWGR5XJOKJsuMrFH9d89LFMrT4NVEfMRj06abHE_9VKxbAH2bHZWzH13tGI-fBqlsuo2GnZVhgrQFBUuP86Xk-L6bf9y2LA_Hf3bMnDumyfmj2a1Vo0HtEYwnGPtcuHn2epF8Vc7vfRkTjb8y5ry0_FX1uF-POT4k8Bt_vQu8eDBVEG8fRIYjkUSUKQ4pu3Cz4k4KJaHxKNz86FcTl22vIqQ2QGrWH8GRC86caH4eV8366PchjOCiYA1XdIkarTus9riUMnLpkvJs7NhPY54witnpdYUArhI0Kt8377LTQ6-vDrwE3CSb7Bs3g58flN452JLxyw2vGP3WdR7vTBB-f3F8_MUkhte1ips9TtnKoaXoZkkffRyJ_xWFkCp8RXghgch4DT19pgm-VswTDNAaeko9VjqmpkG2zf9iycCyXZWlLGughzq7HSMgtUVNxsPxYjq-GPiqJ7qNPVNOnzJdyLAm3StCKZUXJPZR15hnJcl6XWXNa6lWbBwWHh5Qi87VAtfGCFbktCJ4Z-ULNCQOU6exIsvT1DVfOtq-BR2ImPUlYtkbEpggp8v8prM_lSLYUvdTScXZMV8dgUdBAKAaJdwDeeqj4esQfBHEypLLjJ41kcWvUSyVfTwfuUEgh_b2n7o=",
+         "summary": []
+        },
+        {
+         "id": "rs_0a2eca53fc410561006abf53adaac487d1a358d3639de7828c",
+         "type": "reasoning",
+         "content": [],
+         "encrypted_content": "gAAAAABqv1Oxv6Mvmc-4SztiXBr8HDC2VLy6ss8igx5GX7s7SLRN9D18E90LbYTL1ahQq0v4jY4UEx5B3olaX0eqgHW4zB36D6tKlX1mrXdmpzWywMqW8i4hkZnxtE58smffka7pI4CxNucMRY6dzL4FGVLR3PzFPXsBJ49H_VqdIxBwpDN30Yl6b5I9I7KQ5F0S_ZZ5a_TFy4CDbpBWlNtBMN6LixIwzA9xg3CpRxL9xlGhH1Hj-JLS-sHfEN0YpCaO57AjC6-1z3xuzIuMpLyGdrO9s2HtzEkyTzRMID20Cjh3gQj6hY4Kph-RVx68y3n3Swt2-GJ2oxN5-4vUo5Vb6EWEl-nM22fipm75GEN8BMF00PGB5ZG3Xd24RdazzExWyXeIjoHtfeLYbvcSuULF71KvaW_RIgcbCUaiNUIklYoE0qNGb1aITEoMISpYl4tMn1Y70db02u_lQKj0cRpX1qAtM7BoD3OM_cg-Vy3K2nb8Rbl2JjuG_N8pH2-UChJcO4ZZBLmPX3N9i_Td9bmNyA8CTkrVtcA98ppuT2ocBLhB6Fj877dBO0-CkQTiUjPCIMUvLLLYnC-NRJS-gv_ne-CB6n5qGTamqnKJ9SRjuHZ2QDA2vXT38wo9p9f55WNcdUDxcDZ40HKnwzbH4M1TTMForMBRH-5r_qadn-nkaVif9Y0C6askRZl25dxKvTVa2o2_4RildFk1xU2_vF5IzW-CoQZ8kpp0Xmj4-lCe0mD9RnF0SBN0poDY5Wmg8iabKKIIoo_y-uzd1--KEGaQ3DFyFQbCtUpHcV1JyApC_HaAG1rS_1JxD21p5LloD6CLo_-qZa2g8mf3iMqOagdbInad_i_wT9185pzXoGCf53M8nTjrQQMQZ1OZaHmCOzU8rJsmapG6I9N3Wtz4IdSGihmSPfJ5JvV5gP4T79IgzLnkTEHgBrK74dDrhU_2OeKSjX3UfPGR7W1kQtW2DGpH8gVZ8MSCgtq6kLNc6rv_7v0OqabE4gCX9kX3KEKR5b6lPoYHoOwasNElrcNQyXHj89UzHSPY4yUEsHhpOfipjXBupinHtz9xmnsVr2KYMEQYgBq1hvX2NJGCKNvrrab08rMnCbBMhS57mCGnYrWxBIKspel3LAF9Kwvn6owlhbj7SxtG4Or-grQ-5Mm39kMCYN6FPc5cn4jO1tXy7m4OrL_FY_NA8OXlqSnMwCRxSsS1wApuhU72BZz3gwcdtVGkd6cSX139r361iorCFVNr5S9iuSslGO6rxCoxQHhTuCXXK4ExamCKVOYorRm_1UR3OQLVQogmbgAEvg6Q366vTvE0lJ6Y8fD8_HYl4RxOVEWY-AlepP_IXF99kQx2SwxW6vxUqTXJFHzTeTi-57cqECjjlZyiwHtiCglu7f69_pjcGSRFSAQL1XVGl6goNFPr33WeeELDgNs4CQQOopuq_XASF03-WjbudiPI28BC-NwSoTJeTQLK2x2lxJ2oQJxciQCflCG17uhWTbhExMAJt77RlHI-v53nhKtJGTZyFA6BXbgoryebbYxifjMIW-ANA4gvaMC5vk-6KaW4IsXrGkopz52YelOfBq6fUK3yDZiqx2h8Kp9qUBn6FC-OHQm6zbKGXvm8sE3Y4v4kgbB6_936LfcjGZg354AnDgKgMRx0pM8Wspwh4xx7pCEokp-J2O6nHVZCEihFmvAQRTbBau4CiisGTh37Aps84ydxTT-3ElcPoXakEFGpvfKxlslrr2haoUiqTQRIhH4ouXUdmexabDCGrVs53WZ5ZMzFBl4VZ2m2J6x8DXujDigp87j13f1zMSdVVpDkY-9fmsoOqHC8wb6IHO_S0xryhVPt6wt_9hwMt1I65qn_q2T4rMggl_wRPXuxEvgCR8rDak8Q_QFvYHPt_-QZAdVcEJoZ5saF0TZjg_T-TCh_QvdVlJSXAeBYjxQz8b_ZkR6gKJq7Ox40jLEa4pAhW1xajmUbrkla5EL3AXPonETvAIiDPgqe-s2oAxCrNiywzSGdXlkgFX4nSxSsMBrlcqJJykgYjTDAAfI03Y0ypbmRu-Z6Rwn3SRe9_goqsB92FotHWYglGtHx7eXPbBS1iCdINLF662U14G8E9ASM4tEvbFSJpYo2Dh2DGUBU2l_qfFGIUiA2h1G8Q_Pzmi4QvK5aoEaelG5pTzccjHxNDjyW17BtZ_PsNTVHBL5Gdk8_s2VOGtX-YDNbxSFyZrlHFqmYk6cX54IpruSlssCoy-79OYmcDlntOnPEFhR_HNgW9qH76ZomQOr0cLa_yB2CtlShcxoGQ0GhgrAhxW1uEYQa1FCHPzX8iGnhooBw6MNd_G8Dbv5-P3Mbtv2UCcV_C8kNuGN_KxsrLREx7HwcCf8GxUyKKRaq5FC2k-ZOEQ==",
+         "summary": []
+        },
+        {
+         "id": "msg_0a2eca53fc410561006abf53b19c8087d19d3976abc022d814",
+         "type": "message",
+         "status": "completed",
+         "content": [
+          {
+           "type": "output_text",
+           "annotations": [],
+           "logprobs": [],
+           "text": "21271"
+          }
+         ],
+         "phase": "final_answer",
+         "role": "assistant"
+        }
+       ],
+       "parallel_tool_calls": true,
+       "presence_penalty": 0.0,
+       "previous_response_id": null,
+       "prompt_cache_key": null,
+       "prompt_cache_retention": "24h",
+       "reasoning": {
+        "context": "all_turns",
+        "effort": "low",
+        "mode": "standard",
+        "summary": null
+       },
+       "safety_identifier": null,
+       "service_tier": "default",
+       "store": true,
+       "temperature": 1.0,
+       "text": {
+        "format": {
+         "type": "text"
+        },
+        "verbosity": "medium"
+       },
+       "tool_choice": "auto",
+       "tool_usage": {
+        "image_gen": {
+         "input_tokens": 0,
+         "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "output_tokens": 0,
+         "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "total_tokens": 0
+        },
+        "web_search": {
+         "num_requests": 0
+        }
+       },
+       "tools": [],
+       "top_logprobs": 0,
+       "top_p": 0.98,
+       "truncation": "disabled",
+       "usage": {
+        "input_tokens": 136,
+        "input_tokens_details": {
+         "cache_write_tokens": 0,
+         "cached_tokens": 0
+        },
+        "output_tokens": 1024,
+        "output_tokens_details": {
+         "reasoning_tokens": 1016
+        },
+        "total_tokens": 1160
+       },
+       "user": null,
+       "metadata": {}
+      }
+     },
+     "tool_runs": []
+    }
+   ]
+  },
+  "16/sol/tools": {
+   "started_at": "2026-10-02T06:48:07.117+00:00",
+   "total_ms": 4594.5,
+   "turns": [
+    {
+     "started_at": "2026-10-02T06:48:07.118+00:00",
+     "latency_ms": 3187.7,
+     "request": {
+      "url": "https://api.openai.com/v1/responses",
+      "body": {
+       "model": "gpt-6-sol",
+       "input": [
+        {
+         "role": "user",
+         "content": "In this 16x16 grid, '#' is a wall and '.' is open. Starting at the top-left cell and moving only right or down, how many different paths reach the bottom-right cell?\n...##.......#...\n.....##.......#.\n#...#.........#.\n................\n..#.............\n..#...#.#....#..\n.....#.#.#.#.#..\n##..#.##...#.#..\n.........#..#...\n#....#.#####....\n...........##.#.\n.##.............\n#..##........#.#\n...#.....#...#.#\n.....###....#...\n................\nAnswer with just the number."
+        }
+       ],
+       "reasoning": {
+        "effort": "low"
+       },
+       "max_output_tokens": 16000,
+       "tools": [
+        {
+         "type": "function",
+         "name": "run_python",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code"
+          ]
+         }
+        }
+       ]
+      }
+     },
+     "response": {
+      "status": 200,
+      "body": {
+       "id": "resp_0d7ef714122c354a006abf53a77d2487d19eea18a464994394",
+       "object": "response",
+       "created_at": 1790923687,
+       "status": "completed",
+       "access_programs": null,
+       "background": false,
+       "billing": {
+        "payer": "developer"
+       },
+       "completed_at": 1790923690,
+       "error": null,
+       "frequency_penalty": 0.0,
+       "incomplete_details": null,
+       "instructions": null,
+       "max_output_tokens": 16000,
+       "max_tool_calls": null,
+       "model": "gpt-6-sol",
+       "moderation": null,
+       "output": [
+        {
+         "id": "fc_0d7ef714122c354a006abf53a85b4487d18a44b96d84229a6f",
+         "type": "function_call",
+         "status": "completed",
+         "arguments": "{\"code\":\"def main(input):\\n a=input.splitlines(); d=[[0]*16 for _ in range(16)];d[0][0]=1\\n for i in range(16):\\n  for j in range(16):\\n   if a[i][j]=='#':d[i][j]=0\\n   elif i or j:d[i][j]=(d[i-1][j] if i else 0)+(d[i][j-1] if j else 0)\\n return str(d[-1][-1])\",\"input\":\"...##.......#...\\n.....##.......#.\\n#...#.........#.\\n................\\n..#.............\\n..#...#.#....#..\\n.....#.#.#.#.#..\\n##..#.##...#.#..\\n.........#..#...\\n#....#.#####....\\n...........##.#.\\n.##.............\\n#..##........#.#\\n...#.....#...#.#\\n.....###....#...\\n................\"}",
+         "call_id": "call_33sK20K5LG86KXcgVErIYOKT",
+         "name": "run_python"
+        }
+       ],
+       "parallel_tool_calls": true,
+       "presence_penalty": 0.0,
+       "previous_response_id": null,
+       "prompt_cache_key": null,
+       "prompt_cache_retention": "24h",
+       "reasoning": {
+        "context": "all_turns",
+        "effort": "low",
+        "mode": "standard",
+        "summary": null
+       },
+       "safety_identifier": null,
+       "service_tier": "default",
+       "store": true,
+       "temperature": 1.0,
+       "text": {
+        "format": {
+         "type": "text"
+        },
+        "verbosity": "medium"
+       },
+       "tool_choice": "auto",
+       "tool_usage": {
+        "image_gen": {
+         "input_tokens": 0,
+         "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "output_tokens": 0,
+         "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "total_tokens": 0
+        },
+        "web_search": {
+         "num_requests": 0
+        }
+       },
+       "tools": [
+        {
+         "type": "function",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "name": "run_python",
+         "output_schema": null,
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code",
+           "input"
+          ],
+          "additionalProperties": false
+         },
+         "strict": true
+        }
+       ],
+       "top_logprobs": 0,
+       "top_p": 0.98,
+       "truncation": "disabled",
+       "usage": {
+        "input_tokens": 246,
+        "input_tokens_details": {
+         "cache_write_tokens": 0,
+         "cached_tokens": 0
+        },
+        "output_tokens": 235,
+        "output_tokens_details": {
+         "reasoning_tokens": 0
+        },
+        "total_tokens": 481
+       },
+       "user": null,
+       "metadata": {}
+      }
+     },
+     "tool_runs": [
+      {
+       "call_id": "call_33sK20K5LG86KXcgVErIYOKT",
+       "arguments": {
+        "code": "def main(input):\n a=input.splitlines(); d=[[0]*16 for _ in range(16)];d[0][0]=1\n for i in range(16):\n  for j in range(16):\n   if a[i][j]=='#':d[i][j]=0\n   elif i or j:d[i][j]=(d[i-1][j] if i else 0)+(d[i][j-1] if j else 0)\n return str(d[-1][-1])",
+        "input": "...##.......#...\n.....##.......#.\n#...#.........#.\n................\n..#.............\n..#...#.#....#..\n.....#.#.#.#.#..\n##..#.##...#.#..\n.........#..#...\n#....#.#####....\n...........##.#.\n.##.............\n#..##........#.#\n...#.....#...#.#\n.....###....#...\n................"
+       },
+       "started_at": "2026-10-02T06:48:10.305+00:00",
+       "duration_ms": 255.1,
+       "container": {
+        "image": "python:3.13-alpine",
+        "command": [
+         "docker",
+         "run",
+         "--rm",
+         "-i",
+         "--name",
+         "models101-f629795b32fe",
+         "--network",
+         "none",
+         "--memory",
+         "128m",
+         "--cpus",
+         "1",
+         "--pids-limit",
+         "64",
+         "--read-only",
+         "--cap-drop",
+         "ALL",
+         "--security-opt",
+         "no-new-privileges",
+         "--user",
+         "65534",
+         "python:3.13-alpine",
+         "timeout",
+         "-s",
+         "KILL",
+         "5",
+         "python",
+         "-I",
+         "-c",
+         "<runner>"
+        ]
+       },
+       "exit_code": 0,
+       "timed_out": false,
+       "stdout": "21271",
+       "stderr": "",
+       "output": "21271"
+      }
+     ]
+    },
+    {
+     "started_at": "2026-10-02T06:48:10.561+00:00",
+     "latency_ms": 1151.1,
+     "request": {
+      "url": "https://api.openai.com/v1/responses",
+      "body": {
+       "model": "gpt-6-sol",
+       "input": [
+        {
+         "role": "user",
+         "content": "In this 16x16 grid, '#' is a wall and '.' is open. Starting at the top-left cell and moving only right or down, how many different paths reach the bottom-right cell?\n...##.......#...\n.....##.......#.\n#...#.........#.\n................\n..#.............\n..#...#.#....#..\n.....#.#.#.#.#..\n##..#.##...#.#..\n.........#..#...\n#....#.#####....\n...........##.#.\n.##.............\n#..##........#.#\n...#.....#...#.#\n.....###....#...\n................\nAnswer with just the number."
+        },
+        {
+         "id": "fc_0d7ef714122c354a006abf53a85b4487d18a44b96d84229a6f",
+         "type": "function_call",
+         "status": "completed",
+         "arguments": "{\"code\":\"def main(input):\\n a=input.splitlines(); d=[[0]*16 for _ in range(16)];d[0][0]=1\\n for i in range(16):\\n  for j in range(16):\\n   if a[i][j]=='#':d[i][j]=0\\n   elif i or j:d[i][j]=(d[i-1][j] if i else 0)+(d[i][j-1] if j else 0)\\n return str(d[-1][-1])\",\"input\":\"...##.......#...\\n.....##.......#.\\n#...#.........#.\\n................\\n..#.............\\n..#...#.#....#..\\n.....#.#.#.#.#..\\n##..#.##...#.#..\\n.........#..#...\\n#....#.#####....\\n...........##.#.\\n.##.............\\n#..##........#.#\\n...#.....#...#.#\\n.....###....#...\\n................\"}",
+         "call_id": "call_33sK20K5LG86KXcgVErIYOKT",
+         "name": "run_python"
+        },
+        {
+         "type": "function_call_output",
+         "call_id": "call_33sK20K5LG86KXcgVErIYOKT",
+         "output": "21271"
+        }
+       ],
+       "reasoning": {
+        "effort": "low"
+       },
+       "max_output_tokens": 16000,
+       "tools": [
+        {
+         "type": "function",
+         "name": "run_python",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code"
+          ]
+         }
+        }
+       ]
+      }
+     },
+     "response": {
+      "status": 200,
+      "body": {
+       "id": "resp_0d7ef714122c354a006abf53aaca8887d1b7a5455cc40c892d",
+       "object": "response",
+       "created_at": 1790923690,
+       "status": "completed",
+       "access_programs": null,
+       "background": false,
+       "billing": {
+        "payer": "developer"
+       },
+       "completed_at": 1790923691,
+       "error": null,
+       "frequency_penalty": 0.0,
+       "incomplete_details": null,
+       "instructions": null,
+       "max_output_tokens": 16000,
+       "max_tool_calls": null,
+       "model": "gpt-6-sol",
+       "moderation": null,
+       "output": [
+        {
+         "id": "msg_0d7ef714122c354a006abf53ab4fc487d18b40a1ddbfcfd8da",
+         "type": "message",
+         "status": "completed",
+         "content": [
+          {
+           "type": "output_text",
+           "annotations": [],
+           "logprobs": [],
+           "text": "21271"
+          }
+         ],
+         "phase": "final_answer",
+         "role": "assistant"
+        }
+       ],
+       "parallel_tool_calls": true,
+       "presence_penalty": 0.0,
+       "previous_response_id": null,
+       "prompt_cache_key": null,
+       "prompt_cache_retention": "24h",
+       "reasoning": {
+        "context": "all_turns",
+        "effort": "low",
+        "mode": "standard",
+        "summary": null
+       },
+       "safety_identifier": null,
+       "service_tier": "default",
+       "store": true,
+       "temperature": 1.0,
+       "text": {
+        "format": {
+         "type": "text"
+        },
+        "verbosity": "medium"
+       },
+       "tool_choice": "auto",
+       "tool_usage": {
+        "image_gen": {
+         "input_tokens": 0,
+         "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "output_tokens": 0,
+         "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "total_tokens": 0
+        },
+        "web_search": {
+         "num_requests": 0
+        }
+       },
+       "tools": [
+        {
+         "type": "function",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "name": "run_python",
+         "output_schema": null,
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code",
+           "input"
+          ],
+          "additionalProperties": false
+         },
+         "strict": true
+        }
+       ],
+       "top_logprobs": 0,
+       "top_p": 0.98,
+       "truncation": "disabled",
+       "usage": {
+        "input_tokens": 494,
+        "input_tokens_details": {
+         "cache_write_tokens": 0,
+         "cached_tokens": 0
+        },
+        "output_tokens": 6,
+        "output_tokens_details": {
+         "reasoning_tokens": 0
+        },
+        "total_tokens": 500
+       },
+       "user": null,
+       "metadata": {}
+      }
+     },
+     "tool_runs": []
+    }
+   ]
+  },
+  "8/astra/plain": {
+   "started_at": "2026-10-02T06:48:07.116+00:00",
+   "total_ms": 4400.9,
+   "turns": [
+    {
+     "started_at": "2026-10-02T06:48:07.116+00:00",
+     "latency_ms": 4400.3,
+     "request": {
+      "url": "https://api.openai.com/v1/responses",
+      "body": {
+       "model": "gpt-6-astra",
+       "input": [
+        {
+         "role": "user",
+         "content": "In this 8x8 grid, '#' is a wall and '.' is open. Starting at the top-left cell and moving only right or down, how many different paths reach the bottom-right cell?\n..#.....\n...###..\n#.....##\n........\n......#.\n........\n.#.##.#.\n......#.\nAnswer with just the number."
+        }
+       ],
+       "reasoning": {
+        "effort": "low"
+       },
+       "max_output_tokens": 16000
+      }
+     },
+     "response": {
+      "status": 200,
+      "body": {
+       "id": "resp_0569996f0236269a006abf53a7812087d1a9ac6beb50fc8052",
+       "object": "response",
+       "created_at": 1790923687,
+       "status": "completed",
+       "access_programs": null,
+       "background": false,
+       "billing": {
+        "payer": "developer"
+       },
+       "completed_at": 1790923691,
+       "error": null,
+       "frequency_penalty": 0.0,
+       "incomplete_details": null,
+       "instructions": null,
+       "max_output_tokens": 16000,
+       "max_tool_calls": null,
+       "model": "gpt-6-astra",
+       "moderation": null,
+       "output": [
+        {
+         "id": "rs_0569996f0236269a006abf53a878d087d19cdd51aa12a6f45f",
+         "type": "reasoning",
+         "content": [],
+         "encrypted_content": "gAAAAABqv1OrcC5je967W1B9mYcolT8mMXj7wx0hAJhhS8_J8XK2k98yznAyAny5W9KJB1ZiLcxFBVQOWS0E_G84IuhVLOQHwRPMkifWfcgi2JEyncgAuqtqWf_rjjY8__yhR7r27ubfFN65aTnbWpdxu1A-5lao8Yf7tp6mlOt389Dc7rt8PiVPErhDULJ6aCfKd1D-WUGiEk1Bi1WKJV0EBQx1eeS_YOt0OdbxugicSYWO3Vb7QZs3Bx5XPtOzzdvKzsr5v7K4PckXDBPBVEepQzIrexJUCywkA3QsFH93te55fG1mSRXUhA6GV7D3Ky6ZjicfW4lv7r2KOCNvnq8lvuICICXDEida2WIkxA3srAZuVsc885vD2Z1PF-klp3sqo4UvlDILytnC4kK_41vwa2-Qaac-cJgnfOvIjHcwpsgByE_MT_SWRCPhI0rVSlO4Kdk1ig40S_x2hjA7_3A1Wz4ul71IILlteERm6JRD8rSfXsc1WUoBvQmdcv-KZJxhdoMSbsxiZcTN3Z6hJg6MhP2st6mGfpKgbpjjpx0EO_7Nsde2ssks9XGyAphNqLNBLpte49hM4yGc4Ft5f84aMURaYbhTohNZPdegJza6rBmMUczy9_l8anAkc3JccKwXevPvwUcNS-4fPbO41_k_jv-NZGsu2uac2zg1K60wsuwfEPdJ7ouBLdVtaa2qCjiIwaQPdGgn2iYj9sTQ-bMF4TtIpq83GICkHrzvSo02VGCVGOQzHVx77MTdKUKyP_3PIs5li5XhHD0LZTWvNJ6hyK-zjc2tA8rjJGBhSPSvx9oM7_xGClzz5-BK2MuJx0WY06O9OULtEjFtWqIwRfXXkOaZAH2_q7_9eKN6A_XDJoLl9iZddGuATIMVciM_IvDS3Yhyuphdrtal0e365E6Vuel_TbbPvqtBmOxujCKXVc6Olx1hDKblFxGhuoeFLq3L0h7QWRODyUS6JMDznXiqZTyT_v7N3ze8R0VMO6Ze6vI_sg3-qkrCXRUniYbbSCLwp8OP_qFL1OpUUuw9kq1RAGJ5SNELCjzX8wv5eiS-KsH2ZQSe2jNL0jdtj6BNdGIXO_pD0msdQkbZ_hkf-V2BsYo0D29IzQpjHQhOjrvJMz7a4I6SRulu3-V_lg4RFkFBu_3urgMIrASSCLvWBpcb8_zp9NOvjaOdOVYPgCo0Wq9QUkRakma6JR2BRTUkxJyFZjKCvhmSITnPwLfNQJLA3R4oCa6TNvczkeMNlfIzz9B-qOr-hkhDKbDCzKM6_GH5AvdiXGk21PArThU78BP53j2aW9nAaxDaXrYJJtM-jKV0rd91XFtx9dmNfVEAqiTND6Axe7h6DGbDbJuUiaHy7P0Q24NfgYEvftXy8DpffRBAUC_N4USBVfbsmvoPgE3hcH-IDcQ7PykOTN3b4A5VjTn2UB27ktIRnowCPgVXikGTpw02mfjMYEKqCQOp3ye5dghcEjjkRymiYIA60Ks84CxgMvdCcEwTqA72fymin-UWuooaS9wftI3n7GoHCTcxXhZO202JZT1N6i7J9Syblxh4D78_yg==",
+         "summary": []
+        },
+        {
+         "id": "msg_0569996f0236269a006abf53ab329087d1bf5c181ceaacd0e5",
+         "type": "message",
+         "status": "completed",
+         "content": [
+          {
+           "type": "output_text",
+           "annotations": [],
+           "logprobs": [],
+           "text": "128"
+          }
+         ],
+         "phase": "final_answer",
+         "role": "assistant"
+        }
+       ],
+       "parallel_tool_calls": true,
+       "presence_penalty": 0.0,
+       "previous_response_id": null,
+       "prompt_cache_key": null,
+       "prompt_cache_retention": "24h",
+       "reasoning": {
+        "context": "all_turns",
+        "effort": "low",
+        "mode": "standard",
+        "summary": null
+       },
+       "safety_identifier": null,
+       "service_tier": "default",
+       "store": true,
+       "temperature": 1.0,
+       "text": {
+        "format": {
+         "type": "text"
+        },
+        "verbosity": "medium"
+       },
+       "tool_choice": "auto",
+       "tool_usage": {
+        "image_gen": {
+         "input_tokens": 0,
+         "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "output_tokens": 0,
+         "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "total_tokens": 0
+        },
+        "web_search": {
+         "num_requests": 0
+        }
+       },
+       "tools": [],
+       "top_logprobs": 0,
+       "top_p": 0.98,
+       "truncation": "disabled",
+       "usage": {
+        "input_tokens": 76,
+        "input_tokens_details": {
+         "cache_write_tokens": 0,
+         "cached_tokens": 0
+        },
+        "output_tokens": 188,
+        "output_tokens_details": {
+         "reasoning_tokens": 181
+        },
+        "total_tokens": 264
+       },
+       "user": null,
+       "metadata": {}
+      }
+     },
+     "tool_runs": []
+    }
+   ]
+  },
+  "8/astra/tools": {
+   "started_at": "2026-10-02T06:48:07.116+00:00",
+   "total_ms": 5709.4,
+   "turns": [
+    {
+     "started_at": "2026-10-02T06:48:07.116+00:00",
+     "latency_ms": 4099.8,
+     "request": {
+      "url": "https://api.openai.com/v1/responses",
+      "body": {
+       "model": "gpt-6-astra",
+       "input": [
+        {
+         "role": "user",
+         "content": "In this 8x8 grid, '#' is a wall and '.' is open. Starting at the top-left cell and moving only right or down, how many different paths reach the bottom-right cell?\n..#.....\n...###..\n#.....##\n........\n......#.\n........\n.#.##.#.\n......#.\nAnswer with just the number."
+        }
+       ],
+       "reasoning": {
+        "effort": "low"
+       },
+       "max_output_tokens": 16000,
+       "tools": [
+        {
+         "type": "function",
+         "name": "run_python",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code"
+          ]
+         }
+        }
+       ]
+      }
+     },
+     "response": {
+      "status": 200,
+      "body": {
+       "id": "resp_09b5a3c1af745fc8006abf53a77b1087d1889e6955949fc612",
+       "object": "response",
+       "created_at": 1790923687,
+       "status": "completed",
+       "access_programs": null,
+       "background": false,
+       "billing": {
+        "payer": "developer"
+       },
+       "completed_at": 1790923690,
+       "error": null,
+       "frequency_penalty": 0.0,
+       "incomplete_details": null,
+       "instructions": null,
+       "max_output_tokens": 16000,
+       "max_tool_calls": null,
+       "model": "gpt-6-astra",
+       "moderation": null,
+       "output": [
+        {
+         "id": "fc_09b5a3c1af745fc8006abf53a9059c87d19b3527e3327518dd",
+         "type": "function_call",
+         "status": "completed",
+         "arguments": "{\"code\":\"def main(input):\\n g=['..#.....','...###..','#.....##','........','......#.','........','.#.##.#.','......#.']\\n d=[[0]*8 for _ in range(8)]\\n for i in range(8):\\n  for j in range(8):\\n   if g[i][j]=='.': d[i][j]=1 if i==j==0 else (d[i-1][j] if i else 0)+(d[i][j-1] if j else 0)\\n return d[7][7]\",\"input\":null}",
+         "call_id": "call_J4PNI3k729Ah8sBVlr19qiNb",
+         "name": "run_python"
+        }
+       ],
+       "parallel_tool_calls": true,
+       "presence_penalty": 0.0,
+       "previous_response_id": null,
+       "prompt_cache_key": null,
+       "prompt_cache_retention": "24h",
+       "reasoning": {
+        "context": "all_turns",
+        "effort": "low",
+        "mode": "standard",
+        "summary": null
+       },
+       "safety_identifier": null,
+       "service_tier": "default",
+       "store": true,
+       "temperature": 1.0,
+       "text": {
+        "format": {
+         "type": "text"
+        },
+        "verbosity": "medium"
+       },
+       "tool_choice": "auto",
+       "tool_usage": {
+        "image_gen": {
+         "input_tokens": 0,
+         "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "output_tokens": 0,
+         "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "total_tokens": 0
+        },
+        "web_search": {
+         "num_requests": 0
+        }
+       },
+       "tools": [
+        {
+         "type": "function",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "name": "run_python",
+         "output_schema": null,
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code",
+           "input"
+          ],
+          "additionalProperties": false
+         },
+         "strict": true
+        }
+       ],
+       "top_logprobs": 0,
+       "top_p": 0.98,
+       "truncation": "disabled",
+       "usage": {
+        "input_tokens": 186,
+        "input_tokens_details": {
+         "cache_write_tokens": 0,
+         "cached_tokens": 0
+        },
+        "output_tokens": 148,
+        "output_tokens_details": {
+         "reasoning_tokens": 0
+        },
+        "total_tokens": 334
+       },
+       "user": null,
+       "metadata": {}
+      }
+     },
+     "tool_runs": [
+      {
+       "call_id": "call_J4PNI3k729Ah8sBVlr19qiNb",
+       "arguments": {
+        "code": "def main(input):\n g=['..#.....','...###..','#.....##','........','......#.','........','.#.##.#.','......#.']\n d=[[0]*8 for _ in range(8)]\n for i in range(8):\n  for j in range(8):\n   if g[i][j]=='.': d[i][j]=1 if i==j==0 else (d[i-1][j] if i else 0)+(d[i][j-1] if j else 0)\n return d[7][7]",
+        "input": null
+       },
+       "started_at": "2026-10-02T06:48:11.216+00:00",
+       "duration_ms": 244.7,
+       "container": {
+        "image": "python:3.13-alpine",
+        "command": [
+         "docker",
+         "run",
+         "--rm",
+         "-i",
+         "--name",
+         "models101-0672db0d49ff",
+         "--network",
+         "none",
+         "--memory",
+         "128m",
+         "--cpus",
+         "1",
+         "--pids-limit",
+         "64",
+         "--read-only",
+         "--cap-drop",
+         "ALL",
+         "--security-opt",
+         "no-new-privileges",
+         "--user",
+         "65534",
+         "python:3.13-alpine",
+         "timeout",
+         "-s",
+         "KILL",
+         "5",
+         "python",
+         "-I",
+         "-c",
+         "<runner>"
+        ]
+       },
+       "exit_code": 0,
+       "timed_out": false,
+       "stdout": "128",
+       "stderr": "",
+       "output": "128"
+      }
+     ]
+    },
+    {
+     "started_at": "2026-10-02T06:48:11.461+00:00",
+     "latency_ms": 1364.2,
+     "request": {
+      "url": "https://api.openai.com/v1/responses",
+      "body": {
+       "model": "gpt-6-astra",
+       "input": [
+        {
+         "role": "user",
+         "content": "In this 8x8 grid, '#' is a wall and '.' is open. Starting at the top-left cell and moving only right or down, how many different paths reach the bottom-right cell?\n..#.....\n...###..\n#.....##\n........\n......#.\n........\n.#.##.#.\n......#.\nAnswer with just the number."
+        },
+        {
+         "id": "fc_09b5a3c1af745fc8006abf53a9059c87d19b3527e3327518dd",
+         "type": "function_call",
+         "status": "completed",
+         "arguments": "{\"code\":\"def main(input):\\n g=['..#.....','...###..','#.....##','........','......#.','........','.#.##.#.','......#.']\\n d=[[0]*8 for _ in range(8)]\\n for i in range(8):\\n  for j in range(8):\\n   if g[i][j]=='.': d[i][j]=1 if i==j==0 else (d[i-1][j] if i else 0)+(d[i][j-1] if j else 0)\\n return d[7][7]\",\"input\":null}",
+         "call_id": "call_J4PNI3k729Ah8sBVlr19qiNb",
+         "name": "run_python"
+        },
+        {
+         "type": "function_call_output",
+         "call_id": "call_J4PNI3k729Ah8sBVlr19qiNb",
+         "output": "128"
+        }
+       ],
+       "reasoning": {
+        "effort": "low"
+       },
+       "max_output_tokens": 16000,
+       "tools": [
+        {
+         "type": "function",
+         "name": "run_python",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code"
+          ]
+         }
+        }
+       ]
+      }
+     },
+     "response": {
+      "status": 200,
+      "body": {
+       "id": "resp_09b5a3c1af745fc8006abf53abaf0c87d1a21f72bc31ad5836",
+       "object": "response",
+       "created_at": 1790923691,
+       "status": "completed",
+       "access_programs": null,
+       "background": false,
+       "billing": {
+        "payer": "developer"
+       },
+       "completed_at": 1790923692,
+       "error": null,
+       "frequency_penalty": 0.0,
+       "incomplete_details": null,
+       "instructions": null,
+       "max_output_tokens": 16000,
+       "max_tool_calls": null,
+       "model": "gpt-6-astra",
+       "moderation": null,
+       "output": [
+        {
+         "id": "msg_09b5a3c1af745fc8006abf53ac7fc087d197a7ea52ac52e1c4",
+         "type": "message",
+         "status": "completed",
+         "content": [
+          {
+           "type": "output_text",
+           "annotations": [],
+           "logprobs": [],
+           "text": "128"
+          }
+         ],
+         "phase": "final_answer",
+         "role": "assistant"
+        }
+       ],
+       "parallel_tool_calls": true,
+       "presence_penalty": 0.0,
+       "previous_response_id": null,
+       "prompt_cache_key": null,
+       "prompt_cache_retention": "24h",
+       "reasoning": {
+        "context": "all_turns",
+        "effort": "low",
+        "mode": "standard",
+        "summary": null
+       },
+       "safety_identifier": null,
+       "service_tier": "default",
+       "store": true,
+       "temperature": 1.0,
+       "text": {
+        "format": {
+         "type": "text"
+        },
+        "verbosity": "medium"
+       },
+       "tool_choice": "auto",
+       "tool_usage": {
+        "image_gen": {
+         "input_tokens": 0,
+         "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "output_tokens": 0,
+         "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "total_tokens": 0
+        },
+        "web_search": {
+         "num_requests": 0
+        }
+       },
+       "tools": [
+        {
+         "type": "function",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "name": "run_python",
+         "output_schema": null,
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code",
+           "input"
+          ],
+          "additionalProperties": false
+         },
+         "strict": true
+        }
+       ],
+       "top_logprobs": 0,
+       "top_p": 0.98,
+       "truncation": "disabled",
+       "usage": {
+        "input_tokens": 346,
+        "input_tokens_details": {
+         "cache_write_tokens": 0,
+         "cached_tokens": 0
+        },
+        "output_tokens": 5,
+        "output_tokens_details": {
+         "reasoning_tokens": 0
+        },
+        "total_tokens": 351
+       },
+       "user": null,
+       "metadata": {}
+      }
+     },
+     "tool_runs": []
+    }
+   ]
+  },
+  "8/luna/plain": {
+   "started_at": "2026-10-02T06:48:07.115+00:00",
+   "total_ms": 4887.4,
+   "turns": [
+    {
+     "started_at": "2026-10-02T06:48:07.116+00:00",
+     "latency_ms": 4886.7,
+     "request": {
+      "url": "https://api.openai.com/v1/responses",
+      "body": {
+       "model": "gpt-6-luna",
+       "input": [
+        {
+         "role": "user",
+         "content": "In this 8x8 grid, '#' is a wall and '.' is open. Starting at the top-left cell and moving only right or down, how many different paths reach the bottom-right cell?\n..#.....\n...###..\n#.....##\n........\n......#.\n........\n.#.##.#.\n......#.\nAnswer with just the number."
+        }
+       ],
+       "reasoning": {
+        "effort": "low"
+       },
+       "max_output_tokens": 16000
+      }
+     },
+     "response": {
+      "status": 200,
+      "body": {
+       "id": "resp_09912da3dc932021006abf53a77a5c87d19de7a5f924a9fcc1",
+       "object": "response",
+       "created_at": 1790923687,
+       "status": "completed",
+       "access_programs": null,
+       "background": false,
+       "billing": {
+        "payer": "developer"
+       },
+       "completed_at": 1790923691,
+       "error": null,
+       "frequency_penalty": 0.0,
+       "incomplete_details": null,
+       "instructions": null,
+       "max_output_tokens": 16000,
+       "max_tool_calls": null,
+       "model": "gpt-6-luna",
+       "moderation": null,
+       "output": [
+        {
+         "id": "rs_09912da3dc932021006abf53a843d487d1b63bfb32ccbb431a",
+         "type": "reasoning",
+         "content": [],
+         "encrypted_content": "gAAAAABqv1OriArPI7pHjpgM37UuZfczAU3jrmaPbYC8NVJiBR5ucWxieLwPcCxH9zZCsV38XJPPpD9Jf4avz4n3zeQ744qLni5kKJSSVrp3yZ2qd7VOH4XwPbJ-q_XTPl_zDrYcHpaBHdhZAzL0R5l2in9HBs0br0sP03WaLwkiAgtJWyOiqC4pJfvr_V3mqE_CFypz0-5jUOznKZJcHfFlOWa5-N-RVNqgrdq-KbRncHq2H3-D1E-KpmmG22xSSAsVO8Lo6Vch-xQRKyYuSBzC8wK-imAzjhZOPR2gMYEX15EWCEXVWh5YWC6ckXSLXdyCAIlkZ0SLkOgVgvhP1Er7I9HizviybTOs5ys7A-YaximGgoKKAA6A9gQ9oBCsgbME55ikPwiu2uk9dy0ytRlfMIjMtVxhMrAwu2EFssO7-INaKSBcD517r0pZTOQT-tFaFWlb1Rns5eFW8YUcPCRxR8M7-AEbek6Lsiz2U1a0k_0zRboyY7FfV7ZTtqPRve57jUfVdYSk29Blsco3c4Ts0xRvGdWLUH1rO9EeSlVlXgxfZ45P5o9diqJ6y7cUTc6lvKYIltU9ORHOyM2s6XFjTf8Ze2P56LxoYH5nhe8PYHqNpTRvAzO3Z-jVxbq82wQVAdFqg5WmeVTQzlKmUnK56nen9GpYxl8IRiVNc42S8dTHItqdirCtc8y_CfFanRVtQwJBKPGZY7tjDdyiOjnplnF_hQPVwyxLosdPqU0ZTE_UGHleKLCisAKD8apgYs8wBKmC1o8WJC-6XYZT3g9jnnrZY3HGggGZtkX2G_4lV9n5ixaQQ1lVIu20uWOWxRlJEgboPp0pPaOOOWGUMPa-lYGAk2r5-hW_OC0PKkk8RCRHP73zHHA2ewh95L_R6qq7nWOqSZO6vQHPogFPbjdhzXNBadxhJC8TR5pjcN-lDjVOZ8RQbNe_cx3EUCKvvqSoRfDVEqpMc7XPkCJBHNFxTTedlbiohLBJGouPDGmkqrZUtwp1cMtVG9JMfoDs6QZnBfATGlYrtldi3De6d67OytZOd6SODpMLaZWJS0Bk06GvfbxBuyJpPPSq9J9UJKIcJZHfkLIKbCL68-NlSs6ss0vVBbhjg_HoKSv9HkoZuR_uSgtPyy8FaWeQ5ygMq9A8AwEfHoEZaqwIl-f8CYYjLl3ghdFNz6GoXZ3ZZV4UKIYb0BGagrke8w2TQ5Cy1v_Q-utn9L0Oe57zpczgKDsZlF9u7rat3G1iApqNU3zG24nqIq7YPJxnXVtKSjGL27gxNNLQ56_3ZXl0p46Er96zr7PeueAX4ZRkeAAqXcZSa_UheXLBnuwf5UiaMBO-Sbh0D_Is4T2lBPQXBap6a12jORK2SGWe27-eTYwsw8Z_3QvRaYzTaFRasoWweeG6FDzWBXmvkWZZ0bjtRm1dSjB1cp23fbd0rdY99twNxZHirTi4lc0WrQN7sNYXnUXD5Zf1JakLKGZpSCYiutJIrPnuifVI92CBrYw4O1_-vS5wNPpyAWpdw3OdqOV7Cz7ZCLguN5AWMe6VkbRjXwcwnFE33mXTIldN0z4perT5gU29bn1XqhkmVmwJ0jCN4DUR6ijvSlrY_i7XBykuCF45w4qdDkfj3Frdi1kdrV_jcnJFSNzXwN5YGD-agzEOi0irM5EdhooWffzPJBRXMPqH6rjvTvEWzS2jFi18y7ZsK82qAAmiIKOWVeNWfsNU1-QSxflagdNXSQA2jLu5sRv4SuS1Cjgay5xH377tpmq83IFZ4bt_1yIcJIqx9Iz97yad1KrKyuYT3wpcgPC9yzRtiTOggQzNRhs0K785CIJYNaCwA_OSTQjghdXci4XgFku60zYESGFMJbAx2fGvDFEmFPEMyC537QKeefJ4XUTWsQlCkGLuREdKVSaQ42mnbegOCnv_dCDfMN5ulF5LCEDYZeAGiGshPK0qgh_z1YjRNxDG8PJH3FgRFp668decQvqQnE7qy42O7kqgPV6C9pnsvsw8S7Zi2DdEZ6M_lE0aZX3rndZpLVUDp4mZQaDUwnUUEbhwMrq4GORc6YFTKhx7P7SkPlZ98noCPercToeAbvTNBTCFcloTNrUEJORincoR1YZkAMdSIS6vD1pYP74Bx-QAUeA2uIeegCjggwyZ6HslszrioGMXeCiyqREe9ANoO998WdZjEvmuTCMtrmiN8cVW6fhqrDEoGy66Cwv7n5HE9EX2iJdJ7Xwp2DNxMasjUAfqTmrETeMDS2yG3Ux3ZZVPik748CokfwOtXhZtzxHIOmsBpHHM7UIpYLxwIeaRcVelKstFYkMD4rLh-8loB1wPoboK6HisWh8QibDjWPOl778at44qFbAhvsu68aGBkFwJOdMFvl6xLRn_Clisk7tXHXjD8MVj4i0N7aXgYs0Y4hJWEc0-YxR90L4ILavODZGLrW4_u5mg8lsWMyjfq-hFqcMAh3O9WS0BcScyNCi995aiunlnXCSCMUyPsW5ksObKlhqyp7zz",
+         "summary": []
+        },
+        {
+         "id": "msg_09912da3dc932021006abf53ab997887d1b4fd9b791c5c8319",
+         "type": "message",
+         "status": "completed",
+         "content": [
+          {
+           "type": "output_text",
+           "annotations": [],
+           "logprobs": [],
+           "text": "348"
+          }
+         ],
+         "phase": "final_answer",
+         "role": "assistant"
+        }
+       ],
+       "parallel_tool_calls": true,
+       "presence_penalty": 0.0,
+       "previous_response_id": null,
+       "prompt_cache_key": null,
+       "prompt_cache_retention": "24h",
+       "reasoning": {
+        "context": "all_turns",
+        "effort": "low",
+        "mode": "standard",
+        "summary": null
+       },
+       "safety_identifier": null,
+       "service_tier": "default",
+       "store": true,
+       "temperature": 1.0,
+       "text": {
+        "format": {
+         "type": "text"
+        },
+        "verbosity": "medium"
+       },
+       "tool_choice": "auto",
+       "tool_usage": {
+        "image_gen": {
+         "input_tokens": 0,
+         "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "output_tokens": 0,
+         "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "total_tokens": 0
+        },
+        "web_search": {
+         "num_requests": 0
+        }
+       },
+       "tools": [],
+       "top_logprobs": 0,
+       "top_p": 0.98,
+       "truncation": "disabled",
+       "usage": {
+        "input_tokens": 76,
+        "input_tokens_details": {
+         "cache_write_tokens": 0,
+         "cached_tokens": 0
+        },
+        "output_tokens": 505,
+        "output_tokens_details": {
+         "reasoning_tokens": 498
+        },
+        "total_tokens": 581
+       },
+       "user": null,
+       "metadata": {}
+      }
+     },
+     "tool_runs": []
+    }
+   ]
+  },
+  "8/luna/tools": {
+   "started_at": "2026-10-02T06:48:07.115+00:00",
+   "total_ms": 4053.7,
+   "turns": [
+    {
+     "started_at": "2026-10-02T06:48:07.116+00:00",
+     "latency_ms": 2593.4,
+     "request": {
+      "url": "https://api.openai.com/v1/responses",
+      "body": {
+       "model": "gpt-6-luna",
+       "input": [
+        {
+         "role": "user",
+         "content": "In this 8x8 grid, '#' is a wall and '.' is open. Starting at the top-left cell and moving only right or down, how many different paths reach the bottom-right cell?\n..#.....\n...###..\n#.....##\n........\n......#.\n........\n.#.##.#.\n......#.\nAnswer with just the number."
+        }
+       ],
+       "reasoning": {
+        "effort": "low"
+       },
+       "max_output_tokens": 16000,
+       "tools": [
+        {
+         "type": "function",
+         "name": "run_python",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code"
+          ]
+         }
+        }
+       ]
+      }
+     },
+     "response": {
+      "status": 200,
+      "body": {
+       "id": "resp_06c65cfb231389d7006abf53a77a2487d195696d0c86d10259",
+       "object": "response",
+       "created_at": 1790923687,
+       "status": "completed",
+       "access_programs": null,
+       "background": false,
+       "billing": {
+        "payer": "developer"
+       },
+       "completed_at": 1790923689,
+       "error": null,
+       "frequency_penalty": 0.0,
+       "incomplete_details": null,
+       "instructions": null,
+       "max_output_tokens": 16000,
+       "max_tool_calls": null,
+       "model": "gpt-6-luna",
+       "moderation": null,
+       "output": [
+        {
+         "id": "fc_06c65cfb231389d7006abf53a8423087d1a6996a6f4f68bc9c",
+         "type": "function_call",
+         "status": "completed",
+         "arguments": "{\"code\":\"def main(input):\\n g=input.strip().splitlines(); n=len(g); m=len(g[0]); d=[[0]*m for _ in range(n)]\\n if g[0][0]=='.': d[0][0]=1\\n for i in range(n):\\n  for j in range(m):\\n   if g[i][j]=='#': continue\\n   if i: d[i][j]+=d[i-1][j]\\n   if j: d[i][j]+=d[i][j-1]\\n return str(d[-1][-1])\",\"input\":\"..#.....\\n...###..\\n#.....##\\n........\\n......#.\\n........\\n.#.##.#.\\n......#.\"}",
+         "call_id": "call_feYaTRm4VRArKCrv9jVgfntw",
+         "name": "run_python"
+        }
+       ],
+       "parallel_tool_calls": true,
+       "presence_penalty": 0.0,
+       "previous_response_id": null,
+       "prompt_cache_key": null,
+       "prompt_cache_retention": "24h",
+       "reasoning": {
+        "context": "all_turns",
+        "effort": "low",
+        "mode": "standard",
+        "summary": null
+       },
+       "safety_identifier": null,
+       "service_tier": "default",
+       "store": true,
+       "temperature": 1.0,
+       "text": {
+        "format": {
+         "type": "text"
+        },
+        "verbosity": "medium"
+       },
+       "tool_choice": "auto",
+       "tool_usage": {
+        "image_gen": {
+         "input_tokens": 0,
+         "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "output_tokens": 0,
+         "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "total_tokens": 0
+        },
+        "web_search": {
+         "num_requests": 0
+        }
+       },
+       "tools": [
+        {
+         "type": "function",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "name": "run_python",
+         "output_schema": null,
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code",
+           "input"
+          ],
+          "additionalProperties": false
+         },
+         "strict": true
+        }
+       ],
+       "top_logprobs": 0,
+       "top_p": 0.98,
+       "truncation": "disabled",
+       "usage": {
+        "input_tokens": 186,
+        "input_tokens_details": {
+         "cache_write_tokens": 0,
+         "cached_tokens": 0
+        },
+        "output_tokens": 176,
+        "output_tokens_details": {
+         "reasoning_tokens": 0
+        },
+        "total_tokens": 362
+       },
+       "user": null,
+       "metadata": {}
+      }
+     },
+     "tool_runs": [
+      {
+       "call_id": "call_feYaTRm4VRArKCrv9jVgfntw",
+       "arguments": {
+        "code": "def main(input):\n g=input.strip().splitlines(); n=len(g); m=len(g[0]); d=[[0]*m for _ in range(n)]\n if g[0][0]=='.': d[0][0]=1\n for i in range(n):\n  for j in range(m):\n   if g[i][j]=='#': continue\n   if i: d[i][j]+=d[i-1][j]\n   if j: d[i][j]+=d[i][j-1]\n return str(d[-1][-1])",
+        "input": "..#.....\n...###..\n#.....##\n........\n......#.\n........\n.#.##.#.\n......#."
+       },
+       "started_at": "2026-10-02T06:48:09.710+00:00",
+       "duration_ms": 274.2,
+       "container": {
+        "image": "python:3.13-alpine",
+        "command": [
+         "docker",
+         "run",
+         "--rm",
+         "-i",
+         "--name",
+         "models101-65d9cd13912b",
+         "--network",
+         "none",
+         "--memory",
+         "128m",
+         "--cpus",
+         "1",
+         "--pids-limit",
+         "64",
+         "--read-only",
+         "--cap-drop",
+         "ALL",
+         "--security-opt",
+         "no-new-privileges",
+         "--user",
+         "65534",
+         "python:3.13-alpine",
+         "timeout",
+         "-s",
+         "KILL",
+         "5",
+         "python",
+         "-I",
+         "-c",
+         "<runner>"
+        ]
+       },
+       "exit_code": 0,
+       "timed_out": false,
+       "stdout": "128",
+       "stderr": "",
+       "output": "128"
+      }
+     ]
+    },
+    {
+     "started_at": "2026-10-02T06:48:09.984+00:00",
+     "latency_ms": 1184.7,
+     "request": {
+      "url": "https://api.openai.com/v1/responses",
+      "body": {
+       "model": "gpt-6-luna",
+       "input": [
+        {
+         "role": "user",
+         "content": "In this 8x8 grid, '#' is a wall and '.' is open. Starting at the top-left cell and moving only right or down, how many different paths reach the bottom-right cell?\n..#.....\n...###..\n#.....##\n........\n......#.\n........\n.#.##.#.\n......#.\nAnswer with just the number."
+        },
+        {
+         "id": "fc_06c65cfb231389d7006abf53a8423087d1a6996a6f4f68bc9c",
+         "type": "function_call",
+         "status": "completed",
+         "arguments": "{\"code\":\"def main(input):\\n g=input.strip().splitlines(); n=len(g); m=len(g[0]); d=[[0]*m for _ in range(n)]\\n if g[0][0]=='.': d[0][0]=1\\n for i in range(n):\\n  for j in range(m):\\n   if g[i][j]=='#': continue\\n   if i: d[i][j]+=d[i-1][j]\\n   if j: d[i][j]+=d[i][j-1]\\n return str(d[-1][-1])\",\"input\":\"..#.....\\n...###..\\n#.....##\\n........\\n......#.\\n........\\n.#.##.#.\\n......#.\"}",
+         "call_id": "call_feYaTRm4VRArKCrv9jVgfntw",
+         "name": "run_python"
+        },
+        {
+         "type": "function_call_output",
+         "call_id": "call_feYaTRm4VRArKCrv9jVgfntw",
+         "output": "128"
+        }
+       ],
+       "reasoning": {
+        "effort": "low"
+       },
+       "max_output_tokens": 16000,
+       "tools": [
+        {
+         "type": "function",
+         "name": "run_python",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code"
+          ]
+         }
+        }
+       ]
+      }
+     },
+     "response": {
+      "status": 200,
+      "body": {
+       "id": "resp_06c65cfb231389d7006abf53aa3e4c87d1a0912e6b754f09e1",
+       "object": "response",
+       "created_at": 1790923690,
+       "status": "completed",
+       "access_programs": null,
+       "background": false,
+       "billing": {
+        "payer": "developer"
+       },
+       "completed_at": 1790923690,
+       "error": null,
+       "frequency_penalty": 0.0,
+       "incomplete_details": null,
+       "instructions": null,
+       "max_output_tokens": 16000,
+       "max_tool_calls": null,
+       "model": "gpt-6-luna",
+       "moderation": null,
+       "output": [
+        {
+         "id": "msg_06c65cfb231389d7006abf53aacef887d1a93eea320790fd69",
+         "type": "message",
+         "status": "completed",
+         "content": [
+          {
+           "type": "output_text",
+           "annotations": [],
+           "logprobs": [],
+           "text": "128"
+          }
+         ],
+         "phase": "final_answer",
+         "role": "assistant"
+        }
+       ],
+       "parallel_tool_calls": true,
+       "presence_penalty": 0.0,
+       "previous_response_id": null,
+       "prompt_cache_key": null,
+       "prompt_cache_retention": "24h",
+       "reasoning": {
+        "context": "all_turns",
+        "effort": "low",
+        "mode": "standard",
+        "summary": null
+       },
+       "safety_identifier": null,
+       "service_tier": "default",
+       "store": true,
+       "temperature": 1.0,
+       "text": {
+        "format": {
+         "type": "text"
+        },
+        "verbosity": "medium"
+       },
+       "tool_choice": "auto",
+       "tool_usage": {
+        "image_gen": {
+         "input_tokens": 0,
+         "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "output_tokens": 0,
+         "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "total_tokens": 0
+        },
+        "web_search": {
+         "num_requests": 0
+        }
+       },
+       "tools": [
+        {
+         "type": "function",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "name": "run_python",
+         "output_schema": null,
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code",
+           "input"
+          ],
+          "additionalProperties": false
+         },
+         "strict": true
+        }
+       ],
+       "top_logprobs": 0,
+       "top_p": 0.98,
+       "truncation": "disabled",
+       "usage": {
+        "input_tokens": 374,
+        "input_tokens_details": {
+         "cache_write_tokens": 0,
+         "cached_tokens": 0
+        },
+        "output_tokens": 5,
+        "output_tokens_details": {
+         "reasoning_tokens": 0
+        },
+        "total_tokens": 379
+       },
+       "user": null,
+       "metadata": {}
+      }
+     },
+     "tool_runs": []
+    }
+   ]
+  },
+  "8/sol/plain": {
+   "started_at": "2026-10-02T06:48:07.115+00:00",
+   "total_ms": 3161.6,
+   "turns": [
+    {
+     "started_at": "2026-10-02T06:48:07.116+00:00",
+     "latency_ms": 3160.9,
+     "request": {
+      "url": "https://api.openai.com/v1/responses",
+      "body": {
+       "model": "gpt-6-sol",
+       "input": [
+        {
+         "role": "user",
+         "content": "In this 8x8 grid, '#' is a wall and '.' is open. Starting at the top-left cell and moving only right or down, how many different paths reach the bottom-right cell?\n..#.....\n...###..\n#.....##\n........\n......#.\n........\n.#.##.#.\n......#.\nAnswer with just the number."
+        }
+       ],
+       "reasoning": {
+        "effort": "low"
+       },
+       "max_output_tokens": 16000
+      }
+     },
+     "response": {
+      "status": 200,
+      "body": {
+       "id": "resp_0c9ae5948bd9050f006abf53a77cec87d182fd2ab8f3c9f7e9",
+       "object": "response",
+       "created_at": 1790923687,
+       "status": "completed",
+       "access_programs": null,
+       "background": false,
+       "billing": {
+        "payer": "developer"
+       },
+       "completed_at": 1790923690,
+       "error": null,
+       "frequency_penalty": 0.0,
+       "incomplete_details": null,
+       "instructions": null,
+       "max_output_tokens": 16000,
+       "max_tool_calls": null,
+       "model": "gpt-6-sol",
+       "moderation": null,
+       "output": [
+        {
+         "id": "rs_0c9ae5948bd9050f006abf53a85a0887d1beadfdbec345595d",
+         "type": "reasoning",
+         "content": [],
+         "encrypted_content": "gAAAAABqv1OqkfnSrnFqoxDeK2lBj2lHjQAmB19scm7pCO9rFj7eGrwqhExabAq3xMK7zZPmARLdmtEah-FnNotEUWDZaqJWEfgi2sK2PN8IMeDcopgEya3wpXYWH-uMwmNnvMOFn-tZBEAiV6yChQxOF2byaapBnwDDXeL5rJichqOU6-eJ5qOyMB1VOWBe_3BlgjEKwRQkJ3hBcHByN3b0Kbl7H1vBHrGWYVHOBj4qOrAs1AhbzvV0HANiMgphyKQrjeDR0J8RLjdW_KSEmjQxcS8_OW_Yp9n0lYIyt5FDbWKxZIjcduEc_5IjBV46iT_H3VwcG5uPg4xjRVBew4Yeki4GbhwDsMJErTf-HK0JPm2OeUAkA_yY1Ljp69Uz8krd5pyvzOLeSSITaPiuNhK7DelI8nG1HmpJbj-xI9BCbqPW-Tsag4FtlkaNr1etuJeHlAcPLyrAwKjaO16Th8yBQoNH9QGJ_AL9guEKR4DiTKOKTlk8ynSEZgpRlAfXDkCEEsspAhRSZzKeqovqzhmZiekzy1P2E2IyBJ5mbKmsEX-eNfxfdVtIA9Wlmit5OOuTF2ywzQScYIfCSp_o5h-FRh9hOnyE857IUsWvU_cMVJOCrElcqtM-q5VSWaru2bbBq5lpRoKbeetGFdMkGjKt5-edr6AYvGHWuyQ1NUWA83I-u7vbqUSpZJvbQip_jNZUnB2j1J7H2QFny__2M6HIiCDZJEe0vmx2a_3oGMEBDKV8LcQshxFZEJNIdkvDz1AiHrOPSZZaX08_7cKXXg7Z08ySDUASAgGea9AuZTPOBMCle5MIAHy6-JJWJvcROtERwWj_LVg1IQ02b3kXXeQ07D-4ayM8V_-QSr1fbKenoHmGz3R0kK50idjezU2XVI0bdjWVYTjGTzKSPKKge64d3fNQaL6G7Z4nIonTD9PZkI5KA22laY_23EE0IXbi8BhRBUR7ut9eAG1nzehiwpci4M9FYANCjVzEMsYOuCMzc5TiYbP9NPmYXWEvuLDM7wKQoLEOrKNhEc9e3oXNaUjRe_wIywcVzjFoAUK3kesCyOL1cQuNHEi7gNqJjoWI81o3V6bA3tkUUQM2lvWNizj3EORJsgWaL0LP5GiIncujlRPUY6Ir3LFZ6ZMHftAywZ_KnZZHkVYYXBeUR_zFZzuSQoZ--_vBourXy-rrfoiVeIBmAKBZmGKluUcuTi-kJnTnIxnEPcGgF8JWLdt1rRmE49_qJ6IOhQbAme5oDkTuodXmexA3T680FeLMzvj0DWVuOj5VE9w_UzTSY1RFlOXFbdxoZVCnshuDFPsq4X3AUaz7dv4SO-4x9GrBcONhcO_jzAbKECwkDPGovClXkpi9j76bErMQ3rWvPNVWzgmaudN53L4geuNdx2KM2PbBJdV2M4-HidxgLV7OnZOFDbi-PnKy8gFrBk9PKQ1coknOccthsitRONm1MuTTow6PZVYxS5NRKFxNZYdyQ8R6CsuxvqbJQ2izzloAW8VqQDOTXVB4sS0QmC9impXTYPfYP9tT9cHpC9NI2bKAF-fbUPmiGEdQQPpmXcJtxsxAxmnC07jlV_tj_HExab4dWKDu-2A9G20F5WqDXTFWMM_MZ1v3GEeX1kXdQQ==",
+         "summary": []
+        },
+        {
+         "id": "msg_0c9ae5948bd9050f006abf53a9ffec87d1979618d78f799f4a",
+         "type": "message",
+         "status": "completed",
+         "content": [
+          {
+           "type": "output_text",
+           "annotations": [],
+           "logprobs": [],
+           "text": "128"
+          }
+         ],
+         "phase": "final_answer",
+         "role": "assistant"
+        }
+       ],
+       "parallel_tool_calls": true,
+       "presence_penalty": 0.0,
+       "previous_response_id": null,
+       "prompt_cache_key": null,
+       "prompt_cache_retention": "24h",
+       "reasoning": {
+        "context": "all_turns",
+        "effort": "low",
+        "mode": "standard",
+        "summary": null
+       },
+       "safety_identifier": null,
+       "service_tier": "default",
+       "store": true,
+       "temperature": 1.0,
+       "text": {
+        "format": {
+         "type": "text"
+        },
+        "verbosity": "medium"
+       },
+       "tool_choice": "auto",
+       "tool_usage": {
+        "image_gen": {
+         "input_tokens": 0,
+         "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "output_tokens": 0,
+         "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "total_tokens": 0
+        },
+        "web_search": {
+         "num_requests": 0
+        }
+       },
+       "tools": [],
+       "top_logprobs": 0,
+       "top_p": 0.98,
+       "truncation": "disabled",
+       "usage": {
+        "input_tokens": 76,
+        "input_tokens_details": {
+         "cache_write_tokens": 0,
+         "cached_tokens": 0
+        },
+        "output_tokens": 202,
+        "output_tokens_details": {
+         "reasoning_tokens": 195
+        },
+        "total_tokens": 278
+       },
+       "user": null,
+       "metadata": {}
+      }
+     },
+     "tool_runs": []
+    }
+   ]
+  },
+  "8/sol/tools": {
+   "started_at": "2026-10-02T06:48:07.116+00:00",
+   "total_ms": 4401.2,
+   "turns": [
+    {
+     "started_at": "2026-10-02T06:48:07.116+00:00",
+     "latency_ms": 3112.1,
+     "request": {
+      "url": "https://api.openai.com/v1/responses",
+      "body": {
+       "model": "gpt-6-sol",
+       "input": [
+        {
+         "role": "user",
+         "content": "In this 8x8 grid, '#' is a wall and '.' is open. Starting at the top-left cell and moving only right or down, how many different paths reach the bottom-right cell?\n..#.....\n...###..\n#.....##\n........\n......#.\n........\n.#.##.#.\n......#.\nAnswer with just the number."
+        }
+       ],
+       "reasoning": {
+        "effort": "low"
+       },
+       "max_output_tokens": 16000,
+       "tools": [
+        {
+         "type": "function",
+         "name": "run_python",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code"
+          ]
+         }
+        }
+       ]
+      }
+     },
+     "response": {
+      "status": 200,
+      "body": {
+       "id": "resp_07fe61033c3dc603006abf53a78c4487d1a41e44b0dffa328f",
+       "object": "response",
+       "created_at": 1790923687,
+       "status": "completed",
+       "access_programs": null,
+       "background": false,
+       "billing": {
+        "payer": "developer"
+       },
+       "completed_at": 1790923690,
+       "error": null,
+       "frequency_penalty": 0.0,
+       "incomplete_details": null,
+       "instructions": null,
+       "max_output_tokens": 16000,
+       "max_tool_calls": null,
+       "model": "gpt-6-sol",
+       "moderation": null,
+       "output": [
+        {
+         "id": "fc_07fe61033c3dc603006abf53a89fd887d193a09e229925ec72",
+         "type": "function_call",
+         "status": "completed",
+         "arguments": "{\"code\":\"def main(input):\\n g=['..#.....','...###..','#.....##','........','......#.','........','.#.##.#.','......#.']; d=[[0]*8 for _ in range(8)];d[0][0]=1\\n for i in range(8):\\n  for j in range(8):\\n   if g[i][j]=='#':continue\\n   if i:d[i][j]+=d[i-1][j]\\n   if j:d[i][j]+=d[i][j-1]\\n return str(d[7][7])\",\"input\":null}",
+         "call_id": "call_G9EzzfESmvX9zvS4g7zsEowM",
+         "name": "run_python"
+        }
+       ],
+       "parallel_tool_calls": true,
+       "presence_penalty": 0.0,
+       "previous_response_id": null,
+       "prompt_cache_key": null,
+       "prompt_cache_retention": "24h",
+       "reasoning": {
+        "context": "all_turns",
+        "effort": "low",
+        "mode": "standard",
+        "summary": null
+       },
+       "safety_identifier": null,
+       "service_tier": "default",
+       "store": true,
+       "temperature": 1.0,
+       "text": {
+        "format": {
+         "type": "text"
+        },
+        "verbosity": "medium"
+       },
+       "tool_choice": "auto",
+       "tool_usage": {
+        "image_gen": {
+         "input_tokens": 0,
+         "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "output_tokens": 0,
+         "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "total_tokens": 0
+        },
+        "web_search": {
+         "num_requests": 0
+        }
+       },
+       "tools": [
+        {
+         "type": "function",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "name": "run_python",
+         "output_schema": null,
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code",
+           "input"
+          ],
+          "additionalProperties": false
+         },
+         "strict": true
+        }
+       ],
+       "top_logprobs": 0,
+       "top_p": 0.98,
+       "truncation": "disabled",
+       "usage": {
+        "input_tokens": 186,
+        "input_tokens_details": {
+         "cache_write_tokens": 0,
+         "cached_tokens": 0
+        },
+        "output_tokens": 147,
+        "output_tokens_details": {
+         "reasoning_tokens": 0
+        },
+        "total_tokens": 333
+       },
+       "user": null,
+       "metadata": {}
+      }
+     },
+     "tool_runs": [
+      {
+       "call_id": "call_G9EzzfESmvX9zvS4g7zsEowM",
+       "arguments": {
+        "code": "def main(input):\n g=['..#.....','...###..','#.....##','........','......#.','........','.#.##.#.','......#.']; d=[[0]*8 for _ in range(8)];d[0][0]=1\n for i in range(8):\n  for j in range(8):\n   if g[i][j]=='#':continue\n   if i:d[i][j]+=d[i-1][j]\n   if j:d[i][j]+=d[i][j-1]\n return str(d[7][7])",
+        "input": null
+       },
+       "started_at": "2026-10-02T06:48:10.229+00:00",
+       "duration_ms": 224.8,
+       "container": {
+        "image": "python:3.13-alpine",
+        "command": [
+         "docker",
+         "run",
+         "--rm",
+         "-i",
+         "--name",
+         "models101-d04b3e19ccfa",
+         "--network",
+         "none",
+         "--memory",
+         "128m",
+         "--cpus",
+         "1",
+         "--pids-limit",
+         "64",
+         "--read-only",
+         "--cap-drop",
+         "ALL",
+         "--security-opt",
+         "no-new-privileges",
+         "--user",
+         "65534",
+         "python:3.13-alpine",
+         "timeout",
+         "-s",
+         "KILL",
+         "5",
+         "python",
+         "-I",
+         "-c",
+         "<runner>"
+        ]
+       },
+       "exit_code": 0,
+       "timed_out": false,
+       "stdout": "128",
+       "stderr": "",
+       "output": "128"
+      }
+     ]
+    },
+    {
+     "started_at": "2026-10-02T06:48:10.454+00:00",
+     "latency_ms": 1063.1,
+     "request": {
+      "url": "https://api.openai.com/v1/responses",
+      "body": {
+       "model": "gpt-6-sol",
+       "input": [
+        {
+         "role": "user",
+         "content": "In this 8x8 grid, '#' is a wall and '.' is open. Starting at the top-left cell and moving only right or down, how many different paths reach the bottom-right cell?\n..#.....\n...###..\n#.....##\n........\n......#.\n........\n.#.##.#.\n......#.\nAnswer with just the number."
+        },
+        {
+         "id": "fc_07fe61033c3dc603006abf53a89fd887d193a09e229925ec72",
+         "type": "function_call",
+         "status": "completed",
+         "arguments": "{\"code\":\"def main(input):\\n g=['..#.....','...###..','#.....##','........','......#.','........','.#.##.#.','......#.']; d=[[0]*8 for _ in range(8)];d[0][0]=1\\n for i in range(8):\\n  for j in range(8):\\n   if g[i][j]=='#':continue\\n   if i:d[i][j]+=d[i-1][j]\\n   if j:d[i][j]+=d[i][j-1]\\n return str(d[7][7])\",\"input\":null}",
+         "call_id": "call_G9EzzfESmvX9zvS4g7zsEowM",
+         "name": "run_python"
+        },
+        {
+         "type": "function_call_output",
+         "call_id": "call_G9EzzfESmvX9zvS4g7zsEowM",
+         "output": "128"
+        }
+       ],
+       "reasoning": {
+        "effort": "low"
+       },
+       "max_output_tokens": 16000,
+       "tools": [
+        {
+         "type": "function",
+         "name": "run_python",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code"
+          ]
+         }
+        }
+       ]
+      }
+     },
+     "response": {
+      "status": 200,
+      "body": {
+       "id": "resp_07fe61033c3dc603006abf53aaac4887d1931266e274f14395",
+       "object": "response",
+       "created_at": 1790923690,
+       "status": "completed",
+       "access_programs": null,
+       "background": false,
+       "billing": {
+        "payer": "developer"
+       },
+       "completed_at": 1790923691,
+       "error": null,
+       "frequency_penalty": 0.0,
+       "incomplete_details": null,
+       "instructions": null,
+       "max_output_tokens": 16000,
+       "max_tool_calls": null,
+       "model": "gpt-6-sol",
+       "moderation": null,
+       "output": [
+        {
+         "id": "msg_07fe61033c3dc603006abf53ab42c087d1b2d6e8bdaa6f2925",
+         "type": "message",
+         "status": "completed",
+         "content": [
+          {
+           "type": "output_text",
+           "annotations": [],
+           "logprobs": [],
+           "text": "128"
+          }
+         ],
+         "phase": "final_answer",
+         "role": "assistant"
+        }
+       ],
+       "parallel_tool_calls": true,
+       "presence_penalty": 0.0,
+       "previous_response_id": null,
+       "prompt_cache_key": null,
+       "prompt_cache_retention": "24h",
+       "reasoning": {
+        "context": "all_turns",
+        "effort": "low",
+        "mode": "standard",
+        "summary": null
+       },
+       "safety_identifier": null,
+       "service_tier": "default",
+       "store": true,
+       "temperature": 1.0,
+       "text": {
+        "format": {
+         "type": "text"
+        },
+        "verbosity": "medium"
+       },
+       "tool_choice": "auto",
+       "tool_usage": {
+        "image_gen": {
+         "input_tokens": 0,
+         "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "output_tokens": 0,
+         "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+         },
+         "total_tokens": 0
+        },
+        "web_search": {
+         "num_requests": 0
+        }
+       },
+       "tools": [
+        {
+         "type": "function",
+         "description": "Run Python code in a sandbox with no network and no third-party libraries, stopped after 5 seconds. The code must define main(input); it is called with `input` (a string, or None) and its return value is returned as a string, after anything the code printed.",
+         "name": "run_python",
+         "output_schema": null,
+         "parameters": {
+          "type": "object",
+          "properties": {
+           "code": {
+            "type": "string",
+            "description": "Python source defining main(input)."
+           },
+           "input": {
+            "type": [
+             "string",
+             "null"
+            ],
+            "description": "Passed to main() as its only argument."
+           }
+          },
+          "required": [
+           "code",
+           "input"
+          ],
+          "additionalProperties": false
+         },
+         "strict": true
+        }
+       ],
+       "top_logprobs": 0,
+       "top_p": 0.98,
+       "truncation": "disabled",
+       "usage": {
+        "input_tokens": 345,
+        "input_tokens_details": {
+         "cache_write_tokens": 0,
+         "cached_tokens": 0
+        },
+        "output_tokens": 5,
+        "output_tokens_details": {
+         "reasoning_tokens": 0
+        },
+        "total_tokens": 350
+       },
+       "user": null,
+       "metadata": {}
+      }
+     },
+     "tool_runs": []
+    }
+   ]
+  }
+ }
+}

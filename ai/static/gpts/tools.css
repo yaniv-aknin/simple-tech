@@ -1,0 +1,24 @@
+.switch { display: flex; padding: 3px; background: var(--card); border: 1px solid var(--line-strong); border-radius: 10px; }
+.switch button { font: inherit; font-size: 20px; font-weight: 600; color: var(--muted); background: none; border: 0; border-radius: 8px; padding: 8px 20px; cursor: pointer; }
+.switch button.on { background: var(--accent); color: #fff; }
+
+.log { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; scrollbar-width: none; }
+.log::-webkit-scrollbar { display: none; }
+.step { flex: none; padding-left: 12px; border-left: 3px solid var(--line-strong); font-size: 18px; line-height: 1.4; animation: pop .3s ease-out; }
+.step.response { border-color: var(--accent); }
+.step.tool { border-color: var(--term); }
+.step.ok { border-color: var(--ok); }
+.step.bad { border-color: var(--error); }
+.step .title { display: flex; align-items: baseline; gap: 10px; font-weight: 600; }
+.step .meta { color: var(--muted); font-weight: 400; }
+.step .note { color: var(--muted); }
+.step .text { margin-top: 4px; font-size: 22px; font-weight: 600; }
+.step.ok .text { color: var(--ok); }
+.step.bad .text { color: var(--error); }
+.step pre { margin: 6px 0 0; padding: 8px 10px; border-radius: 8px; background: var(--field); font: 15px/1.4 ui-monospace, "SF Mono", Menlo, monospace; white-space: pre-wrap; word-break: break-word; }
+.step pre.out { color: var(--term); }
+.step .label { margin-top: 6px; color: var(--muted); font-size: 15px; }
+.step.clickable { cursor: pointer; }
+.step.clickable:hover { border-color: var(--ink); }
+.sheet.wire { width: min(1100px, 100%); }
+.sheet.wire #code { font-size: 19px; white-space: pre-wrap; }

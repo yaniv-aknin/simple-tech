@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Size isn't Everything</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/gpts/gpts.css">
+</head>
+<body data-task="s-m-l">
+<div class="app wide nopick">
+  <header class="bar">
+    <h1>Size isn't Everything</h1>
+    <span class="mode" id="mode"></span>
+    <button id="go">Start</button>
+  </header>
+  <section class="main">
+    <div class="prompt" id="prompt"></div>
+    <div class="results" id="results"></div>
+  </section>
+</div>
+<div class="modal" id="modal" hidden>
+  <div class="sheet">
+    <div class="chrome"><span>message, exactly as sent</span><button id="closeModal">Close</button></div>
+    <textarea id="code" spellcheck="false" autocomplete="off"></textarea>
+  </div>
+</div>
+<script src="/common.js"></script>
+<script src="/gpts/gpts.js"></script>
+<script src="/deck-keys.js"></script>
+</body>
+</html>

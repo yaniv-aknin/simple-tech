@@ -1,0 +1,32 @@
+#text .done { color: var(--muted); }
+#text .ahead { color: #4b4b55; }
+#text .ctx { color: var(--ink); background: var(--accent-soft); border-radius: 6px; padding: 0 5px; }
+#text .nxt { color: #fff; background: var(--accent); border-radius: 6px; padding: 0 5px; }
+
+.tally { display: flex; flex-wrap: wrap; gap: 10px; }
+.stat { padding: 8px 14px; border-radius: 10px; background: rgba(255, 255, 255, 0.04); color: var(--muted); font-size: 20px; }
+.stat .num { color: var(--ink); font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; margin-right: 4px; }
+
+.progress { flex: none; height: 4px; margin-top: -6px; border-radius: 2px; background: rgba(255, 255, 255, 0.07); overflow: hidden; }
+.progress .fill { height: 100%; width: 0; border-radius: 2px; background: var(--accent); opacity: 0.75; transition: width 0.15s linear; }
+
+.log {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 35%);
+  mask-image: linear-gradient(to bottom, transparent, #000 35%);
+}
+.log .track { display: flex; flex-direction: column; }
+.log-empty { color: var(--muted); font-size: 24px; line-height: 1.4; padding-bottom: 4px; }
+.log-row { height: 38px; display: flex; align-items: center; gap: 14px; white-space: nowrap; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 26px; }
+.log-row .k { color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
+.log-row .arrow { color: var(--muted); }
+.log-row .next { color: var(--ink); font-weight: 600; }
+.log-row .next small { font-family: Inter, system-ui, sans-serif; font-weight: 400; font-size: 17px; color: var(--muted); }
+.log-row .count { margin-left: auto; padding: 0 10px; border-radius: 8px; font-size: 20px; line-height: 28px; color: var(--muted); background: rgba(255, 255, 255, 0.06); font-variant-numeric: tabular-nums; }
+.log-row .count.repeat { color: #fff; background: var(--accent); }
+.log-row.newest .k { color: var(--accent-text); }

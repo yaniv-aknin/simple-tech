@@ -1,2 +1,7 @@
 node_modules
 dist
+.env
+.venv/
+__pycache__/
+ai/raw/
+ai/texts/custom.txt

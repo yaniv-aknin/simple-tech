@@ -1,0 +1,33 @@
+{
+ "exchanges": [
+  {
+   "user": "Hi there",
+   "response": {
+    "text": "Hi! What can I help you with?",
+    "latency_ms": 1441.7
+   }
+  },
+  {
+   "user": "How much is 37.0C in Farenheit?",
+   "response": {
+    "text": "37.0°C is 98.6°F.",
+    "latency_ms": 1263.8
+   }
+  },
+  {
+   "user": "What happened to Dolly Parton?",
+   "response": {
+    "text": "#WIKIPEDIA Dolly Parton",
+    "latency_ms": 1248.8
+   }
+  },
+  {
+   "tool_title": "Dolly Parton",
+   "tool_chars": 83558,
+   "response": {
+    "text": "Dolly Parton died on August 25, 2026, at age 80, after a brief battle with cancer. She had been hospitalized in Nashville four days earlier. Earlier in 2026, she had stepped back from public appearances because of health issues.",
+    "latency_ms": 1790.4
+   }
+  }
+ ]
+}

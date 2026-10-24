@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Next Word Prediction</title>
+<link rel="stylesheet" href="/style.css">
+
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Next Word Prediction</h1>
+  </header>
+
+  <nav class="books" id="books" aria-label="Choose a book"></nav>
+
+  <section class="main">
+    <div class="controls">
+      <div class="control memory">
+        <span class="label" id="memLabel">Remembers the last 2 words</span>
+        <input type="range" id="memory" min="1" max="3" step="1" value="2" aria-labelledby="memLabel">
+        <div class="ticks"><span>1 word</span><span>2 words</span><span>3 words</span></div>
+      </div>
+      <div class="control speed">
+        <label for="speed">Speed</label>
+        <input type="range" id="speed" min="1" max="14" step="1" value="8">
+        <div class="ticks"><span>slow</span><span>fast</span></div>
+      </div>
+      <div class="control seed">
+        <label for="seed">Start with</label>
+        <input type="text" id="seed" placeholder="e.g. the detective" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="actions">
+        <button id="clear">Clear</button>
+        <button id="next">Next</button>
+        <button id="go">Start</button>
+      </div>
+    </div>
+
+    <div class="stage" id="stage">
+      <div class="output" id="output" aria-live="polite"></div>
+      <textarea id="pasteText" placeholder="Paste text here…" spellcheck="false"></textarea>
+    </div>
+    <div class="legend" id="legend"><span class="swatch">highlighted</span> = copied word for word from the book</div>
+    <div class="status" id="status"></div>
+  </section>
+
+  <aside class="panel">
+    <h2>Potential next words</h2>
+    <div class="bars" id="bars"></div>
+  </aside>
+</div>
+
+<script src="/common.js"></script>
+<script src="/markov/model.js"></script>
+<script src="/markov/app.js"></script>
+<script src="/deck-keys.js"></script>
+</body>
+</html>
