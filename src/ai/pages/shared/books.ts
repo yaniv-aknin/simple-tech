@@ -1,0 +1,66 @@
+import type {Corpus} from '../../core/markov.ts';
+import {$text, asset} from './dom.ts';
+
+export interface Book {
+  file?: string;
+  title: string;
+  author: string;
+  emoji: string;
+  text: string;
+  corpus: Corpus | null;
+  custom?: boolean;
+}
+
+/** The book picker, in order. Files live in public/ai/texts/. */
+const BOOKS = [
+  {file: 'pride.txt', title: 'Pride and Prejudice', author: 'Jane Austen', emoji: '💌'},
+  {file: 'holmes.txt', title: 'Sherlock Holmes', author: 'Arthur Conan Doyle', emoji: '🔍'},
+];
+
+export async function loadBooks(): Promise<Book[]> {
+  const books: Book[] = BOOKS.map(b => ({...b, text: '', corpus: null}));
+  const custom: Book = {
+    title: 'Custom text',
+    author: 'Paste anything',
+    emoji: '✉️',
+    text: '',
+    corpus: null,
+    custom: true,
+  };
+  const res = await fetch(asset('texts/custom.txt'));
+  if (res.ok) {
+    custom.text = await res.text();
+    $text('pasteText').value = custom.text;
+  }
+  books.push(custom);
+  return books;
+}
+
+export async function loadText(b: Book) {
+  if (b.text || b.custom) return;
+  const res = await fetch(asset('texts/' + encodeURIComponent(b.file!)));
+  b.text = await res.text();
+}
+
+export function renderBooks(
+  nav: HTMLElement,
+  books: Pick<Book, 'emoji' | 'title' | 'author'>[],
+  current: number,
+  onSelect: (i: number) => void,
+) {
+  nav.innerHTML = '';
+  books.forEach((b, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'book' + (i === current ? ' active' : '');
+    btn.innerHTML =
+      '<span class="emoji"></span><span><span class="title"></span><span class="author"></span></span>';
+    btn.querySelector('.emoji')!.textContent = b.emoji;
+    btn.querySelector('.title')!.textContent = b.title;
+    btn.querySelector('.author')!.textContent = b.author;
+    btn.addEventListener('click', () => {
+      onSelect(i);
+      btn.blur();
+    });
+    nav.appendChild(btn);
+  });
+}

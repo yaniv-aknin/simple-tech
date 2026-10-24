@@ -1,12 +1,11 @@
 import {readdirSync} from 'node:fs';
 import {defineConfig} from 'vite';
 
-const AI_URL = 'http://127.0.0.1:8000';
-const aiRoutes = ['api', 'texts', ...readdirSync('ai/static')];
-const proxy = Object.fromEntries(aiRoutes.map(r => [`/${r}`, AI_URL]));
+const aiPages = readdirSync('ai', {recursive: true, encoding: 'utf8'})
+  .filter(f => f.endsWith('index.html'))
+  .map(f => `ai/${f}`);
 
 export default defineConfig({
-  base: './',
-  server: {proxy},
-  preview: {proxy},
+  appType: 'mpa',
+  build: {rollupOptions: {input: ['index.html', ...aiPages]}},
 });

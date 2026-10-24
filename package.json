@@ -5,17 +5,16 @@
   "type": "module",
   "packageManager": "pnpm@11.25.0",
   "scripts": {
-    "dev": "concurrently -k -n web,ai \"vite\" \"pnpm ai\"",
-    "ai": "uv run ai/app.py",
+    "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "concurrently -k -n web,ai \"vite preview\" \"pnpm ai\"",
+    "preview": "vite preview",
     "test": "vitest run",
-    "typecheck": "tsc",
+    "typecheck": "tsc && tsc -p scripts",
     "format": "prettier --write .",
-    "check": "tsc && prettier --check . && vitest run"
+    "check": "pnpm typecheck && prettier --check . && vitest run"
   },
   "devDependencies": {
-    "concurrently": "^10.0.6",
+    "@types/node": "^22.20.5",
     "prettier": "^3.9.10",
     "typescript": "^7.0.2",
     "vite": "^8.3.4",
