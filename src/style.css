@@ -107,6 +107,7 @@ h1 {
 }
 body[data-demo='page'] header,
 body[data-demo='page'] .layout,
+body[data-demo='page'] #controls,
 body:not([data-demo='page']) .page {
   display: none;
 }
