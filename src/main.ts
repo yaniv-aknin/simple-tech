@@ -104,6 +104,10 @@ function route() {
 }
 
 function frame(t: number) {
+  if (!session) {
+    requestAnimationFrame(frame);
+    return;
+  }
   const dt = Math.min(100, t - lastT) / 1000;
   lastT = t;
   const ips = SPEEDS[speedIdx];
@@ -150,8 +154,8 @@ $('rst').onclick = () => {
   restart();
 };
 
-const press = (dir: Direction) => view.keyboard?.press(dir);
-const release = (dir: Direction) => view.keyboard?.release(dir);
+const press = (dir: Direction) => view?.keyboard?.press(dir);
+const release = (dir: Direction) => view?.keyboard?.release(dir);
 
 const KEY_DIRS = new Map<string, Direction>([
   ['ArrowLeft', -1],
