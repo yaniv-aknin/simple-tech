@@ -333,14 +333,6 @@ button:hover {
   display: flex;
   align-items: center;
 }
-.cpu .msg {
-  margin-top: 12px;
-  padding: 10px;
-  background: var(--field);
-  border-radius: 8px;
-  min-height: 84px;
-  border-left: 3px solid var(--accent);
-}
 #listing {
   flex: 1 1 0;
   height: 0;

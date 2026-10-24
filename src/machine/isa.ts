@@ -1,4 +1,3 @@
-import {hex} from './format.ts';
 import type {Machine} from './machine.ts';
 
 export const Op = {
@@ -19,15 +18,12 @@ export const Op = {
   STX_B: 14,
 } as const;
 
-export type Namer = (addr: number) => string;
-
 export interface OpSpec {
   name: string;
   syntax: string;
   does: string;
   flags: string;
-  what(x: number, nm: Namer): string;
-  run(m: Machine, x: number): string;
+  run(m: Machine, x: number): void;
 }
 
 const FOLLOW_A = 'Z and N follow the new A';
@@ -38,52 +34,36 @@ export const OPS: Record<number, OpSpec> = {
     syntax: 'NOP',
     does: 'nothing',
     flags: 'unchanged',
-    what: () => 'Do nothing.',
-    run: () => 'Nothing happens.',
+    run: () => {},
   },
   [Op.LOAD_A]: {
     name: 'LOAD A',
     syntax: 'LOAD A, [addr]',
     does: 'A ← RAM[addr]',
     flags: FOLLOW_A,
-    what: (x, nm) => `Copy the number in RAM address ${hex(x)}${nm(x)} into register A.`,
-    run: (m, x) => {
-      const v = m.read(x);
-      m.setA(v);
-      return `A ← ${v}`;
-    },
+    run: (m, x) => m.setA(m.read(x)),
   },
   [Op.STORE]: {
     name: 'STORE',
     syntax: 'STORE [addr], A',
     does: 'RAM[addr] ← A',
     flags: 'unchanged',
-    what: (x, nm) => `Copy register A into RAM address ${hex(x)}${nm(x)}.`,
-    run: (m, x) => {
-      m.write(x, m.a);
-      return `RAM ${hex(x)}${m.nm(x)} ← ${m.a}`;
-    },
+    run: (m, x) => m.write(x, m.a),
   },
   [Op.LDI_A]: {
     name: 'LDI A',
     syntax: 'LDI A, n',
     does: 'A ← n',
     flags: FOLLOW_A,
-    what: x => `Put the number ${x} straight into register A.`,
-    run: (m, x) => {
-      m.setA(x);
-      return `A ← ${x}`;
-    },
+    run: (m, x) => m.setA(x),
   },
   [Op.LOAD_B]: {
     name: 'LOAD B',
     syntax: 'LOAD B, [addr]',
     does: 'B ← RAM[addr]',
     flags: 'unchanged',
-    what: (x, nm) => `Copy the number in RAM address ${hex(x)}${nm(x)} into register B.`,
     run: (m, x) => {
       m.b = m.read(x);
-      return `B ← ${m.b}`;
     },
   },
   [Op.LDI_B]: {
@@ -91,10 +71,8 @@ export const OPS: Record<number, OpSpec> = {
     syntax: 'LDI B, n',
     does: 'B ← n',
     flags: 'unchanged',
-    what: x => `Put the number ${x} straight into register B.`,
     run: (m, x) => {
       m.b = x;
-      return `B ← ${x}`;
     },
   },
   [Op.ADD]: {
@@ -102,36 +80,22 @@ export const OPS: Record<number, OpSpec> = {
     syntax: 'ADD A, B',
     does: 'A ← A + B (255 + 1 wraps to 0)',
     flags: FOLLOW_A,
-    what: () => 'Add B to A. (Numbers wrap around after 255.)',
-    run: m => {
-      const r = (m.a + m.b) & 255;
-      const s = `A ← ${m.a} + ${m.b} = ${r}`;
-      m.setA(r);
-      return s;
-    },
+    run: m => m.setA((m.a + m.b) & 255),
   },
   [Op.SUB]: {
     name: 'SUB',
     syntax: 'SUB A, B',
     does: 'A ← A − B (0 − 1 wraps to 255)',
     flags: FOLLOW_A,
-    what: () => 'Subtract B from A. (Below 0 wraps around to 255, 254, ...)',
-    run: m => {
-      const r = (m.a - m.b) & 255;
-      const s = `A ← ${m.a} − ${m.b} = ${r}`;
-      m.setA(r);
-      return s;
-    },
+    run: m => m.setA((m.a - m.b) & 255),
   },
   [Op.JMP]: {
     name: 'JMP',
     syntax: 'JMP label',
     does: 'PC ← address of label',
     flags: 'unchanged',
-    what: x => `Jump: set PC to ${hex(x)}, so the next instruction comes from there.`,
     run: (m, x) => {
       m.pc = x;
-      return `PC ← ${hex(x)}`;
     },
   },
   [Op.JZ]: {
@@ -139,11 +103,8 @@ export const OPS: Record<number, OpSpec> = {
     syntax: 'JZ label',
     does: 'if Z = 1: PC ← address of label',
     flags: 'unchanged',
-    what: x => `If the Z flag is 1 (A is zero), jump to ${hex(x)}. Otherwise carry on.`,
     run: (m, x) => {
-      if (!m.z) return 'Z is 0, so no jump.';
-      m.pc = x;
-      return `Z is 1, so jump: PC ← ${hex(x)}`;
+      if (m.z) m.pc = x;
     },
   },
   [Op.JN]: {
@@ -151,11 +112,8 @@ export const OPS: Record<number, OpSpec> = {
     syntax: 'JN label',
     does: 'if N = 1: PC ← address of label',
     flags: 'unchanged',
-    what: x => `If the N flag is 1 (A is 128 or more, "negative"), jump to ${hex(x)}. Otherwise carry on.`,
     run: (m, x) => {
-      if (!m.n) return 'N is 0, so no jump.';
-      m.pc = x;
-      return `N is 1, so jump: PC ← ${hex(x)}`;
+      if (m.n) m.pc = x;
     },
   },
   [Op.LDX_A]: {
@@ -163,47 +121,27 @@ export const OPS: Record<number, OpSpec> = {
     syntax: 'LDX A, [n]',
     does: 'A ← RAM[n + A]',
     flags: FOLLOW_A,
-    what: x => `Add A to ${x} to make an address, and copy the number stored there into A.`,
-    run: (m, x) => {
-      const addr = (x + m.a) & 255;
-      const v = m.read(addr);
-      const s = `A ← RAM[${x} + ${m.a}] = RAM[${hex(addr)}] = ${v}`;
-      m.setA(v);
-      return s;
-    },
+    run: (m, x) => m.setA(m.read((x + m.a) & 255)),
   },
   [Op.INC_A]: {
     name: 'INC A',
     syntax: 'INC A',
     does: 'A ← A + 1 (255 + 1 wraps to 0)',
     flags: FOLLOW_A,
-    what: () => 'Add 1 to A. (Numbers wrap around after 255.)',
-    run: m => {
-      const r = (m.a + 1) & 255;
-      const s = `A ← ${m.a} + 1 = ${r}`;
-      m.setA(r);
-      return s;
-    },
+    run: m => m.setA((m.a + 1) & 255),
   },
   [Op.STX_B]: {
     name: 'STX',
     syntax: 'STX [n], B',
     does: 'RAM[n + A] ← B',
     flags: 'unchanged',
-    what: x => `Add A to ${x} to make an address, and copy register B into the RAM there.`,
-    run: (m, x) => {
-      const addr = (x + m.a) & 255;
-      m.write(addr, m.b);
-      return `RAM[${x} + ${m.a}] = RAM[${hex(addr)}] ← ${m.b}`;
-    },
+    run: (m, x) => m.write((x + m.a) & 255, m.b),
   },
   [Op.RTI]: {
     name: 'RTI',
     syntax: 'RTI',
     does: 'PC, A, B and flags ← the slot at RAM[CUR]; back to user mode',
     flags: 'restored from the slot',
-    what: () =>
-      'Return from interrupt: reload PC, A, B and the flags from the slot at address CUR, so that process carries on.',
     run: m => m.returnFromInterrupt(),
   },
 };

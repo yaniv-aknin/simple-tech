@@ -1,5 +1,5 @@
 import {hex, hex2} from './format.ts';
-import {OPS, opSpec} from './isa.ts';
+import {OPS} from './isa.ts';
 
 export type Phase = 'fetch' | 'execute' | 'timer';
 
@@ -57,7 +57,6 @@ export class Machine {
   next: 'fetch' | 'execute' = 'fetch';
   lastPhase: Phase | null = null;
   executing: number | null = null;
-  msg = 'Pick a speed to start. Each instruction takes two phases: fetch, then execute.';
   instrCount = 0;
   kernel = false;
   timer = 0;
@@ -135,11 +134,6 @@ export class Machine {
       this.touch((from + 1) & 255, 'read');
     }
     this.pc = (from + 2) & 255;
-    const op = opSpec(this.ir[0]);
-    this.msg =
-      `FETCH: PC said ${hex(from)}, so the CPU copied the two bytes stored there ` +
-      `(${hex2(this.ir[0])} ${hex2(this.ir[1])}) into IR. ` +
-      `That means ${op.name}: ${op.what(this.ir[1], this.nm)} PC moved on to ${hex(this.pc)}.`;
     this.lastPhase = 'fetch';
     this.next = 'execute';
   }
@@ -150,7 +144,7 @@ export class Machine {
       throw new Fault(`it ran an illegal instruction (${hex2(opcode)}) at ${hex(this.executing ?? 0)}`);
     }
     const wasKernel = this.kernel;
-    this.msg = `EXECUTE: ${opSpec(this.ir[0]).run(this, this.ir[1])}`;
+    OPS[opcode].run(this, this.ir[1]);
     if (!wasKernel) this.timer++;
     this.instrCount++;
     this.lastPhase = 'execute';
@@ -169,9 +163,6 @@ export class Machine {
     this.write(slot + 1, this.a);
     this.write(slot + 2, this.b);
     this.write(slot + 3, this.z | (this.n << 1));
-    this.msg =
-      `TIMER: ${this.interrupt!.quantum} instructions are up. The CPU saved PC, A, B and the flags ` +
-      `into the running process's slot (${hex(slot)}) and jumped to the kernel at ${hex(this.interrupt!.vector ?? 0)}.`;
     this.pc = this.interrupt!.vector ?? 0;
     this.kernel = true;
     this.executing = null;
@@ -188,6 +179,5 @@ export class Machine {
     this.n = (flags >> 1) & 1;
     this.kernel = false;
     this.timer = 0;
-    return `From the slot at ${hex(s)}: PC ← ${hex(this.pc)}, A ← ${this.a}, B ← ${this.b}, and the flags too`;
   }
 }

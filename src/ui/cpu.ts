@@ -36,8 +36,7 @@ const TEMPLATE = `
     <span class="flag" data-r="fz"><i>Z</i>A is zero</span>
     <span class="flag" data-r="fn"><i>N</i>A is negative (128+)</span>
   </div>
-  <div class="msg" data-r="msg"></div>
-  <div class="dim stats" data-r="stats"></div>`;
+`;
 
 /** One core's registers and what it is doing. */
 export class CpuPanel {
@@ -76,10 +75,5 @@ export class CpuPanel {
     el.fz.classList.toggle('on', !!m.z);
     el.fn.classList.toggle('on', !!m.n);
     for (const [p, span] of this.phases) span.classList.toggle('on', m.lastPhase === p);
-    setText(el.msg, m.msg);
-    setText(
-      el.stats,
-      `Instructions run: ${m.instrCount}. A real laptop does about 3,000,000,000 per second.`,
-    );
   }
 }
