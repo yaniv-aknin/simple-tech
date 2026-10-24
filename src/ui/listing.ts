@@ -1,7 +1,7 @@
 import {parseC} from '../demos/c-source.ts';
 import type {Session} from '../demos/demo.ts';
 import type {Program} from '../machine/assembler.ts';
-import {commentFor, hex, hex2} from '../machine/format.ts';
+import {hex, hex2} from '../machine/format.ts';
 import type {Machine} from '../machine/machine.ts';
 
 export type Lang = 'asm' | 'c';
@@ -157,9 +157,13 @@ export class Listing {
         d.className = 'ins';
         d.innerHTML = `<span class="ad">${hex(it.addr)}</span><span class="by">${hex2(it.bytes[0])} ${hex2(it.bytes[1])}</span><span class="asm"></span><span class="cm"></span>`;
         d.children[2].textContent = it.text;
-        d.children[3].textContent = commentFor(it) ? '; ' + commentFor(it) : '';
+        d.children[3].textContent = it.comment ? '; ' + it.comment : '';
         d.dataset.op = String(it.bytes[0]);
         d.dataset.arg = String(it.bytes[1]);
+        if (it.symbol) {
+          d.dataset.symbol = it.symbol.name;
+          d.dataset.symbolAddr = String(it.symbol.addr);
+        }
         const address = d.children[0] as HTMLElement;
         address.title = 'Click to stop the clock when it gets here. Click again to remove.';
         address.addEventListener('click', () => this.toggleBreakpoint(it.addr));

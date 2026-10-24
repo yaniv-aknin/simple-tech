@@ -1,13 +1,13 @@
-import {hex2} from '../machine/format.ts';
+import {hex, hex2} from '../machine/format.ts';
 import {opSpec} from '../machine/isa.ts';
 
 const binary = (v: number) => v.toString(2).padStart(8, '0');
 
 /** Tooltips for the listing: what an instruction does (on its text), and its machine code in binary (on its bytes). */
 export function attachTooltip(listing: HTMLElement) {
-  const tip = document.createElement('div');
-  tip.id = 'tip';
-  document.body.appendChild(tip);
+  const tip =
+    document.getElementById('tip') ??
+    document.body.appendChild(Object.assign(document.createElement('div'), {id: 'tip'}));
 
   let tipTarget: HTMLElement | null = null;
   let tipTimer = 0;
@@ -26,6 +26,11 @@ export function attachTooltip(listing: HTMLElement) {
         <code>${spec.syntax}</code>
         <div>${spec.does}</div>
         <div class="dim">Flags: ${spec.flags}. Size: 2 bytes (opcode, operand).</div>`;
+      if (row.dataset.symbol) {
+        const addr = Number(row.dataset.symbolAddr);
+        tip.innerHTML += `<div class="sym"><code>${row.dataset.symbol} = ${hex(addr)}</code>
+          <div>A name for the RAM address ${hex(addr)} (${addr}), which this instruction uses.</div></div>`;
+      }
     }
     tip.style.display = 'block';
     const r = target.getBoundingClientRect();

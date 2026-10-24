@@ -1,10 +1,11 @@
 import './page.css';
-import {commentFor, hex, hex2} from '../../machine/format.ts';
+import {hex, hex2} from '../../machine/format.ts';
 import type {Program} from '../../machine/assembler.ts';
 import type {Access} from '../../machine/machine.ts';
 import {$, setText} from '../../ui/dom.ts';
 import {editByte} from '../../ui/edit.ts';
 import {flashLevel} from '../../ui/flash.ts';
+import {attachTooltip} from '../../ui/tooltip.ts';
 import {initTheme} from '../../theme.ts';
 import {procColor} from '../concurrency/concurrency.ts';
 import {PROCESSES} from './programs.ts';
@@ -169,6 +170,7 @@ class View {
     const crash = h('div', 'crash');
 
     const listing = h('div', 'listing');
+    attachTooltip(listing);
     const rows = new Map<number, HTMLElement>();
     this.fillListing(pid, proc.program, listing, rows);
 
@@ -226,6 +228,12 @@ class View {
       if (it.kind === 'label') listing.append(h('div', 'lbl', it.name + ':'));
       else if (it.kind === 'ins') {
         const row = h('div', 'ins');
+        row.dataset.op = String(it.bytes[0]);
+        row.dataset.arg = String(it.bytes[1]);
+        if (it.symbol) {
+          row.dataset.symbol = it.symbol.name;
+          row.dataset.symbolAddr = String(it.symbol.addr);
+        }
         const address = Object.assign(h('span', 'ad', hex(it.addr)), {
           title: 'Click to stop the clock when this program gets here. Click again to remove.',
           onclick: () => {
@@ -234,7 +242,7 @@ class View {
         });
         address.dataset.pid = String(pid);
         address.dataset.addr = String(it.addr);
-        row.append(address, h('span', 'asm', it.text), h('span', 'cm', commentFor(it)));
+        row.append(address, h('span', 'asm', it.text), h('span', 'cm', it.comment ? '; ' + it.comment : ''));
         listing.append(row);
         rows.set(it.addr, row);
       }
