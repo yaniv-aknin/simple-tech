@@ -38,7 +38,6 @@ export class ConcurrencyView implements DemoView {
     $('nearWrap').onclick = () => {
       for (let i = 0; i < n; i++) {
         machine.write(procBase(i), 0xf0);
-        machine.write(procBase(i) + 1, 0xff);
         this.lastSeen[i] = 0xf0;
       }
     };
@@ -100,7 +99,7 @@ export class ConcurrencyView implements DemoView {
       const rate = secs > 0.3 ? (tally[i] - old.tally[i]) / secs : 0;
       const row = this.rows[i];
       row.tr.classList.toggle('on', i === running);
-      setText(row.count, String(m.mem[procBase(i) + 1] * 256 + m.mem[procBase(i)]));
+      setText(row.count, String(m.mem[procBase(i)]));
       setText(row.rate, rate.toFixed(1));
       totalRate += rate;
     }

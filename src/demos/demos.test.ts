@@ -27,17 +27,18 @@ describe('pong', () => {
 describe('concurrency', () => {
   it.each([1, 2, 4, 8])('shares the CPU between %i processes', n => {
     const {machine: m} = boot(concurrencySetup(n), clock);
-    for (let i = 0; i < 2000; i++) m.stepInstruction();
-    const counts = Array.from({length: n}, (_, i) => m.mem[procBase(i) + 1] * 256 + m.mem[procBase(i)]);
+    for (let i = 0; i < 40 * n; i++) m.stepInstruction();
+    const counts = Array.from({length: n}, (_, i) => m.mem[procBase(i)]);
     expect(Math.min(...counts)).toBeGreaterThan(0);
     expect(Math.max(...counts) - Math.min(...counts)).toBeLessThanOrEqual(3);
   });
 
-  it('carries into the high byte', () => {
+  it('wraps from 255 round to 0', () => {
     const {machine: m} = boot(concurrencySetup(1), clock);
-    m.mem[procBase(0)] = 0xff;
-    for (let i = 0; i < 20; i++) m.stepInstruction();
-    expect(m.mem[procBase(0) + 1]).toBe(1);
+    m.mem[procBase(0)] = 0xfe;
+    for (let i = 0; i < 40; i++) m.stepInstruction();
+    expect(m.mem[procBase(0)]).toBeGreaterThan(0);
+    expect(m.mem[procBase(0)]).toBeLessThan(0x20);
   });
 });
 

@@ -37,16 +37,9 @@ kernel:
 .org ${procBase(i - 1) + 2}
 loop${i}:
 .c inc${i}
-  LOAD A, [P${i}LO]
-  LDI B, 1
-  ADD A, B
-  STORE [P${i}LO], A  ; low byte + 1
-  JZ carry${i}        ; wrapped around to 0?
-  JMP loop${i}
-carry${i}:
-  LOAD A, [P${i}HI]
-  ADD A, B
-  STORE [P${i}HI], A  ; high byte + 1
+  LOAD A, [COUNT${i}]
+  INC A               ; 255 + 1 wraps around to 0
+  STORE [COUNT${i}], A
   JMP loop${i}
 `;
   }
@@ -63,7 +56,7 @@ void kernel(void) {  // runs on every timer tick
 `;
   for (let i = 1; i <= n; i++) {
     s += `
-uint16_t count${i};  // RAM ${hex(procBase(i - 1))}
+uint8_t count${i};  // RAM ${hex(procBase(i - 1))}
 
 void process${i}(void) {
     for (;;) {
@@ -79,7 +72,7 @@ function cellColor(a: number, n: number) {
   if (a >= PROC0 && a < PROC0 + PROC_SIZE * n) {
     const i = Math.floor((a - PROC0) / PROC_SIZE);
     const off = (a - PROC0) % PROC_SIZE;
-    if (off < 2) return procColor(i, true);
+    if (off < 1) return procColor(i, true);
     if (off < 22) return procColor(i);
     return '';
   }
@@ -93,13 +86,11 @@ export function concurrencySetup(n: number): DemoSetup {
   const symbols: Record<string, number> = {CUR};
   const names: Record<number, string> = {[CUR]: 'CUR'};
   for (let i = 0; i < n; i++) {
-    symbols[`P${i + 1}LO`] = procBase(i);
-    symbols[`P${i + 1}HI`] = procBase(i) + 1;
+    symbols[`COUNT${i + 1}`] = procBase(i);
     SLOT_FIELDS.forEach((f, j) => {
       names[slotAddr(i) + j] = `P${i + 1}.${f}`;
     });
-    names[procBase(i)] = `P${i + 1} counter, low byte`;
-    names[procBase(i) + 1] = `P${i + 1} counter, high byte`;
+    names[procBase(i)] = `P${i + 1} counter`;
   }
   return {
     source: source(n),
