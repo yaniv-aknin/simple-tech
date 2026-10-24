@@ -21,7 +21,7 @@ const MEMORIES = [
 const SPEEDS = [0, 1, 5, 10, 50, 100, 500];
 const MAX_STEPS_PER_FRAME = 200;
 /** Where each program has a breakpoint: the clock stops when any of them is about to run that address. */
-const breakpoints = PROCESSES.map(() => new Set<number>());
+const breakpoints: Set<number>[] = [];
 const STATE_TEXT = {stopped: 'not started', running: 'running', paused: 'paused', crashed: 'crashed'};
 const TOGGLE_TEXT = {stopped: 'Start', running: 'Pause', paused: 'Resume', crashed: 'Start'};
 
@@ -62,13 +62,11 @@ interface Hover {
 class View {
   private readonly sys: VirtualSystem;
   private readonly cards: Card[] = [];
-  private readonly shown: boolean[];
   private readonly frames: {box: HTMLElement; owner: HTMLElement; cells: HTMLElement[]}[] = [];
   private hover: Hover | null = null;
 
-  constructor(sys: VirtualSystem, shown: boolean[]) {
+  constructor(sys: VirtualSystem) {
     this.sys = sys;
-    this.shown = shown;
     $('procs').replaceChildren(...sys.procs.map((p, i) => this.buildCard(p, i)));
     this.buildFrames();
     document.onmouseover = e => this.pointAt(e);
@@ -119,6 +117,11 @@ class View {
   private hoveredFrame() {
     const h = this.hover;
     return h ? this.sys.procs[h.pid].table[h.page] : -1;
+  }
+
+  /** Shows the process just added to the system. */
+  addCard(pid: number) {
+    $('procs').append(this.buildCard(this.sys.procs[pid], pid));
   }
 
   private buildCard(proc: Process, pid: number) {
@@ -272,13 +275,9 @@ class View {
 
   render(t: number) {
     const {sys} = this;
-    const count = this.shown.filter(Boolean).length;
+    const count = sys.procs.length;
     if ($('procs').dataset.count !== String(count)) $('procs').dataset.count = String(count);
-    sys.procs.forEach((proc, pid) => {
-      const card = this.cards[pid];
-      if (card.el.hidden === this.shown[pid]) card.el.hidden = !this.shown[pid];
-      if (this.shown[pid]) this.renderCard(proc, pid, t);
-    });
+    sys.procs.forEach((proc, pid) => this.renderCard(proc, pid, t));
     this.renderFrames(t);
     setText($('physTitle'), `Physical memory: ${sys.frames * PAGE_SIZE} bytes`);
     setText($('usage'), `${sys.framesInUse} of ${sys.frames} frames in use`);
@@ -411,10 +410,9 @@ class View {
 initTheme();
 
 let speedIdx = 3;
-const shown = PROCESSES.map(() => true);
 let memory = MEMORIES[0];
-let sys = new VirtualSystem(PROCESSES, memory);
-let view = new View(sys, shown);
+let sys = new VirtualSystem([], memory);
+let view = new View(sys);
 let budget = 0;
 let last = 0;
 
@@ -448,29 +446,19 @@ SPEEDS.forEach((ips, i) => {
 showSpeed();
 
 const strip = $('strip');
-const showStrip = () => {
-  const count = shown.filter(Boolean).length;
-  [...strip.children].forEach((b, pid) => {
-    b.classList.toggle('on', shown[pid]);
-    (b as HTMLButtonElement).disabled = shown[pid] && count === 1;
-  });
-};
 PROCESSES.forEach((def, pid) => {
   const b = h('button', 'pill');
-  b.append(
-    Object.assign(h('i', 'chip'), {style: `background:${procColor(pid, true)}`}),
-    `P${pid + 1} ${def.name}`,
-  );
-  b.title = 'Show or hide this program. Hiding it stops it and frees its frames.';
-  b.onclick = () => {
+  b.append(Object.assign(h('i', 'chip'), {style: `background:${procColor(pid, true)}`}), def.name);
+  b.title = 'Add a process running this program. Shift-click to start it as well. It can be added again.';
+  b.onclick = e => {
     b.blur();
-    if (shown[pid]) sys.reset(pid);
-    shown[pid] = !shown[pid];
-    showStrip();
+    const id = sys.spawn(def);
+    breakpoints.push(new Set());
+    view.addCard(id);
+    if (e.shiftKey) sys.toggle(id);
   };
   strip.append(b);
 });
-showStrip();
 
 const memBox = $('memsize');
 const showMemory = () =>
@@ -482,11 +470,14 @@ MEMORIES.forEach(choice => {
     if (choice === memory) return;
     const old = sys;
     memory = choice;
-    sys = new VirtualSystem(PROCESSES, memory);
+    sys = new VirtualSystem(
+      old.procs.map(proc => proc.def),
+      memory,
+    );
     old.procs.forEach((proc, pid) => {
       for (const [key, value] of Object.entries(proc.values)) sys.setParam(pid, key, value);
     });
-    view = new View(sys, shown);
+    view = new View(sys);
     showMemory();
   };
   memBox.append(b);
@@ -499,9 +490,9 @@ showMemory();
  */
 function fitZoom() {
   const procs = $('procs');
-  const count = shown.filter(Boolean).length;
+  const count = sys.procs.length;
   procs.style.setProperty('--zoom', '1');
-  if (count >= 3) return;
+  if (count === 0 || count >= 3) return;
   const root = document.documentElement;
   const real = (root.clientWidth - 32 - 14 * (count - 1)) / count;
   const max = Math.min(2.2, real / 880);
@@ -547,9 +538,9 @@ function frame(t: number) {
     if (n >= MAX_STEPS_PER_FRAME) budget = 0;
   }
   view.render(t);
-  const crashed = sys.procs.some((p, pid) => shown[pid] && p.state === 'crashed');
+  const crashed = sys.procs.some(p => p.state === 'crashed');
   const states = sys.procs.map(p => p.state).join();
-  const layout = [shown.join(), memory.frames, crashed, states, innerWidth, innerHeight].join();
+  const layout = [sys.procs.length, memory.frames, crashed, states, innerWidth, innerHeight].join();
   if (layout !== fitted) {
     fitted = layout;
     fitZoom();
