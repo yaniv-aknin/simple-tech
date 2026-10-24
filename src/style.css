@@ -296,9 +296,6 @@ button:hover {
   min-height: 84px;
   border-left: 3px solid var(--accent);
 }
-.prog {
-  container-type: inline-size;
-}
 #listing {
   flex: 1 1 0;
   height: 0;
@@ -311,7 +308,6 @@ button:hover {
 }
 #rows,
 #crows {
-  column-width: 420px;
   column-gap: 0;
   column-rule: 1px solid var(--line);
 }
@@ -387,17 +383,6 @@ button:hover {
   font: 600 14px var(--mono);
   color: var(--accent);
   margin-bottom: 2px;
-}
-@container (min-width:1260px) {
-  #listing {
-    overflow-x: auto;
-    overflow-y: hidden;
-  }
-  #rows,
-  #crows {
-    height: 100%;
-    column-fill: auto;
-  }
 }
 .ins {
   display: grid;

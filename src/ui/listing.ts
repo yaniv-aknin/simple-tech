@@ -6,6 +6,8 @@ import type {Machine} from '../machine/machine.ts';
 
 export type Lang = 'asm' | 'c';
 
+const MIN_COLUMN_PX = 400;
+
 const C_KEYWORDS = /\b(void|uint8_t|uint16_t|struct|for|if|else|goto)\b/g;
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -59,14 +61,41 @@ export class Listing {
   private readonly asmNext = new Marker(this.rowByAddr, 'next');
   private readonly cCur = new Marker(this.rowByTag, 'cur');
   private readonly cNext = new Marker(this.rowByTag, 'next');
+  private followed: HTMLElement | null = null;
 
   constructor(el: HTMLElement) {
     this.el = el;
+    new ResizeObserver(() => this.fit()).observe(el);
   }
 
   setLang(lang: Lang) {
     this.lang = lang;
     this.el.dataset.lang = lang;
+    this.followed = null;
+    this.fit();
+  }
+
+  /**
+   * Show the program in the fewest columns (each at least MIN_COLUMN_PX wide) that hold it without
+   * scrolling; if even the most that fit are not enough, use those and scroll.
+   */
+  private fit() {
+    const rows = this.el.querySelector<HTMLElement>(this.lang === 'c' ? '#crows' : '#rows');
+    if (!rows) return;
+    const most = Math.max(1, Math.floor(this.el.offsetWidth / MIN_COLUMN_PX));
+    this.el.style.overflow = 'hidden';
+    rows.style.columnFill = 'auto';
+    rows.style.height = this.el.clientHeight + 'px';
+    for (let count = 1; count <= most; count++) {
+      rows.style.columnCount = String(count);
+      if (rows.scrollWidth <= rows.clientWidth) {
+        this.el.style.overflow = '';
+        return;
+      }
+    }
+    rows.style.columnFill = 'balance';
+    rows.style.height = '';
+    this.el.style.overflow = '';
   }
 
   build({program, setup}: Session) {
@@ -78,6 +107,8 @@ export class Listing {
     this.buildAsm(program);
     this.buildC(setup.cSource, program);
     this.el.scrollTop = 0;
+    this.followed = null;
+    this.fit();
   }
 
   private buildAsm(program: Program) {
@@ -139,10 +170,10 @@ export class Listing {
     this.asmNext.set(next);
     this.cCur.set(curTag);
     this.cNext.set(nextTag);
-    if (!follow) return;
     const row =
       this.lang === 'c' ? this.rowByTag.get(curTag ?? nextTag ?? '') : this.rowByAddr.get(cur ?? next ?? -1);
-    if (!row) return;
+    if (!follow || !row || row === this.followed) return;
+    this.followed = row;
     const el = this.el;
     const top = row.getBoundingClientRect().top - el.getBoundingClientRect().top + el.scrollTop;
     if (top < el.scrollTop + 20 || top > el.scrollTop + el.clientHeight - 40) {
