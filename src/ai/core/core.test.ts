@@ -3,7 +3,7 @@ import {recordingKey, sentences} from './context.ts';
 import {TASKS, countPaths} from './gpts.ts';
 import {Corpus, generate} from './markov.ts';
 import {prettyJoin, stripBoilerplate, tokenize} from './text.ts';
-import {TOOL_LINE, scriptedReply, type WikiData} from './wiki.ts';
+import {TOOL_LINE, looksLikeDollyPartonPage, scriptedReply, type WikiData} from './wiki.ts';
 
 describe('text', () => {
   it('tokenizes words and punctuation, and joins them back', () => {
@@ -85,5 +85,18 @@ describe('wiki', () => {
 
   it('finds the tool line', () => {
     expect(TOOL_LINE.exec('Let me check.\n#WIKIPEDIA Dolly Parton ')?.[1]).toBe('Dolly Parton');
+  });
+
+  it('recognises a copy of the Dolly Parton page, not other text', () => {
+    const sections = ['Early life', 'Music career', 'Acting career', 'Discography', 'Filmography'].join('\n');
+    const page =
+      `WikipediaThe Free Encyclopedia\nDolly Parton\n${sections}\nFrom Wikipedia, the free encyclopedia\n` +
+      'Dolly Parton died on August 25, 2026.\n' +
+      'Dolly Parton is a singer. '.repeat(2500);
+    expect(looksLikeDollyPartonPage(page)).toBe(true);
+    expect(looksLikeDollyPartonPage(page.slice(0, 20_000))).toBe(false);
+    expect(looksLikeDollyPartonPage(page.replaceAll('August 25, 2026', 'a date'))).toBe(false);
+    expect(looksLikeDollyPartonPage(page.replaceAll('Dolly Parton', 'Someone Else'))).toBe(false);
+    expect(looksLikeDollyPartonPage('Dolly Parton is a singer.')).toBe(false);
   });
 });

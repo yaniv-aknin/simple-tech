@@ -7,12 +7,13 @@ import {
   SYSTEM_PROMPT,
   TOOL_LINE,
   fetchArticle,
+  looksLikeDollyPartonPage,
   liveChat,
   scriptedReply,
   type Message,
   type WikiData,
 } from '../../core/wiki.ts';
-import {$, $text, el, fetchJson} from '../shared/dom.ts';
+import {$, $text, asset, el, fetchJson} from '../shared/dom.ts';
 import {livePost} from '../shared/key.ts';
 
 const kb = (bytes: number) => `${Math.max(1, Math.round(bytes / 1000))} KB`;
@@ -20,6 +21,7 @@ const kb = (bytes: number) => `${Math.max(1, Math.round(bytes / 1000))} KB`;
 let history: Message[] = [];
 let auto = false;
 let busy = false;
+let toolReady = false;
 let lastTitle = '';
 let script: WikiData = {exchanges: []};
 let lines: string[] = [];
@@ -80,6 +82,7 @@ async function askModel() {
     if (!call) prefill();
     if (call) {
       lastTitle = call[1];
+      setToolReady(true);
       if (auto) await runAuto(lastTitle);
       else $('toolText').focus();
     }
@@ -104,16 +107,34 @@ function send(text: string) {
 
 /* ---------- tool input ---------- */
 
+function setToolReady(on: boolean) {
+  toolReady = on;
+  $text('toolText').disabled = !on;
+  $('toolText').classList.toggle('ready', on);
+  updateToolMeta();
+}
+
 function updateToolMeta() {
   const text = $text('toolText').value;
-  $<HTMLButtonElement>('execute').disabled = busy || !text.trim();
+  $<HTMLButtonElement>('execute').disabled = busy || !toolReady || !text.trim();
   $('toolMeta').textContent = text ? kb(new TextEncoder().encode(text).length) : '';
 }
 
+/* The cheat in looksLikeDollyPartonPage: a pasted copy of the live page becomes the saved article. */
+async function savedDollyParton(pasted: string) {
+  try {
+    const res = await fetch(asset('texts/dolly-parton.txt'));
+    return res.ok ? (await res.text()).trim() : pasted;
+  } catch {
+    return pasted;
+  }
+}
+
 async function execute() {
-  const text = $text('toolText').value.trim();
-  if (!text || busy) return;
+  let text = $text('toolText').value.trim();
+  if (!text || busy || !toolReady) return;
   const title = lastTitle || 'unknown';
+  if (/dolly parton/i.test(title) && looksLikeDollyPartonPage(text)) text = await savedDollyParton(text);
   const bytes = new TextEncoder().encode(text).length;
   history.push({role: 'user', content: `Result of #WIKIPEDIA ${title}:\n\n${text}`});
   const card = el('div', 'msg doc');
@@ -124,7 +145,7 @@ async function execute() {
   card.append(head, track, el('div', 'snippet', text.slice(0, 300)));
   addMessage(card);
   $text('toolText').value = '';
-  updateToolMeta();
+  setToolReady(false);
   setBusy(true);
   await sleep(1100);
   await askModel();
@@ -217,6 +238,7 @@ $('reset').addEventListener('click', () => {
   prefill();
   $('messages').replaceChildren();
   $text('toolText').value = '';
+  setToolReady(false);
   $('frame').removeAttribute('src');
   $('addr').textContent = '';
   $('selection').classList.remove('on');

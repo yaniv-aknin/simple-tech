@@ -73,6 +73,37 @@ export async function fetchArticle(title: string): Promise<Article> {
   };
 }
 
+const DOLLY_DEATH_DATE = 'August 25, 2026';
+
+const DOLLY_SECTIONS = [
+  'Early life',
+  'Music career',
+  'Acting career',
+  'Philanthropy and advocacy',
+  'Discography',
+  'Filmography',
+  'Bibliography',
+  'External links',
+];
+
+/**
+ * A cheat: true when `text` looks like a Ctrl-A/Ctrl-C of the Dolly Parton article in a browser (page chrome and
+ * all), however recently it was edited. The page then gets swapped for a saved copy, so the recorded replies
+ * still apply and the demo works without an API key. A copy that does not mention the date of her death is
+ * older than the story, so it is not recognised and is processed as pasted.
+ */
+export function looksLikeDollyPartonPage(text: string) {
+  return (
+    text.length >= 50_000 &&
+    text.slice(0, 5000).includes('Wikipedia') &&
+    text.slice(0, 5000).includes('Dolly Parton') &&
+    text.includes('From Wikipedia, the free encyclopedia') &&
+    text.includes(DOLLY_DEATH_DATE) &&
+    text.split('Dolly Parton').length - 1 >= 100 &&
+    DOLLY_SECTIONS.filter(section => text.includes(section)).length >= 5
+  );
+}
+
 export async function liveChat(post: Post, messages: Message[]) {
   const record = await post(CHAT_URL, {
     model: MODEL,
