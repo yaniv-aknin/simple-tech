@@ -14,6 +14,7 @@ import {
   type Turn,
 } from '../../core/tools.ts';
 import {$, $text, el, fetchJson} from '../shared/dom.ts';
+import {isCorrect, renderMaze} from './prompt.ts';
 
 interface ModelView extends Model {
   recordings: Partial<Record<Mode, Recording>>;
@@ -53,24 +54,6 @@ function buildConfig(data: ToolsData) {
 }
 
 /* ---------- prompt ---------- */
-
-function renderMaze(grid: string) {
-  const rows = grid.split('\n');
-  const maze = document.createElement('div');
-  maze.className = 'maze';
-  maze.style.setProperty('--cols', String(rows[0].length));
-  maze.style.setProperty('--rows', String(rows.length));
-  rows.forEach((row, r) =>
-    [...row].forEach((ch, c) => {
-      const cell = document.createElement('div');
-      const end = (r === 0 && c === 0) || (r === rows.length - 1 && c === row.length - 1);
-      cell.className = 'c' + (ch === '#' ? ' wall' : '') + (end ? ' end' : '');
-      maze.append(cell);
-    }),
-  );
-  maze.style.cursor = 'default';
-  return maze;
-}
 
 function renderPrompt() {
   const o = option();
@@ -125,11 +108,6 @@ function timeline(recording: Recording) {
   });
   events.push({at, kind: 'answer', text: finalText(recording)});
   return events;
-}
-
-function isCorrect(text: string, expected: string) {
-  const t = text.trim();
-  return t !== '' && Number.isFinite(Number(t)) && Math.abs(Number(t) - Number(expected)) < 1e-9;
 }
 
 /* ---------- terminal text ---------- */

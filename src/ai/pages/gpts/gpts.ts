@@ -2,7 +2,6 @@ import '../shared/page.ts';
 import './gpts.css';
 import {
   TASKS,
-  countPaths,
   entryKey,
   runLive,
   speedOf,
@@ -17,6 +16,7 @@ import {OPEN, isWord, prettyJoin} from '../../core/text.ts';
 import {renderBooks} from '../shared/books.ts';
 import {$, $text, asset, fetchJson} from '../shared/dom.ts';
 import {livePost} from '../shared/key.ts';
+import {expectedAnswer, isCorrect, joinPrompt, renderMaze, splitPrompt, type Parts} from './prompt.ts';
 
 interface SavedRun {
   text?: string;
@@ -41,7 +41,7 @@ const task = document.body.dataset.task!;
 
 let config: {speed: number; multiline: boolean; options: OptionView[]};
 let current = 0;
-let parts: {head: string; grid: string | null; tail: string};
+let parts: Parts;
 let token = 0;
 
 const option = () => config.options[current];
@@ -65,69 +65,17 @@ function buildConfig(data: GptsData) {
   };
 }
 
-/* ---------- prompt: head text, optional grid, tail text ---------- */
-
-const GRID_LINE = /^[.#]+$/;
-
-function splitPrompt(prompt: string) {
-  const lines = prompt.split('\n');
-  const first = lines.findIndex(l => GRID_LINE.test(l));
-  if (first < 0) return {head: prompt, grid: null, tail: ''};
-  let last = first;
-  while (last + 1 < lines.length && GRID_LINE.test(lines[last + 1])) last++;
-  const rows = lines.slice(first, last + 1);
-  if (rows.length < 2 || rows.some(r => r.length !== rows[0].length))
-    return {head: prompt, grid: null, tail: ''};
-  return {
-    head: lines.slice(0, first).join('\n'),
-    grid: rows.join('\n'),
-    tail: lines.slice(last + 1).join('\n'),
-  };
-}
-
-const composePrompt = () => [parts.head, parts.grid, parts.tail].filter(p => p).join('\n');
+const composePrompt = () => joinPrompt(parts);
 const isCollapsed = () => parts.grid === null && composePrompt().length > 500;
 const isEdited = () => composePrompt() !== option().prompt;
 
-/* The expected answer is only known for the original question, or the original text over an edited grid. */
-function truth() {
-  if (!isEdited()) return option().truth ?? null;
-  const original = splitPrompt(option().prompt);
-  if (parts.grid && original.grid && parts.head === original.head && parts.tail === original.tail) {
-    return String(countPaths(parts.grid));
-  }
-  return null;
-}
-
-function isCorrect(text: string, expected: string) {
-  const t = text.trim();
-  return t !== '' && Number.isFinite(Number(t)) && Math.abs(Number(t) - Number(expected)) < 1e-9;
-}
+const truth = () => expectedAnswer(option(), parts);
 
 /* ---------- rendering ---------- */
 
 function autosize(el: HTMLElement) {
   el.style.height = 'auto';
   el.style.height = el.scrollHeight + 'px';
-}
-
-function renderMaze(grid: string) {
-  const rows = grid.split('\n');
-  const maze = document.createElement('div');
-  maze.className = 'maze';
-  maze.title = 'Show the message as sent';
-  maze.style.setProperty('--cols', String(rows[0].length));
-  maze.style.setProperty('--rows', String(rows.length));
-  rows.forEach((row, r) =>
-    [...row].forEach((ch, c) => {
-      const cell = document.createElement('div');
-      const end = (r === 0 && c === 0) || (r === rows.length - 1 && c === row.length - 1);
-      cell.className = 'c' + (ch === '#' ? ' wall' : '') + (end ? ' end' : '');
-      maze.append(cell);
-    }),
-  );
-  maze.addEventListener('click', openModal);
-  return maze;
 }
 
 /* Compact options show line breaks as " / " so they take one line. */
@@ -192,7 +140,7 @@ function renderPrompt() {
     if (parts.grid !== null) q.append(field('tail'));
   }
   box.append(q);
-  if (parts.grid !== null) box.append(renderMaze(parts.grid));
+  if (parts.grid !== null) box.append(renderMaze(parts.grid, openModal));
   const side = document.createElement('div');
   side.className = 'side';
   const truthBox = document.createElement('div');
