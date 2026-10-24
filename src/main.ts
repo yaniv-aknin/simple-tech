@@ -18,9 +18,18 @@ const DEFAULT_PROCESSES = 1;
 const PANELS = ['vars', 'ins', 'cpu', 'ram'] as const;
 type Panel = (typeof PANELS)[number];
 const DEFAULT_PANELS: Panel[] = ['vars', 'ins'];
-/** The pages built into the shell, by the path of their stand-alone copy. Others load in an iframe. */
-const PAGES: Record<string, () => Promise<{mount: Mount}>> = {
-  'computer/virtual-memory/': () => import('./demos/virtual/page.ts'),
+/** The pages beside the simulator, by the path of their stand-alone copy. */
+const PAGES: Record<string, () => Promise<Mount>> = {
+  'computer/virtual-memory/': () => import('./demos/virtual/page.ts').then(m => m.mount),
+  'ai/markov/build/': () => import('./ai/pages/markov/build.ts').then(m => m.mount),
+  'ai/markov/predict/': () => import('./ai/pages/markov/predict.ts').then(m => m.mount),
+  'ai/gpts/gpt2-markov/': () => import('./ai/pages/gpts/gpts.ts').then(m => m.mountTask('gpt2-markov')),
+  'ai/gpts/2-4-6/': () => import('./ai/pages/gpts/gpts.ts').then(m => m.mountTask('2-4-6')),
+  'ai/gpts/s-m-l-apples/': () => import('./ai/pages/gpts/gpts.ts').then(m => m.mountTask('s-m-l-apples')),
+  'ai/gpts/s-m-l/': () => import('./ai/pages/gpts/gpts.ts').then(m => m.mountTask('s-m-l')),
+  'ai/gpts/wikipedia/': () => import('./ai/pages/gpts/wikipedia.ts').then(m => m.mount),
+  'ai/gpts/python/': () => import('./ai/pages/gpts/tools.ts').then(m => m.mount),
+  'ai/gpts/context/': () => import('./ai/pages/gpts/context.ts').then(m => m.mount),
 };
 
 const breakpoints = new Set<number>();
@@ -141,33 +150,23 @@ function unmountPage() {
 async function mountPage(path: string) {
   unmountPage();
   const stop = (pageStop = new AbortController());
-  const {mount} = await PAGES[path]();
+  const mount = await PAGES[path]();
   if (!stop.signal.aborted) mount($('page'), stop.signal);
 }
 
-function showPage(path: string, query: string) {
-  const shown = page;
+/** Every visit builds the page afresh, from the state in the URL. */
+function showPage(path: string) {
   page = path;
   setSpeed(0);
   document.body.dataset.demo = 'page';
   toggleOn($('tabs'), b => b.dataset.page === path);
-  const built = path in PAGES;
-  const iframe = $<HTMLIFrameElement>('frame');
-  $('page').hidden = !built;
-  iframe.hidden = built;
-  if (built) {
-    if (shown !== path) void mountPage(path);
-    return;
-  }
-  unmountPage();
-  const url = path + (query ? '?' + query : '');
-  if (iframe.getAttribute('src') !== url) iframe.src = url;
+  void mountPage(path);
 }
 
 function route() {
   const [path, query = ''] = location.hash.slice(1).split('?');
-  if (buttons('tabs').some(b => b.dataset.page === path)) {
-    showPage(path, query);
+  if (path in PAGES) {
+    showPage(path);
     return;
   }
   const params = new URLSearchParams(query);

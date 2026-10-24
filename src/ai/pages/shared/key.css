@@ -1,81 +1,83 @@
-.keyicon {
-  position: fixed;
-  right: 12px;
-  bottom: 10px;
-  z-index: 50;
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: none;
-  color: var(--dim);
-  opacity: 0.45;
-  cursor: pointer;
-}
-.keyicon:hover {
-  opacity: 0.9;
-}
-.keyicon[hidden] {
-  display: none;
-}
+@scope (.ai) {
+  .keyicon {
+    position: fixed;
+    right: 12px;
+    bottom: 10px;
+    z-index: 50;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--dim);
+    opacity: 0.45;
+    cursor: pointer;
+  }
+  .keyicon:hover {
+    opacity: 0.9;
+  }
+  .keyicon[hidden] {
+    display: none;
+  }
 
-.keydialog {
-  width: min(520px, calc(100vw - 32px));
-  padding: 26px 28px;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius);
-  background: var(--panel);
-  color: var(--text);
-  font-size: 18px;
-}
-.keydialog::backdrop {
-  background: rgba(0, 0, 0, 0.6);
-}
-.keydialog h2 {
-  margin: 0 0 10px;
-  font-size: 24px;
-  font-weight: 600;
-}
-.keydialog p {
-  margin: 0 0 18px;
-  color: var(--dim);
-}
-.keydialog input {
-  width: 100%;
-  padding: 10px 14px;
-  border: 1px solid var(--line-strong);
-  border-radius: 10px;
-  background: var(--field);
-  color: var(--text);
-  font: inherit;
-}
-.keydialog .row {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 18px;
-}
-.keydialog button {
-  padding: 8px 24px;
-  border: 0;
-  border-radius: 10px;
-  background: var(--blue);
-  color: #fff;
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-}
-.keydialog button:hover {
-  background: var(--blue-strong);
-}
-.keydialog button.ghost {
-  background: var(--panel);
-  color: var(--text);
-  box-shadow: inset 0 0 0 1px var(--line-strong);
-}
-.keydialog button.ghost:hover {
-  background: var(--button-hover);
+  .keydialog {
+    width: min(520px, calc(100vw - 32px));
+    padding: 26px 28px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--panel);
+    color: var(--text);
+    font-size: 18px;
+  }
+  .keydialog::backdrop {
+    background: rgba(0, 0, 0, 0.6);
+  }
+  .keydialog h2 {
+    margin: 0 0 10px;
+    font-size: 24px;
+    font-weight: 600;
+  }
+  .keydialog p {
+    margin: 0 0 18px;
+    color: var(--dim);
+  }
+  .keydialog input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    background: var(--field);
+    color: var(--text);
+    font: inherit;
+  }
+  .keydialog .row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .keydialog button {
+    padding: 8px 24px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--blue);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .keydialog button:hover {
+    background: var(--blue-strong);
+  }
+  .keydialog button.ghost {
+    background: var(--panel);
+    color: var(--text);
+    box-shadow: inset 0 0 0 1px var(--line-strong);
+  }
+  .keydialog button.ghost:hover {
+    background: var(--button-hover);
+  }
 }

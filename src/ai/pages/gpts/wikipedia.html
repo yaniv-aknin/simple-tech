@@ -1,0 +1,47 @@
+<div class="ai ai-gpts ai-tools ai-wikipedia">
+  <div class="app wide nopick">
+    <header class="bar">
+      <h1>Inside Tool Calls</h1>
+      <span class="switchlabel">Auto tools</span>
+      <div class="switch" id="switch" role="group" aria-label="Auto tools">
+        <button data-auto="off" class="on">Off</button>
+        <button data-auto="on">On</button>
+      </div>
+      <button id="instructions" class="ghost">Instructions</button>
+      <button id="reset" class="ghost">Reset</button>
+    </header>
+    <section class="main wiki">
+      <div class="pane chat">
+        <div class="phead"><span class="ptitle">Chat</span><span class="pmeta">GPT6 Luna</span></div>
+        <div class="messages" id="messages"></div>
+        <form class="composer" id="composer">
+          <textarea id="input" rows="2" placeholder="Say anything" spellcheck="false"></textarea>
+          <button id="send" type="submit">Send</button>
+        </form>
+      </div>
+      <div class="pane tool" id="tool">
+        <div class="phead">
+          <span class="ptitle">Tool input</span><span class="pmeta" id="toolMeta"></span>
+        </div>
+        <div class="browser" id="browser">
+          <div class="addr" id="addr"></div>
+          <div class="viewport">
+            <iframe id="frame" title="Wikipedia" tabindex="-1"></iframe>
+            <div class="selection" id="selection"><span id="selectionLabel"></span></div>
+          </div>
+        </div>
+        <div class="paste">
+          <textarea id="toolText" placeholder="Paste tool input here" spellcheck="false" disabled></textarea>
+          <button id="execute" type="button" disabled>Execute</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal" id="modal" hidden>
+    <div class="sheet wire">
+      <div class="chrome"><span>System prompt</span><button id="closeModal">Close</button></div>
+      <textarea id="code" spellcheck="false" readonly></textarea>
+    </div>
+  </div>
+</div>

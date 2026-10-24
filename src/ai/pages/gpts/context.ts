@@ -1,7 +1,9 @@
-import '../shared/page.ts';
+import {buildPage} from '../shared/page.ts';
 import './gpts.css';
 import './tools.css';
 import './context.css';
+import html from './context.html?raw';
+import type {Mount} from '../../../page.ts';
 import {
   AGENT_SPEEDUP,
   LIMIT_TOKENS,
@@ -19,9 +21,8 @@ import {
   type Scope,
 } from '../../core/context.ts';
 import {speedOf} from '../../core/gpts.ts';
-import {$, asset, el, fetchJson} from '../shared/dom.ts';
+import {asset, el, fetchJson} from '../shared/dom.ts';
 import {livePost} from '../shared/key.ts';
-import {getParam, setParam} from '../shared/params.ts';
 
 const METER_MAX = 6_000_000;
 const fmt = (n: number) => n.toLocaleString('en-US');
@@ -49,305 +50,312 @@ const library: Library = {
   meta: once(() => fetchJson<IndexMeta>('data/dickens_index.json')),
 };
 
-let books: BookInfo[];
-let recordings: ContextData;
-let book = '';
-let scope: Scope = 'book';
-const runs: Partial<Record<Method, Run>> = {};
+export const mount: Mount = (root, signal) => {
+  const {page, $, getParam, setParam} = buildPage(root, html);
 
-const bookInfo = (slug: string) => books.find(b => b.slug === slug)!;
-const totalTokens = () => books.reduce((sum, b) => sum + b.tokens, 0);
+  let books: BookInfo[];
+  let recordings: ContextData;
+  let book = '';
+  let scope: Scope = 'book';
+  const runs: Partial<Record<Method, Run>> = {};
 
-/* ---------- meter ---------- */
+  const bookInfo = (slug: string) => books.find(b => b.slug === slug)!;
+  const totalTokens = () => books.reduce((sum, b) => sum + b.tokens, 0);
 
-function showMeter(tokens: number) {
-  const over = tokens > LIMIT_TOKENS;
-  $('fill').style.width = Math.min(100, (tokens / METER_MAX) * 100) + '%';
-  $('fill').classList.toggle('over', over);
-  $('meterTokens').textContent = `${fmt(tokens)} tokens`;
-}
+  /* ---------- meter ---------- */
 
-function resetMeter() {
-  $('window').style.width = (LIMIT_TOKENS / METER_MAX) * 100 + '%';
-  $('meterLimit').textContent = `limit ${fmt(LIMIT_TOKENS)}`;
-  showMeter(scope === 'all' ? totalTokens() : bookInfo(book).tokens);
-}
-
-/* ---------- metrics ---------- */
-
-function renderMetrics(method: Method, {tokens, calls, time}: Run['metrics']) {
-  const box = $(method + 'Metrics');
-  box.replaceChildren();
-  for (const [label, value] of [
-    ['tokens', tokens],
-    ['calls', calls],
-    ['time', time],
-  ]) {
-    const cell = el('div', '', label);
-    cell.prepend(el('b', '', value));
-    box.append(cell);
+  function showMeter(tokens: number) {
+    const over = tokens > LIMIT_TOKENS;
+    $('fill').style.width = Math.min(100, (tokens / METER_MAX) * 100) + '%';
+    $('fill').classList.toggle('over', over);
+    $('meterTokens').textContent = `${fmt(tokens)} tokens`;
   }
-}
 
-function emptyMetrics(method: Method) {
-  renderMetrics(method, {tokens: '–', calls: '–', time: '–'});
-}
+  function resetMeter() {
+    $('window').style.width = (LIMIT_TOKENS / METER_MAX) * 100 + '%';
+    $('meterLimit').textContent = `limit ${fmt(LIMIT_TOKENS)}`;
+    showMeter(scope === 'all' ? totalTokens() : bookInfo(book).tokens);
+  }
 
-/* ---------- runs ---------- */
+  /* ---------- metrics ---------- */
 
-const handlers: Record<Method, (ev: Event, run: Run) => void> = {
-  stuff(ev, run) {
-    if (ev.type === 'start') {
-      showMeter(ev.tokens);
-      run.status = run.body.appendChild(
-        el('div', 'line pending', `Sending ${fmt(ev.tokens)} tokens to GPT6 Luna`),
-      );
-    } else if (ev.type === 'error') {
-      run.status?.classList.remove('pending');
-      run.body.append(el('div', 'fail', ev.message));
-      run.metrics.tokens = '0';
-    } else if (ev.type === 'answer') {
-      run.status!.classList.remove('pending');
-      run.body.append(el('div', 'answer', ev.text));
-      run.metrics.tokens = fmt(ev.prompt_tokens + ev.completion_tokens);
-      run.metrics.calls = String(ev.calls);
+  function renderMetrics(method: Method, {tokens, calls, time}: Run['metrics']) {
+    const box = $(method + 'Metrics');
+    box.replaceChildren();
+    for (const [label, value] of [
+      ['tokens', tokens],
+      ['calls', calls],
+      ['time', time],
+    ]) {
+      const cell = el('div', '', label);
+      cell.prepend(el('b', '', value));
+      box.append(cell);
     }
-  },
-  rag(ev, run) {
-    if (ev.type === 'embedding') {
-      run.status = run.body.appendChild(
-        el('div', 'line pending', 'Embedding the question and searching the chunks'),
-      );
-    } else if (ev.type === 'retrieved') {
-      const status = run.status!;
-      status.classList.remove('pending');
-      status.textContent = `Searched ${fmt(ev.searched)} passages in ${ev.ms} ms. Best ${ev.per_book} from each of ${ev.chunks.length / ev.per_book} novels:`;
-      status.before(el('div', 'query', ev.query));
-      const scores: number[] = ev.chunks
-        .flatMap((c: Event) => c.sentences.map((s: Event) => s.score))
-        .sort((a: number, b: number) => a - b);
-      const low = scores[Math.floor(scores.length / 2)];
-      const high = scores[scores.length - 1];
-      for (const c of ev.chunks) {
-        const card = el('div', 'chunk');
-        const head = el('div', 'ch', c.book);
-        head.append(el('span', 'score', c.score.toFixed(3)));
-        const text = el('div', 'ct');
-        for (const s of c.sentences) {
-          const hit = Math.max(0, (s.score - low) / (high - low)) ** 2;
-          const span = el('span', hit > 0.02 ? 'hit' : '', s.text + ' ');
-          span.style.setProperty('--hit', hit.toFixed(2));
-          text.append(span);
+  }
+
+  function emptyMetrics(method: Method) {
+    renderMetrics(method, {tokens: '–', calls: '–', time: '–'});
+  }
+
+  /* ---------- runs ---------- */
+
+  const handlers: Record<Method, (ev: Event, run: Run) => void> = {
+    stuff(ev, run) {
+      if (ev.type === 'start') {
+        showMeter(ev.tokens);
+        run.status = run.body.appendChild(
+          el('div', 'line pending', `Sending ${fmt(ev.tokens)} tokens to GPT6 Luna`),
+        );
+      } else if (ev.type === 'error') {
+        run.status?.classList.remove('pending');
+        run.body.append(el('div', 'fail', ev.message));
+        run.metrics.tokens = '0';
+      } else if (ev.type === 'answer') {
+        run.status!.classList.remove('pending');
+        run.body.append(el('div', 'answer', ev.text));
+        run.metrics.tokens = fmt(ev.prompt_tokens + ev.completion_tokens);
+        run.metrics.calls = String(ev.calls);
+      }
+    },
+    rag(ev, run) {
+      if (ev.type === 'embedding') {
+        run.status = run.body.appendChild(
+          el('div', 'line pending', 'Embedding the question and searching the chunks'),
+        );
+      } else if (ev.type === 'retrieved') {
+        const status = run.status!;
+        status.classList.remove('pending');
+        status.textContent = `Searched ${fmt(ev.searched)} passages in ${ev.ms} ms. Best ${ev.per_book} from each of ${ev.chunks.length / ev.per_book} novels:`;
+        status.before(el('div', 'query', ev.query));
+        const scores: number[] = ev.chunks
+          .flatMap((c: Event) => c.sentences.map((s: Event) => s.score))
+          .sort((a: number, b: number) => a - b);
+        const low = scores[Math.floor(scores.length / 2)];
+        const high = scores[scores.length - 1];
+        for (const c of ev.chunks) {
+          const card = el('div', 'chunk');
+          const head = el('div', 'ch', c.book);
+          head.append(el('span', 'score', c.score.toFixed(3)));
+          const text = el('div', 'ct');
+          for (const s of c.sentences) {
+            const hit = Math.max(0, (s.score - low) / (high - low)) ** 2;
+            const span = el('span', hit > 0.02 ? 'hit' : '', s.text + ' ');
+            span.style.setProperty('--hit', hit.toFixed(2));
+            text.append(span);
+          }
+          card.append(head, text);
+          card.addEventListener('click', () => card.classList.toggle('open'));
+          run.body.append(card);
         }
-        card.append(head, text);
-        card.addEventListener('click', () => card.classList.toggle('open'));
-        run.body.append(card);
+        run.status = run.body.appendChild(
+          el('div', 'line pending', `Asking GPT6 Luna with those ${ev.chunks.length} chunks`),
+        );
+        scrollToEnd(run.body);
+      } else if (ev.type === 'answer') {
+        run.status!.classList.remove('pending');
+        run.body.append(el('div', 'answer', ev.text));
+        run.metrics.tokens = fmt(ev.prompt_tokens + ev.completion_tokens);
+        run.metrics.calls = String(ev.calls);
+        scrollToEnd(run.body);
+      } else if (ev.type === 'error') {
+        run.status?.classList.remove('pending');
+        run.body.append(el('div', 'fail', ev.message));
       }
-      run.status = run.body.appendChild(
-        el('div', 'line pending', `Asking GPT6 Luna with those ${ev.chunks.length} chunks`),
-      );
-      scrollToEnd(run.body);
-    } else if (ev.type === 'answer') {
-      run.status!.classList.remove('pending');
-      run.body.append(el('div', 'answer', ev.text));
-      run.metrics.tokens = fmt(ev.prompt_tokens + ev.completion_tokens);
-      run.metrics.calls = String(ev.calls);
-      scrollToEnd(run.body);
-    } else if (ev.type === 'error') {
-      run.status?.classList.remove('pending');
-      run.body.append(el('div', 'fail', ev.message));
-    }
-  },
-  agents(ev, run) {
-    if (ev.type === 'plan') {
-      $('tiles').replaceChildren();
-      for (const b of ev.books) {
-        const tile = el('div', 'tile');
-        tile.dataset.slug = b.slug;
-        tile.append(el('span', 'tn', b.title), el('span', 'ts', `${compact(b.tokens)} tokens`));
-        tile.addEventListener('click', () => showNote(tile));
-        $('tiles').append(tile);
-      }
-      $('tiles').append(newSynthesisTile());
-    } else if (ev.type === 'agent') {
-      const tile = $('tiles').querySelector<HTMLElement>(`[data-slug="${ev.slug}"]`)!;
-      const ts = tile.querySelector('.ts')!;
-      tile.classList.remove('running', 'done', 'err');
-      if (ev.state === 'start') {
+    },
+    agents(ev, run) {
+      if (ev.type === 'plan') {
+        $('tiles').replaceChildren();
+        for (const b of ev.books) {
+          const tile = el('div', 'tile');
+          tile.dataset.slug = b.slug;
+          tile.append(el('span', 'tn', b.title), el('span', 'ts', `${compact(b.tokens)} tokens`));
+          tile.addEventListener('click', () => showNote(tile));
+          $('tiles').append(tile);
+        }
+        $('tiles').append(newSynthesisTile());
+      } else if (ev.type === 'agent') {
+        const tile = $('tiles').querySelector<HTMLElement>(`[data-slug="${ev.slug}"]`)!;
+        const ts = tile.querySelector('.ts')!;
+        tile.classList.remove('running', 'done', 'err');
+        if (ev.state === 'start') {
+          tile.classList.add('running');
+          ts.textContent = 'reading';
+        } else if (ev.state === 'done') {
+          tile.classList.add('done');
+          ts.textContent = `✓ ${compact(ev.prompt_tokens)}`;
+          tile.dataset.note = ev.text;
+        } else {
+          tile.classList.add('err');
+          ts.textContent = 'failed';
+          tile.dataset.note = ev.message;
+        }
+      } else if (ev.type === 'synthesis') {
+        const tile = synthesisTile();
         tile.classList.add('running');
-        ts.textContent = 'reading';
-      } else if (ev.state === 'done') {
+        tile.querySelector('.ts')!.textContent = 'reading the notes';
+      } else if (ev.type === 'answer') {
+        const tile = synthesisTile();
+        tile.classList.remove('running');
         tile.classList.add('done');
-        ts.textContent = `✓ ${compact(ev.prompt_tokens)}`;
+        tile.querySelector('.ts')!.textContent = '✓';
         tile.dataset.note = ev.text;
-      } else {
-        tile.classList.add('err');
-        ts.textContent = 'failed';
-        tile.dataset.note = ev.message;
+        showNote(tile);
+        run.metrics.tokens = fmt(ev.total_tokens);
+        run.metrics.calls = String(ev.calls);
+      } else if (ev.type === 'error') {
+        $('tiles').querySelector('.wide')?.classList.remove('running');
+        run.body.append(el('div', 'fail', ev.message));
       }
-    } else if (ev.type === 'synthesis') {
-      const tile = synthesisTile();
-      tile.classList.add('running');
-      tile.querySelector('.ts')!.textContent = 'reading the notes';
-    } else if (ev.type === 'answer') {
-      const tile = synthesisTile();
-      tile.classList.remove('running');
-      tile.classList.add('done');
-      tile.querySelector('.ts')!.textContent = '✓';
-      tile.dataset.note = ev.text;
-      showNote(tile);
-      run.metrics.tokens = fmt(ev.total_tokens);
-      run.metrics.calls = String(ev.calls);
-    } else if (ev.type === 'error') {
-      $('tiles').querySelector('.wide')?.classList.remove('running');
-      run.body.append(el('div', 'fail', ev.message));
+    },
+  };
+
+  function scrollToEnd(box: HTMLElement) {
+    requestAnimationFrame(() => box.scrollTo({top: box.scrollHeight, behavior: 'smooth'}));
+  }
+
+  const SYNTHESIS = 'Synthesizing the 16 notes';
+
+  const synthesisTile = () => $('tiles').querySelector<HTMLElement>('.wide')!;
+
+  function newSynthesisTile() {
+    const tile = el('div', 'tile wide');
+    tile.append(el('span', 'tn', SYNTHESIS), el('span', 'ts', 'waiting for the notes'));
+    tile.addEventListener('click', () => showNote(tile));
+    return tile;
+  }
+
+  function showNote(tile: HTMLElement) {
+    if (!tile.dataset.note) return;
+    const wide = tile.classList.contains('wide');
+    for (const t of $('tiles').children) t.classList.toggle('sel', t === tile);
+    const note = el('div', wide ? 'answer' : 'line note');
+    note.textContent = wide
+      ? tile.dataset.note
+      : `${tile.querySelector('.tn')!.textContent}: ${tile.dataset.note}`;
+    $('agentsBody').querySelector('.note, .answer')?.remove();
+    $('agentsBody').prepend(note);
+  }
+
+  function clearColumn(method: Method) {
+    $(method + 'Body').replaceChildren();
+    emptyMetrics(method);
+    if (method === 'agents') $('tiles').replaceChildren(...books.map(plannedTile), newSynthesisTile());
+  }
+
+  function plannedTile(b: BookInfo) {
+    const tile = el('div', 'tile');
+    tile.dataset.slug = b.slug;
+    tile.append(el('span', 'tn', b.title), el('span', 'ts', `${compact(b.tokens)} tokens`));
+    return tile;
+  }
+
+  async function events(method: Method, question: string) {
+    const recorded = recordings.runs[recordingKey(method, question, scope) ?? ''];
+    if (recorded) {
+      const speedup = AGENT_SPEEDUP[method] ?? 1;
+      return {speedup, events: replay(recorded.events, speedOf(recordings) * speedup)};
     }
-  },
-};
-
-function scrollToEnd(box: HTMLElement) {
-  requestAnimationFrame(() => box.scrollTo({top: box.scrollHeight, behavior: 'smooth'}));
-}
-
-const SYNTHESIS = 'Synthesizing the 16 notes';
-
-const synthesisTile = () => $('tiles').querySelector<HTMLElement>('.wide')!;
-
-function newSynthesisTile() {
-  const tile = el('div', 'tile wide');
-  tile.append(el('span', 'tn', SYNTHESIS), el('span', 'ts', 'waiting for the notes'));
-  tile.addEventListener('click', () => showNote(tile));
-  return tile;
-}
-
-function showNote(tile: HTMLElement) {
-  if (!tile.dataset.note) return;
-  const wide = tile.classList.contains('wide');
-  for (const t of $('tiles').children) t.classList.toggle('sel', t === tile);
-  const note = el('div', wide ? 'answer' : 'line note');
-  note.textContent = wide
-    ? tile.dataset.note
-    : `${tile.querySelector('.tn')!.textContent}: ${tile.dataset.note}`;
-  $('agentsBody').querySelector('.note, .answer')?.remove();
-  $('agentsBody').prepend(note);
-}
-
-function clearColumn(method: Method) {
-  $(method + 'Body').replaceChildren();
-  emptyMetrics(method);
-  if (method === 'agents') $('tiles').replaceChildren(...books.map(plannedTile), newSynthesisTile());
-}
-
-function plannedTile(b: BookInfo) {
-  const tile = el('div', 'tile');
-  tile.dataset.slug = b.slug;
-  tile.append(el('span', 'tn', b.title), el('span', 'ts', `${compact(b.tokens)} tokens`));
-  return tile;
-}
-
-async function events(method: Method, question: string) {
-  const recorded = recordings.runs[recordingKey(method, question, scope) ?? ''];
-  if (recorded) {
-    const speedup = AGENT_SPEEDUP[method] ?? 1;
-    return {speedup, events: replay(recorded.events, speedOf(recordings) * speedup)};
+    return {speedup: 1, events: runLive(await livePost(), library, method, question, scope, book)};
   }
-  return {speedup: 1, events: runLive(await livePost(), library, method, question, scope, book)};
-}
 
-async function run(method: Method) {
-  if (runs[method]) return;
-  const question = $<HTMLTextAreaElement>('question').value.trim();
-  if (!question) return;
-  clearColumn(method);
-  const button = document.querySelector<HTMLButtonElement>(`.run[data-method="${method}"]`)!;
-  button.disabled = true;
-  const state: Run = {
-    body: $(method + 'Body'),
-    metrics: {tokens: '–', calls: '–', time: '0.0s'},
-    status: null,
-  };
-  let speedup = 1;
-  runs[method] = state;
-  const started = performance.now();
-  const tick = () => {
-    state.metrics.time = (((performance.now() - started) / 1000) * speedup).toFixed(1) + 's';
-    renderMetrics(method, state.metrics);
-  };
-  const timer = setInterval(tick, 100);
-  try {
-    const stream = await events(method, question);
-    speedup = stream.speedup;
-    for await (const ev of stream.events) handlers[method](ev, state);
-  } catch (e) {
-    state.body.append(el('div', 'fail', (e as Error).message));
-  } finally {
-    clearInterval(timer);
-    tick();
-    delete runs[method];
-    button.disabled = false;
+  async function run(method: Method) {
+    if (runs[method]) return;
+    const question = $<HTMLTextAreaElement>('question').value.trim();
+    if (!question) return;
+    clearColumn(method);
+    const button = page.querySelector<HTMLButtonElement>(`.run[data-method="${method}"]`)!;
+    button.disabled = true;
+    const state: Run = {
+      body: $(method + 'Body'),
+      metrics: {tokens: '–', calls: '–', time: '0.0s'},
+      status: null,
+    };
+    let speedup = 1;
+    runs[method] = state;
+    const started = performance.now();
+    const tick = () => {
+      state.metrics.time = (((performance.now() - started) / 1000) * speedup).toFixed(1) + 's';
+      renderMetrics(method, state.metrics);
+    };
+    const timer = setInterval(tick, 100);
+    try {
+      const stream = await events(method, question);
+      speedup = stream.speedup;
+      for await (const ev of stream.events) {
+        if (signal.aborted) break;
+        handlers[method](ev, state);
+      }
+    } catch (e) {
+      state.body.append(el('div', 'fail', (e as Error).message));
+    } finally {
+      clearInterval(timer);
+      tick();
+      delete runs[method];
+      button.disabled = false;
+    }
   }
-}
 
-/* ---------- wiring ---------- */
+  /* ---------- wiring ---------- */
 
-function selectPreset(preset: (typeof QUESTIONS)[number]) {
-  setParam('preset', preset === QUESTIONS[0] ? null : preset.id);
-  $<HTMLTextAreaElement>('question').value = preset.text;
-  book = preset.book;
-  $('scopeBook').textContent = bookInfo(book).title;
-  resetMeter();
-  autosize();
-}
+  function selectPreset(preset: (typeof QUESTIONS)[number]) {
+    setParam('preset', preset === QUESTIONS[0] ? null : preset.id);
+    $<HTMLTextAreaElement>('question').value = preset.text;
+    book = preset.book;
+    $('scopeBook').textContent = bookInfo(book).title;
+    resetMeter();
+    autosize();
+  }
 
-function autosize() {
-  const q = $('question');
-  q.style.height = 'auto';
-  q.style.height = q.scrollHeight + 'px';
-}
+  function autosize() {
+    const q = $('question');
+    q.style.height = 'auto';
+    q.style.height = q.scrollHeight + 'px';
+  }
 
-function reset() {
-  for (const method of ['stuff', 'rag', 'agents'] as const) clearColumn(method);
-  resetMeter();
-}
+  function reset() {
+    for (const method of ['stuff', 'rag', 'agents'] as const) clearColumn(method);
+    resetMeter();
+  }
 
-async function init() {
-  [books, recordings] = await Promise.all([
-    library.meta().then(bookInfos),
-    fetchJson<ContextData>('data/context.json'),
-  ]);
-  $('meterLimit').textContent = `limit ${fmt(LIMIT_TOKENS)}`;
-  $('agentsSpeed').textContent = `${AGENT_SPEEDUP.agents}x speed`;
-  const labels: Record<string, string> = {'poor-rich': 'Poor vs rich', barkis: 'Barkis'};
-  const initial = QUESTIONS.find(q => q.id === getParam('preset')) ?? QUESTIONS[0];
-  QUESTIONS.forEach(preset => {
-    const button = el('button', '', labels[preset.id] || preset.id);
-    button.addEventListener('click', () => {
-      selectPreset(preset);
+  async function init() {
+    [books, recordings] = await Promise.all([
+      library.meta().then(bookInfos),
+      fetchJson<ContextData>('data/context.json'),
+    ]);
+    $('meterLimit').textContent = `limit ${fmt(LIMIT_TOKENS)}`;
+    $('agentsSpeed').textContent = `${AGENT_SPEEDUP.agents}x speed`;
+    const labels: Record<string, string> = {'poor-rich': 'Poor vs rich', barkis: 'Barkis'};
+    const initial = QUESTIONS.find(q => q.id === getParam('preset')) ?? QUESTIONS[0];
+    QUESTIONS.forEach(preset => {
+      const button = el('button', '', labels[preset.id] || preset.id);
+      button.addEventListener('click', () => {
+        selectPreset(preset);
+        button.blur();
+      });
+      $('presets').append(button);
+      if (preset === initial) selectPreset(preset);
+    });
+    reset();
+    page.querySelectorAll<HTMLElement>('.run').forEach(b =>
+      b.addEventListener('click', () => {
+        run(b.dataset.method as Method);
+        b.blur();
+      }),
+    );
+    $('scope').addEventListener('click', e => {
+      const button = (e.target as Element).closest('button');
+      if (!button) return;
+      scope = button.dataset.scope as Scope;
+      for (const b of $('scope').children) b.classList.toggle('on', b === button);
+      resetMeter();
       button.blur();
     });
-    $('presets').append(button);
-    if (preset === initial) selectPreset(preset);
-  });
-  reset();
-  document.querySelectorAll<HTMLElement>('.run').forEach(b =>
-    b.addEventListener('click', () => {
-      run(b.dataset.method as Method);
-      b.blur();
-    }),
-  );
-  $('scope').addEventListener('click', e => {
-    const button = (e.target as Element).closest('button');
-    if (!button) return;
-    scope = button.dataset.scope as Scope;
-    for (const b of $('scope').children) b.classList.toggle('on', b === button);
-    resetMeter();
-    button.blur();
-  });
-  $('question').addEventListener('input', autosize);
-  $('reset').addEventListener('click', () => {
-    reset();
-    $('reset').blur();
-  });
-}
+    $('question').addEventListener('input', autosize);
+    $('reset').addEventListener('click', () => {
+      reset();
+      $('reset').blur();
+    });
+  }
 
-init();
+  init();
+};

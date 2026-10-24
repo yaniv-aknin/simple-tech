@@ -693,12 +693,17 @@
   }
 }
 
+body[data-demo='page'] {
+  height: 100vh;
+}
 body:not([data-demo='page']) .page {
   display: none;
 }
 .page {
   flex: 1;
-  container-type: inline-size;
+  min-height: 0;
+  overflow: auto;
+  container-type: size;
   border: 1px solid var(--line);
   border-radius: 10px;
 }

@@ -35,7 +35,7 @@ const current = (): Theme =>
   (document.documentElement.dataset.theme as Theme | undefined) ??
   (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
 
-/** Use the saved theme, and follow changes made in other pages of the site (such as the shell around an iframe). */
+/** Use the saved theme, and follow changes made in other tabs and windows. */
 export function initTheme() {
   apply(stored());
   addEventListener('storage', e => {

@@ -1,5 +1,5 @@
 import type {Corpus} from '../../core/markov.ts';
-import {$text, asset} from './dom.ts';
+import {asset} from './dom.ts';
 
 export interface Book {
   file?: string;
@@ -17,7 +17,8 @@ const BOOKS = [
   {file: 'holmes.txt', title: 'Sherlock Holmes', author: 'Arthur Conan Doyle', emoji: '🔍'},
 ];
 
-export async function loadBooks(): Promise<Book[]> {
+/** The books, the last being the custom text, which also fills `paste`. */
+export async function loadBooks(paste: HTMLTextAreaElement): Promise<Book[]> {
   const books: Book[] = BOOKS.map(b => ({...b, text: '', corpus: null}));
   const custom: Book = {
     title: 'Custom text',
@@ -30,7 +31,7 @@ export async function loadBooks(): Promise<Book[]> {
   const res = await fetch(asset('texts/custom.txt'));
   if (res.ok) {
     custom.text = await res.text();
-    $text('pasteText').value = custom.text;
+    paste.value = custom.text;
   }
   books.push(custom);
   return books;

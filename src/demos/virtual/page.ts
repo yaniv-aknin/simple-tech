@@ -487,7 +487,7 @@ export const mount: Mount = (root, signal) => {
   showMemory();
 
   /**
-   * With one or two programs the cards scale up, by the largest factor that still fits the window without
+   * With one or two programs the cards scale up, by the largest factor that still fits the page without
    * scrolling (and keeps each card about as wide as its two-column layout wants).
    */
   function fitZoom() {
@@ -495,13 +495,12 @@ export const mount: Mount = (root, signal) => {
     const count = sys.procs.length;
     procs.style.setProperty('--zoom', '1');
     if (count === 0 || count >= 3) return;
-    const doc = document.documentElement;
     const real = (procs.clientWidth - 14 * (count - 1)) / count;
     const max = Math.min(2.2, real / 880);
     const min = 0.8;
     const fits = (z: number) => {
       procs.style.setProperty('--zoom', String(z));
-      return doc.scrollHeight <= window.innerHeight;
+      return root.scrollHeight <= root.clientHeight;
     };
     if (max <= min || fits(max)) return;
     let lo = min;

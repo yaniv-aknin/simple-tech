@@ -1,0 +1,24 @@
+<div class="ai ai-gpts ai-tools">
+  <div class="app wide nopick">
+    <header class="bar">
+      <h1>Hey do you have a pen?</h1>
+      <span class="mode" id="mode"></span>
+      <div class="switch" id="switch" role="group" aria-label="Python tool">
+        <button data-mode="plain">Code off</button>
+        <button data-mode="tools">Code on</button>
+      </div>
+      <button id="go">Start</button>
+    </header>
+    <section class="main">
+      <div class="prompt" id="prompt"></div>
+      <div class="results" id="results"></div>
+    </section>
+  </div>
+
+  <div class="modal" id="modal" hidden>
+    <div class="sheet wire">
+      <div class="chrome"><span id="terminalTitle"></span><button id="closeModal">Close</button></div>
+      <textarea id="code" spellcheck="false" readonly></textarea>
+    </div>
+  </div>
+</div>

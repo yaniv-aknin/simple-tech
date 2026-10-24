@@ -3,5 +3,9 @@
 body {
   margin: 0;
   background: var(--bg);
-  container-type: inline-size;
+}
+.page {
+  height: 100vh;
+  overflow: auto;
+  container-type: size;
 }

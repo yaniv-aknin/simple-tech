@@ -5,20 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GPT Then and Now</title>
   </head>
-  <body data-task="2-4-6">
-    <div class="app wide nopick">
-      <header class="bar">
-        <h1>GPT Then and Now</h1>
-        <span class="mode" id="mode"></span>
-        <button id="go">Start</button>
-      </header>
-
-      <section class="main">
-        <div class="prompt" id="prompt"></div>
-        <div class="results" id="results"></div>
-      </section>
-    </div>
-
-    <script type="module" src="/src/ai/pages/gpts/gpts.ts"></script>
+  <body>
+    <script type="module">
+      import {standalone} from '/src/standalone.ts';
+      import {mountTask} from '/src/ai/pages/gpts/gpts.ts';
+      standalone(mountTask('2-4-6'));
+    </script>
   </body>
 </html>

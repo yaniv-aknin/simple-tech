@@ -1,11 +1,19 @@
-export function $<T extends HTMLElement = HTMLElement>(id: string): T {
-  const node = document.getElementById(id);
-  if (!node) throw new Error(`#${id} not found`);
-  return node as T;
+/**
+ * Finds a page's elements by id. The search stays within `page`, so work that finishes after the page was left
+ * only changes its own detached elements.
+ */
+export function lookup(page: HTMLElement) {
+  const $ = <T extends HTMLElement = HTMLElement>(id: string): T => {
+    const node = page.querySelector<T>('#' + id);
+    if (!node) throw new Error(`#${id} not found`);
+    return node;
+  };
+  return {
+    $,
+    $input: (id: string) => $<HTMLInputElement>(id),
+    $text: (id: string) => $<HTMLTextAreaElement>(id),
+  };
 }
-
-export const $input = (id: string) => $<HTMLInputElement>(id);
-export const $text = (id: string) => $<HTMLTextAreaElement>(id);
 
 export function el<K extends keyof HTMLElementTagNameMap>(tag: K, className?: string, text?: string) {
   const node = document.createElement(tag);

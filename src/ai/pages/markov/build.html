@@ -1,0 +1,51 @@
+<div class="ai ai-build">
+  <div class="app">
+    <header>
+      <h1>Learning a Markov chain</h1>
+    </header>
+
+    <nav class="books" id="books" aria-label="Choose a book"></nav>
+
+    <section class="main">
+      <div class="controls">
+        <div class="control memory">
+          <span class="label" id="memLabel">Remembers the last 2 words</span>
+          <input type="range" id="memory" min="1" max="3" step="1" value="2" aria-labelledby="memLabel" />
+          <div class="ticks"><span>1 word</span><span>2 words</span><span>3 words</span></div>
+        </div>
+        <div class="control speed">
+          <label for="speed">Speed</label>
+          <input type="range" id="speed" min="1" max="14" step="1" value="4" />
+          <div class="ticks"><span>slow</span><span>fast</span></div>
+        </div>
+        <div class="actions">
+          <button id="clear">Clear</button>
+          <button id="next">Next</button>
+          <button id="go">Start</button>
+        </div>
+      </div>
+
+      <div class="stage" id="stage">
+        <div class="output" id="text" aria-live="polite"></div>
+        <textarea id="pasteText" placeholder="Paste text here…" spellcheck="false"></textarea>
+      </div>
+      <div class="status" id="status"></div>
+    </section>
+
+    <aside class="panel">
+      <section class="widget">
+        <div class="widget-head">
+          <h2>Memory</h2>
+          <button class="link" id="punct">Show punctuation</button>
+        </div>
+        <div class="memory-rows" id="memoryRows"></div>
+      </section>
+      <section class="widget">
+        <h2>Learning</h2>
+        <div class="log" id="log"><div class="track" id="track"></div></div>
+      </section>
+      <div class="tally" id="tally"></div>
+      <div class="progress" aria-hidden="true"><div class="fill" id="progressFill"></div></div>
+    </aside>
+  </div>
+</div>

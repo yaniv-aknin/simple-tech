@@ -24,23 +24,23 @@ function store(key: string | null) {
     // Without storage the key lasts until the page closes.
   }
   memory = key;
-  icon.hidden = !key;
+  keyIcon.hidden = !key;
 }
 
 let memory = stored();
 let asking: Promise<string> | null = null;
 
-const icon = Object.assign(document.createElement('button'), {
+/** Shown on every AI page, beside its content. */
+export const keyIcon = Object.assign(document.createElement('button'), {
   className: 'keyicon',
   title: 'OpenAI API key saved in this browser',
   innerHTML: KEY_ICON,
   hidden: !memory,
 });
-icon.addEventListener('click', () => {
+keyIcon.addEventListener('click', () => {
   if (confirm('Forget the OpenAI API key saved in this browser?')) store(null);
-  icon.blur();
+  keyIcon.blur();
 });
-document.body.append(icon);
 
 function ask(): Promise<string> {
   const dialog = document.createElement('dialog');
@@ -52,7 +52,7 @@ function ask(): Promise<string> {
     <input type="password" placeholder="sk-…" autocomplete="off" spellcheck="false" required>
     <div class="row"><button value="cancel" formnovalidate class="ghost">Cancel</button><button value="ok">Save</button></div>
   </form>`;
-  document.body.append(dialog);
+  keyIcon.after(dialog);
   return new Promise((resolve, reject) => {
     dialog.addEventListener('close', () => {
       const key = dialog.querySelector('input')!.value.trim();

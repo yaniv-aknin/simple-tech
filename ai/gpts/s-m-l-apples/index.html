@@ -5,24 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Size isn't Everything</title>
   </head>
-  <body data-task="s-m-l-apples">
-    <div class="app wide nopick">
-      <header class="bar">
-        <h1>Size isn't Everything</h1>
-        <span class="mode" id="mode"></span>
-        <button id="go">Start</button>
-      </header>
-      <section class="main">
-        <div class="prompt" id="prompt"></div>
-        <div class="results" id="results"></div>
-      </section>
-    </div>
-    <div class="modal" id="modal" hidden>
-      <div class="sheet">
-        <div class="chrome"><span>message, exactly as sent</span><button id="closeModal">Close</button></div>
-        <textarea id="code" spellcheck="false" autocomplete="off"></textarea>
-      </div>
-    </div>
-    <script type="module" src="/src/ai/pages/gpts/gpts.ts"></script>
+  <body>
+    <script type="module">
+      import {standalone} from '/src/standalone.ts';
+      import {mountTask} from '/src/ai/pages/gpts/gpts.ts';
+      standalone(mountTask('s-m-l-apples'));
+    </script>
   </body>
 </html>
