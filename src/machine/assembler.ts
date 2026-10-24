@@ -87,6 +87,10 @@ export function assemble(src: string, symbols: Record<string, number>): Program 
         return [Op.JN, operand(args[0])];
       case 'LDX':
         return [Op.LDX_A, operand(args[1])];
+      case 'INC':
+        return [Op.INC_A, 0];
+      case 'STX':
+        return [Op.STX_B, operand(args[0])];
       case 'RTI':
         return [Op.RTI, 0];
       default:

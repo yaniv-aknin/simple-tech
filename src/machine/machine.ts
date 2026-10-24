@@ -1,11 +1,20 @@
 import {hex, hex2} from './format.ts';
-import {opSpec} from './isa.ts';
+import {OPS, opSpec} from './isa.ts';
 
 export type Phase = 'fetch' | 'execute' | 'timer';
 
 export interface Access {
   kind: 'read' | 'write';
   t: number;
+}
+
+/** A program did something the machine cannot carry on from. */
+export class Fault extends Error {}
+
+/** Where a program's addresses actually lead, when they are not simply the machine's own RAM. */
+export interface AddressSpace {
+  read(addr: number, fetch: boolean): number;
+  write(addr: number, value: number): void;
 }
 
 export interface Interrupt {
@@ -19,6 +28,7 @@ export interface MachineOptions {
   names?: Record<number, string>;
   interrupt?: Interrupt;
   clock?: () => number;
+  space?: AddressSpace;
 }
 
 export class Machine {
@@ -26,6 +36,7 @@ export class Machine {
   readonly access: (Access | null)[] = new Array(256).fill(null);
   readonly names: Record<number, string>;
   readonly interrupt: Interrupt | undefined;
+  private readonly space: AddressSpace | undefined;
   private readonly clock: () => number;
 
   pc = 0;
@@ -45,11 +56,12 @@ export class Machine {
 
   constructor(
     bytes: Uint8Array,
-    {names = {}, interrupt, clock = () => performance.now()}: MachineOptions = {},
+    {names = {}, interrupt, clock = () => performance.now(), space}: MachineOptions = {},
   ) {
     this.mem.set(bytes);
     this.names = names;
     this.interrupt = interrupt;
+    this.space = space;
     this.clock = clock;
   }
 
@@ -60,6 +72,7 @@ export class Machine {
   }
 
   read(addr: number) {
+    if (this.space) return this.space.read(addr, false);
     this.touch(addr, 'read');
     const v = this.mem[addr];
     this.onRead?.(addr, v);
@@ -67,8 +80,16 @@ export class Machine {
   }
 
   write(addr: number, v: number) {
+    if (this.space) {
+      this.space.write(addr, v & 255);
+      return;
+    }
     this.mem[addr] = v & 255;
     this.touch(addr, 'write');
+  }
+
+  private fetchByte(addr: number) {
+    return this.space ? this.space.read(addr, true) : this.mem[addr];
   }
 
   setA(v: number) {
@@ -97,9 +118,11 @@ export class Machine {
   private fetch() {
     const from = this.pc;
     this.executing = from;
-    this.ir = [this.mem[from], this.mem[(from + 1) & 255]];
-    this.touch(from, 'read');
-    this.touch((from + 1) & 255, 'read');
+    this.ir = [this.fetchByte(from), this.fetchByte((from + 1) & 255)];
+    if (!this.space) {
+      this.touch(from, 'read');
+      this.touch((from + 1) & 255, 'read');
+    }
     this.pc = (from + 2) & 255;
     const op = opSpec(this.ir[0]);
     this.msg =
@@ -111,6 +134,10 @@ export class Machine {
   }
 
   private execute() {
+    const opcode = this.ir[0];
+    if (!(opcode in OPS)) {
+      throw new Fault(`it ran an illegal instruction (${hex2(opcode)}) at ${hex(this.executing ?? 0)}`);
+    }
     const wasKernel = this.kernel;
     this.msg = `EXECUTE: ${opSpec(this.ir[0]).run(this, this.ir[1])}`;
     if (!wasKernel) this.timer++;
@@ -120,7 +147,8 @@ export class Machine {
   }
 
   private get slot() {
-    if (!this.interrupt) throw new Error('this machine has no interrupt configured');
+    if (!this.interrupt)
+      throw new Fault('it ran RTI (return from interrupt), but there is no interrupt to return from');
     return this.mem[this.interrupt.curAddr];
   }
 

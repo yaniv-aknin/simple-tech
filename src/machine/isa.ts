@@ -15,6 +15,8 @@ export const Op = {
   JN: 10,
   LDX_A: 11,
   RTI: 12,
+  INC_A: 13,
+  STX_B: 14,
 } as const;
 
 export type Namer = (addr: number) => string;
@@ -164,9 +166,35 @@ export const OPS: Record<number, OpSpec> = {
     what: x => `Add A to ${x} to make an address, and copy the number stored there into A.`,
     run: (m, x) => {
       const addr = (x + m.a) & 255;
-      const s = `A ← RAM[${x} + ${m.a}] = RAM[${hex(addr)}] = ${m.mem[addr]}`;
-      m.setA(m.read(addr));
+      const v = m.read(addr);
+      const s = `A ← RAM[${x} + ${m.a}] = RAM[${hex(addr)}] = ${v}`;
+      m.setA(v);
       return s;
+    },
+  },
+  [Op.INC_A]: {
+    name: 'INC A',
+    syntax: 'INC A',
+    does: 'A ← A + 1 (255 + 1 wraps to 0)',
+    flags: FOLLOW_A,
+    what: () => 'Add 1 to A. (Numbers wrap around after 255.)',
+    run: m => {
+      const r = (m.a + 1) & 255;
+      const s = `A ← ${m.a} + 1 = ${r}`;
+      m.setA(r);
+      return s;
+    },
+  },
+  [Op.STX_B]: {
+    name: 'STX',
+    syntax: 'STX [n], B',
+    does: 'RAM[n + A] ← B',
+    flags: 'unchanged',
+    what: x => `Add A to ${x} to make an address, and copy register B into the RAM there.`,
+    run: (m, x) => {
+      const addr = (x + m.a) & 255;
+      m.write(addr, m.b);
+      return `RAM[${x} + ${m.a}] = RAM[${hex(addr)}] ← ${m.b}`;
     },
   },
   [Op.RTI]: {

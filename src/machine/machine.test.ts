@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'vitest';
 import {assemble} from './assembler.ts';
 import {Keyboard} from './keyboard.ts';
-import {Machine, type MachineOptions} from './machine.ts';
+import {Fault, Machine, type MachineOptions} from './machine.ts';
 
 const clock = () => 0;
 const load = (src: string, symbols = {}, options: MachineOptions = {}) =>
@@ -40,6 +40,52 @@ describe('Machine', () => {
     m.stepInstruction();
     m.stepInstruction();
     expect(m.a).toBe(99);
+  });
+
+  it('increments A, wrapping at 255', () => {
+    const m = load('LDI A, 255\nINC A\nINC A');
+    m.stepInstruction();
+    m.stepInstruction();
+    expect(m).toMatchObject({a: 0, z: 1, n: 0});
+    m.stepInstruction();
+    expect(m).toMatchObject({a: 1, z: 0});
+  });
+
+  it('stores B indexed by A', () => {
+    const m = load('LDI A, 3\nLDI B, 77\nSTX [32], B');
+    for (let i = 0; i < 3; i++) m.stepInstruction();
+    expect(m.mem[0x23]).toBe(77);
+    expect(m.access[0x23]?.kind).toBe('write');
+  });
+
+  it('sends reads, writes and fetches through an address space', () => {
+    const ram = new Uint8Array(256);
+    ram.set(assemble('LOAD A, [200]\nINC A\nSTORE [201], A', {}).bytes);
+    ram[200] = 41;
+    const seen: string[] = [];
+    const space = {
+      read(addr: number, fetch: boolean) {
+        seen.push(`${fetch ? 'fetch' : 'read'} ${addr}`);
+        return ram[addr];
+      },
+      write(addr: number, v: number) {
+        seen.push(`write ${addr}`);
+        ram[addr] = v;
+      },
+    };
+    const m = new Machine(new Uint8Array(256), {clock, space});
+    for (let i = 0; i < 3; i++) m.stepInstruction();
+    expect(ram[201]).toBe(42);
+    expect(m.mem[201]).toBe(0);
+    expect(seen).toContain('read 200');
+    expect(seen).toContain('write 201');
+    expect(seen.filter(x => x.startsWith('fetch'))).toHaveLength(6);
+  });
+
+  it('faults on an opcode it does not know', () => {
+    const m = load('LDI A, 1');
+    m.mem[0] = 0xff;
+    expect(() => m.stepInstruction()).toThrow(Fault);
   });
 
   it('records reads and writes for the UI', () => {
