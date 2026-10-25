@@ -84,18 +84,18 @@ function writeDemoHash() {
   history.replaceState(null, '', '#' + demoKey + query);
 }
 
-/** Shows the chosen panels and gives the columns of the layout to those that are left. */
+/** Shows the chosen panels and gives the columns of the layout to those that are left. The Machine panel stays. */
 function setPanels(panels: Iterable<Panel>) {
   shown = new Set(panels);
   for (const p of PANELS) document.body.dataset[p] = shown.has(p) ? 'on' : 'off';
   toggleOn($('views'), b => shown.has(b.dataset.view as Panel));
   const middle = shown.has('cpu') || shown.has('ram');
   const columns = [
-    shown.has('vars') && 'minmax(340px, 416px)',
+    'minmax(340px, 416px)',
     middle && 'minmax(400px, 576px)',
     shown.has('ins') && 'minmax(340px, 1fr)',
   ].filter(Boolean);
-  $('layout').style.setProperty('--columns', columns.join(' ') || '1fr');
+  $('layout').style.setProperty('--columns', columns.join(' '));
   listing.refit();
 }
 
@@ -136,7 +136,6 @@ function switchDemo(key: DemoKey) {
   unmountPage();
   document.body.dataset.demo = key;
   toggleOn($('tabs'), b => b.dataset.demo === key);
-  $('ctl-' + key).appendChild($('controls'));
   setSpeed(0);
   restart();
 }

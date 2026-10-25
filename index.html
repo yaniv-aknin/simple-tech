@@ -33,24 +33,42 @@
 
     <main>
       <header>
-        <div class="seg" id="views">
-          <button data-view="vars">Variables</button>
-          <button data-view="ins">Instructions</button>
-          <button data-view="cpu">CPU</button>
-          <button data-view="ram">RAM</button>
-        </div>
         <button id="rst" class="reset">Reset</button>
       </header>
 
       <div class="layout" id="layout">
         <div class="col left">
+          <section class="panel machine">
+            <h2>Machine</h2>
+            <div class="speed">
+              <div class="dim seg-label">Clock: instructions per second</div>
+              <div class="seg wide" id="clock">
+                <button
+                  id="step"
+                  title="Step one tick: an instruction, or one phase of it while the CPU or RAM is shown"
+                >
+                  &gt;|
+                </button>
+                <button data-i="0">0</button><button data-i="1">1</button><button data-i="2">5</button
+                ><button data-i="3">10</button><button data-i="4">50</button><button data-i="5">100</button
+                ><button data-i="6">500</button>
+              </div>
+            </div>
+            <div class="views">
+              <div class="dim seg-label">Show</div>
+              <div class="seg wide" id="views">
+                <button data-view="vars">Variables</button><button data-view="ins">Instructions</button
+                ><button data-view="cpu">CPU</button><button data-view="ram">RAM</button>
+              </div>
+            </div>
+          </section>
+
           <section class="panel demo-pong">
             <h2>Screen</h2>
             <div class="scorebar">
               <span class="score" id="score">0</span><span class="dim">score = RAM 0xF6</span>
             </div>
             <canvas id="screen" width="384" height="288"></canvas>
-            <div id="ctl-pong"></div>
             <div class="dim" style="margin-top: 6px">
               The keyboard wires the ← / → keys to RAM 0xF0: 255 or 1 while held, else 0. A quick tap stays
               until the CPU reads it.
@@ -83,7 +101,6 @@
               <div class="dim">Counts per second, the last 30 seconds</div>
               <div id="rateChart"></div>
             </div>
-            <div id="ctl-procs"></div>
           </section>
 
           <section class="panel kernel-ui">
@@ -124,22 +141,6 @@
         </section>
       </div>
 
-      <div id="controls">
-        <div class="speed">
-          <div class="dim speed-label">Clock: instructions per second</div>
-          <div class="seg wide" id="clock">
-            <button
-              id="step"
-              title="Step one tick: an instruction, or one phase of it while the CPU or RAM is shown"
-            >
-              &gt;|
-            </button>
-            <button data-i="0">0</button><button data-i="1">1</button><button data-i="2">5</button
-            ><button data-i="3">10</button><button data-i="4">50</button><button data-i="5">100</button
-            ><button data-i="6">500</button>
-          </div>
-        </div>
-      </div>
       <div class="page" id="page"></div>
     </main>
 
