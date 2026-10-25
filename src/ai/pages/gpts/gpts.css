@@ -67,7 +67,7 @@
     font-size: 15px;
     line-height: 1.45;
   }
-  .prompt textarea {
+  .prompt :is(textarea, .field) {
     display: block;
     width: 100%;
     resize: none;
@@ -84,10 +84,23 @@
   .prompt .q {
     gap: 6px;
   }
-  .prompt textarea:hover {
+  .prompt .field {
+    white-space: pre-wrap;
+    -webkit-user-select: text;
+    user-select: text;
+  }
+  .prompt .field .more {
+    font: inherit;
+    color: var(--accent);
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+  .prompt :is(textarea, .field):hover {
     border-color: var(--blue);
   }
-  .prompt textarea:focus {
+  .prompt :is(textarea, .field):focus {
     outline: none;
     border-color: var(--blue);
     box-shadow: 0 0 0 3px var(--accent-soft);

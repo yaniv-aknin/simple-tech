@@ -111,6 +111,37 @@ export const mountTask =
       return el;
     }
 
+    /* One field in which the grid is a link to the message as sent, between the text before and after it. */
+    function mazeField() {
+      const el = document.createElement('div');
+      el.className = 'field';
+      el.contentEditable = 'plaintext-only';
+      el.spellcheck = false;
+      const link = document.createElement('button');
+      link.className = 'more';
+      link.contentEditable = 'false';
+      link.textContent = '[maze here]';
+      link.addEventListener('click', openModal);
+      el.append(`${parts.head} `, link, ` ${parts.tail}`);
+      el.addEventListener('input', () => {
+        if (!link.isConnected) {
+          parts.head = el.textContent!.trim();
+          parts.tail = '';
+          renderPrompt();
+        } else {
+          const text = (from: Node | null, to: Node | null) => {
+            let out = '';
+            for (let n = from; n !== to; n = n!.nextSibling) out += n!.textContent;
+            return out;
+          };
+          parts.head = text(el.firstChild, link).replace(/ $/, '');
+          parts.tail = text(link.nextSibling, null).replace(/^ /, '');
+        }
+        edited();
+      });
+      return el;
+    }
+
     function renderPreview() {
       const paragraphs = composePrompt().split(/\n\s*\n/);
       const hidden = Math.max(0, paragraphs.length - 2);
@@ -147,9 +178,10 @@ export const mountTask =
       q.className = 'q';
       if (isCollapsed()) {
         q.append(renderPreview());
+      } else if (parts.grid !== null) {
+        q.append(mazeField());
       } else {
         q.append(field('head'));
-        if (parts.grid !== null) q.append(field('tail'));
       }
       box.append(q);
       if (parts.grid !== null) box.append(renderMaze(parts.grid, openModal));
