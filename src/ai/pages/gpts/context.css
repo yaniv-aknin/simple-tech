@@ -24,7 +24,7 @@
     align-items: baseline;
     gap: 12px;
   }
-  .chead .run {
+  .chead .runbtn {
     margin-left: auto;
     align-self: center;
   }
@@ -36,7 +36,7 @@
     align-items: center;
     gap: 2px;
   }
-  .chead .runbox .run {
+  .chead .runbox .runbtn {
     margin-left: 0;
   }
   .chead .runbox small {

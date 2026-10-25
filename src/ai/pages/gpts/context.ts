@@ -264,7 +264,7 @@ export const mount: Mount = (root, signal) => {
     const question = $<HTMLTextAreaElement>('question').value.trim();
     if (!question) return;
     clearColumn(method);
-    const button = page.querySelector<HTMLButtonElement>(`.run[data-method="${method}"]`)!;
+    const button = page.querySelector<HTMLButtonElement>(`.runbtn[data-method="${method}"]`)!;
     button.disabled = true;
     const state: Run = {
       body: $(method + 'Body'),
@@ -337,7 +337,7 @@ export const mount: Mount = (root, signal) => {
       if (preset === initial) selectPreset(preset);
     });
     reset();
-    page.querySelectorAll<HTMLElement>('.run').forEach(b =>
+    page.querySelectorAll<HTMLElement>('.runbtn').forEach(b =>
       b.addEventListener('click', () => {
         run(b.dataset.method as Method);
         b.blur();
