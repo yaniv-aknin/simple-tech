@@ -441,7 +441,8 @@ export const mount: Mount = (root, signal) => {
   const page = root.querySelector<HTMLElement>('.vm')!;
   const breakpoints: Set<number>[] = [];
   let memory = MEMORIES[0];
-  let sys = new VirtualSystem([], memory);
+  let sys = new VirtualSystem([PROCESSES[0]], memory);
+  breakpoints[0] = new Set();
   /** Starting a program turns the machine on. */
   const wake = () => clock.wake();
   let view = new View(sys, page, breakpoints, wake);
@@ -507,35 +508,6 @@ export const mount: Mount = (root, signal) => {
   });
   showMemory();
 
-  /**
-   * With one or two programs the cards scale up, by the largest factor that still fits the page without
-   * scrolling (and keeps each card about as wide as its two-column layout wants).
-   */
-  function fitZoom() {
-    const procs = $('procs');
-    const count = openCount(sys);
-    procs.style.setProperty('--zoom', '1');
-    if (count === 0 || count >= 3) return;
-    const real = (procs.clientWidth - 14 * (count - 1)) / count;
-    const max = Math.min(2.2, real / 880);
-    const min = 0.8;
-    const fits = (z: number) => {
-      procs.style.setProperty('--zoom', String(z));
-      return root.scrollHeight <= root.clientHeight;
-    };
-    if (max <= min || fits(max)) return;
-    let lo = min;
-    let hi = max;
-    for (let i = 0; i < 8; i++) {
-      const mid = (lo + hi) / 2;
-      if (fits(mid)) lo = mid;
-      else hi = mid;
-    }
-    procs.style.setProperty('--zoom', String(lo));
-  }
-
-  let fitted = '';
-
   function frame(t: number) {
     if (signal.aborted) return;
     const dt = Math.min(100, t - last) / 1000;
@@ -552,13 +524,6 @@ export const mount: Mount = (root, signal) => {
       }
     }
     view.render(t);
-    const crashed = sys.procs.some(p => p.state === 'crashed');
-    const states = sys.procs.map(p => p.state).join();
-    const layout = [openCount(sys), memory.frames, crashed, states, innerWidth, innerHeight].join();
-    if (layout !== fitted) {
-      fitted = layout;
-      fitZoom();
-    }
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);

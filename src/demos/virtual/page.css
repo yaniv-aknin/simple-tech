@@ -144,18 +144,17 @@
     gap: 0 14px;
   }
   .procs[data-count='1'] {
-    grid-template-columns: minmax(0, calc(980px * var(--zoom, 1)));
+    grid-template-columns: minmax(0, 980px);
     --cell-h: 24px;
     --cell-font: 13px;
   }
   .procs[data-count='2'] {
-    grid-template-columns: repeat(2, minmax(0, calc(900px * var(--zoom, 1))));
+    grid-template-columns: repeat(2, minmax(0, 900px));
     --cell-h: 22px;
     --cell-font: 12px;
   }
   .procs[data-count='1'] .card,
   .procs[data-count='2'] .card {
-    zoom: var(--zoom, 1);
     grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
     column-gap: 18px;
   }
