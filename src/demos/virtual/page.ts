@@ -6,7 +6,7 @@ import type {Access} from '../../machine/machine.ts';
 import {$, setText} from '../../ui/dom.ts';
 import {editByte} from '../../ui/edit.ts';
 import {flashLevel} from '../../ui/flash.ts';
-import {powerButton} from '../../ui/power.ts';
+import {powerButton} from '../../ui/controls.ts';
 import {attachTooltip} from '../../ui/tooltip.ts';
 import type {Mount} from '../../page.ts';
 import {procColor} from '../concurrency/concurrency.ts';

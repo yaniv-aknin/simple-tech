@@ -1,4 +1,4 @@
-import './power.css';
+import './controls.css';
 
 const ICON =
   '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" ' +

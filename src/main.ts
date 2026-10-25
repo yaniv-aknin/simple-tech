@@ -9,7 +9,7 @@ import {RateChart} from './ui/chart.ts';
 import {CpuPanel} from './ui/cpu.ts';
 import {$, toggleOn} from './ui/dom.ts';
 import {Listing, type Lang} from './ui/listing.ts';
-import {powerButton} from './ui/power.ts';
+import {powerButton} from './ui/controls.ts';
 import {RamGrid} from './ui/ram.ts';
 import {attachTooltip} from './ui/tooltip.ts';
 
