@@ -4,6 +4,11 @@ const ICON =
   '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" ' +
   'stroke-linecap="round"><path d="M12 3v8"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></svg>';
 
+const STEP_ICON =
+  '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" stroke="currentColor" ' +
+  'stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"><path d="M6 5v14l10-7z"/>' +
+  '<path d="M19 5v14"/></svg>';
+
 /** Set in session storage once Power has been clicked; until then, a power button that is off glows. */
 const CLICKED = 'powerClicked';
 
@@ -33,4 +38,11 @@ export function powerButton(button: HTMLButtonElement) {
       ? 'Turn off: stop the clock, and reset the memory and the CPU'
       : 'Turn on: run the clock at 10 instructions per second';
   };
+}
+
+/** Makes `button` show the step icon: one tick of the clock. */
+export function stepButton(button: HTMLButtonElement) {
+  button.classList.add('step');
+  button.innerHTML = STEP_ICON;
+  button.setAttribute('aria-label', 'Step');
 }

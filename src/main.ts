@@ -6,10 +6,10 @@ import {atBreakpoint, finishKernel, tick, type DemoView, type Session} from './d
 import type {Direction} from './machine/keyboard.ts';
 import type {Mount} from './page.ts';
 import {RateChart} from './ui/chart.ts';
+import {powerButton, stepButton} from './ui/controls.ts';
 import {CpuPanel} from './ui/cpu.ts';
 import {$, toggleOn} from './ui/dom.ts';
 import {Listing, type Lang} from './ui/listing.ts';
-import {powerButton} from './ui/controls.ts';
 import {RamGrid} from './ui/ram.ts';
 import {attachTooltip} from './ui/tooltip.ts';
 
@@ -39,6 +39,7 @@ const breakpoints = new Set<number>();
 const listing = new Listing($('listing'));
 const ram = new RamGrid($('ram'));
 const showPower = powerButton($<HTMLButtonElement>('power'));
+stepButton($<HTMLButtonElement>('step'));
 /** The counts per second of the concurrency demo, which go on across restarts until the machine is turned off. */
 const chart = new RateChart(
   $('rateChart'),

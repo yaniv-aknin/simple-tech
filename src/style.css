@@ -65,7 +65,6 @@
   }
   .seg.wide #step {
     flex: 0 0 44px;
-    font-family: var(--mono);
   }
   .seg.wide button {
     flex: 1;

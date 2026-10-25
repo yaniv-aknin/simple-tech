@@ -3,10 +3,10 @@ import html from './page.html?raw';
 import {hex, hex2} from '../../machine/format.ts';
 import type {Program} from '../../machine/assembler.ts';
 import type {Access} from '../../machine/machine.ts';
+import {powerButton, stepButton} from '../../ui/controls.ts';
 import {$, setText} from '../../ui/dom.ts';
 import {editByte} from '../../ui/edit.ts';
 import {flashLevel} from '../../ui/flash.ts';
-import {powerButton} from '../../ui/controls.ts';
 import {attachTooltip} from '../../ui/tooltip.ts';
 import type {Mount} from '../../page.ts';
 import {procColor} from '../concurrency/concurrency.ts';
@@ -476,16 +476,17 @@ export const mount: Mount = (root, signal) => {
     powered = on;
     showPower(on);
   };
-  const stepButton = Object.assign(h('button', '', '>|'), {
+  const step = Object.assign(h('button'), {
     title: 'Step one tick: an instruction of every running program',
     onclick: () => {
       setSpeed(0);
       setPower(true);
       sys.step();
-      stepButton.blur();
+      step.blur();
     },
   });
-  speedBox.append(stepButton);
+  stepButton(step);
+  speedBox.append(step);
   SPEEDS.forEach((ips, i) => {
     const b = h('button', '', String(ips));
     b.dataset.i = String(i);
