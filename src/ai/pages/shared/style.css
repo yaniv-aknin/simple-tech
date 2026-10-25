@@ -400,6 +400,21 @@
       margin-left: 0;
     }
   }
+  @container (max-width: 600px) {
+    .memory {
+      min-width: 0;
+      flex: 1 1 100%;
+    }
+    .actions {
+      flex-wrap: wrap;
+    }
+    #go,
+    #next,
+    #clear {
+      flex: 1 1 120px;
+      min-width: 0;
+    }
+  }
   @container (max-height: 820px) and (min-width: 1251px) {
     .app {
       gap: 12px 28px;

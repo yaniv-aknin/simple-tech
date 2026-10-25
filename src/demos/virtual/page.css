@@ -86,6 +86,7 @@
   }
   .strip {
     display: flex;
+    flex-wrap: wrap;
     gap: 6px;
   }
   .strip button {
@@ -489,6 +490,18 @@
   @container (max-width: 800px) {
     .frames {
       grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  @container (max-width: 500px) {
+    .procs[data-count] {
+      --cell-h: 18px;
+      --cell-font: 9px;
+    }
+    .vgrid {
+      grid-template-columns: 18px repeat(16, minmax(0, 1fr));
+    }
+    .fbytes {
+      font-size: 9px;
     }
   }
 }

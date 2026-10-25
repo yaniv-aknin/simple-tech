@@ -18,6 +18,14 @@
 .clock .seg .step {
   flex: 0 0 44px;
 }
+@media (max-width: 820px) {
+  .clock .seg button {
+    min-width: 0;
+  }
+  .clock .seg .step {
+    flex-basis: 36px;
+  }
+}
 .step svg {
   display: block;
   margin: 0 auto;
