@@ -89,4 +89,20 @@
     font-size: 13px;
     white-space: pre-wrap;
   }
+
+  /* The Play button sits centered over the correct answer, and the heading's controls end at the grid's right edge. */
+  .promptbox {
+    --side-w: 110px;
+  }
+  .promptbox .side {
+    width: var(--side-w);
+    align-items: center;
+  }
+  .promptbox .truth {
+    text-align: center;
+  }
+  .promptbox .phead .play {
+    margin-left: calc(24px + (var(--side-w) - 40px) / 2 - 10px);
+    margin-right: calc((var(--side-w) - 40px) / 2);
+  }
 }
