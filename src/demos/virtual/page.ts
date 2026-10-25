@@ -7,6 +7,7 @@ import {Clock} from '../../ui/clock.ts';
 import {$, setText} from '../../ui/dom.ts';
 import {editByte} from '../../ui/edit.ts';
 import {flashLevel} from '../../ui/flash.ts';
+import {CLOSE, PAUSE, PLAY, RESET} from '../../ui/icons.ts';
 import {attachTooltip} from '../../ui/tooltip.ts';
 import type {Mount} from '../../page.ts';
 import {procColor} from '../concurrency/concurrency.ts';
@@ -28,14 +29,6 @@ const TOGGLE_TEXT = {
   paused: 'Resume',
   crashed: 'Reset: free its frames, to start it afresh',
 };
-
-const icon = (paths: string) =>
-  '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" ' +
-  `stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
-const PLAY = icon('<path d="M7 4.5v15l12-7.5z" fill="currentColor"/>');
-const PAUSE = icon('<path d="M8 5v14M16 5v14"/>');
-const RESET = icon('<path d="M3.5 12a8.5 8.5 0 1 0 2.5-6L3.5 8.5"/><path d="M3.5 3.5v5h5"/>');
-const CLOSE = icon('<path d="M6 6l12 12M18 6 6 18"/>');
 
 const openCount = (sys: VirtualSystem) => sys.procs.filter(p => !p.closed).length;
 

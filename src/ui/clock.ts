@@ -1,17 +1,9 @@
 import './clock.css';
+import {POWER, STEP} from './icons.ts';
 
 export const SPEEDS = [0, 1, 5, 10, 50, 100, 500];
 /** The speed the machine runs at when it is turned on. */
 const POWER_ON_SPEED = SPEEDS.indexOf(100);
-
-const POWER_ICON =
-  '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" ' +
-  'stroke-linecap="round"><path d="M12 3v8"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></svg>';
-
-const STEP_ICON =
-  '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" stroke="currentColor" ' +
-  'stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"><path d="M6 5v14l10-7z"/>' +
-  '<path d="M19 5v14"/></svg>';
 
 /** Set in session storage once Power has been clicked; until then, a power button that is off glows. */
 const CLICKED = 'powerClicked';
@@ -59,7 +51,7 @@ export class Clock {
   private budget = 0;
 
   constructor(opts: ClockOptions) {
-    const step = button('step', STEP_ICON, () => {
+    const step = button('step', STEP, () => {
       this.setSpeed(0);
       this.setPower(true);
       opts.step();
@@ -72,7 +64,7 @@ export class Clock {
         this.setSpeed(i);
       }),
     );
-    this.power = button('power', POWER_ICON, () => {
+    this.power = button('power', POWER, () => {
       try {
         sessionStorage.setItem(CLICKED, '1');
       } catch {}
