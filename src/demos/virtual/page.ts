@@ -445,16 +445,17 @@ export const mount: Mount = (root, signal) => {
   let last = 0;
 
   const speedBox = $('speed');
-  const showSpeed = () =>
+  const setSpeed = (i: number) => {
+    speedIdx = i;
+    budget = 0;
     [...speedBox.children].forEach(b =>
       b.classList.toggle('on', (b as HTMLElement).dataset.i === String(speedIdx)),
     );
+  };
   const stepButton = Object.assign(h('button', '', '>|'), {
     title: 'Step one tick: an instruction of every running program',
     onclick: () => {
-      speedIdx = 0;
-      budget = 0;
-      showSpeed();
+      setSpeed(0);
       sys.step();
       stepButton.blur();
     },
@@ -464,14 +465,12 @@ export const mount: Mount = (root, signal) => {
     const b = h('button', '', String(ips));
     b.dataset.i = String(i);
     b.onclick = () => {
-      speedIdx = i;
-      budget = 0;
-      showSpeed();
+      setSpeed(i);
       b.blur();
     };
     speedBox.append(b);
   });
-  showSpeed();
+  setSpeed(speedIdx);
 
   const strip = $('strip');
   PROCESSES.forEach((def, pid) => {
@@ -489,6 +488,20 @@ export const mount: Mount = (root, signal) => {
     strip.append(b);
   });
 
+  /** Builds the system afresh, in the chosen memory, with the same programs, stopped. */
+  const rebuild = () => {
+    const old = sys;
+    sys = new VirtualSystem(
+      old.procs.map(proc => proc.def),
+      memory,
+    );
+    old.procs.forEach((proc, pid) => {
+      for (const [key, value] of Object.entries(proc.values)) sys.setParam(pid, key, value);
+      if (proc.closed) sys.close(pid);
+    });
+    view = new View(sys, page, breakpoints);
+  };
+
   const memBox = $('memsize');
   const showMemory = () =>
     [...memBox.children].forEach((b, i) => b.classList.toggle('on', MEMORIES[i] === memory));
@@ -497,17 +510,8 @@ export const mount: Mount = (root, signal) => {
     b.onclick = () => {
       b.blur();
       if (choice === memory) return;
-      const old = sys;
       memory = choice;
-      sys = new VirtualSystem(
-        old.procs.map(proc => proc.def),
-        memory,
-      );
-      old.procs.forEach((proc, pid) => {
-        for (const [key, value] of Object.entries(proc.values)) sys.setParam(pid, key, value);
-        if (proc.closed) sys.close(pid);
-      });
-      view = new View(sys, page, breakpoints);
+      rebuild();
       showMemory();
     };
     memBox.append(b);
@@ -559,9 +563,7 @@ export const mount: Mount = (root, signal) => {
           (p, pid) => p.state === 'running' && p.cpu.next === 'fetch' && breakpoints[pid].has(p.cpu.pc),
         );
         if (hit) {
-          speedIdx = 0;
-          showSpeed();
-          budget = 0;
+          setSpeed(0);
           break;
         }
       }
