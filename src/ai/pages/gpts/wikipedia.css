@@ -5,7 +5,8 @@
   }
   .main.wiki {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 800px));
+    justify-content: start;
     gap: 14px;
   }
   .pane {
@@ -21,8 +22,10 @@
   }
   .phead {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 12px;
+    min-height: 36px;
+    margin-bottom: 5px;
   }
   .ptitle {
     font-size: 12px;
@@ -292,8 +295,8 @@
   .paste textarea {
     flex: 1;
     min-height: 0;
-    font-size: 11px;
-    line-height: 1.35;
+    font-size: 15px;
+    line-height: 1.4;
     white-space: pre-wrap;
   }
 
