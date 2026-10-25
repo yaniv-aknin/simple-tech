@@ -139,9 +139,21 @@ function switchDemo(key: DemoKey) {
   page = null;
   unmountPage();
   document.body.dataset.demo = key;
-  toggleOn($('tabs'), b => b.dataset.demo === key);
+  showTab(b => b.dataset.demo === key);
   clock.off();
   restart();
+}
+
+/** Marks the current tab, and names it in the banner that stands for the sidebar on a narrow screen. */
+function showTab(isOn: (b: HTMLElement) => boolean) {
+  toggleOn($('tabs'), isOn);
+  $('current').textContent = $('tabs').querySelector('.on')?.textContent ?? '';
+}
+
+/** On a narrow screen, the sidebar is a banner that opens to show the tabs. */
+function setMenu(open: boolean) {
+  document.body.dataset.menu = open ? 'open' : 'closed';
+  $('menu').setAttribute('aria-expanded', String(open));
 }
 
 function unmountPage() {
@@ -162,7 +174,7 @@ function showPage(path: string) {
   page = path;
   clock.stop();
   document.body.dataset.demo = 'page';
-  toggleOn($('tabs'), b => b.dataset.page === path);
+  showTab(b => b.dataset.page === path);
   void mountPage(path);
 }
 
@@ -222,7 +234,15 @@ for (const b of buttons('views'))
     setPanels(shown.has(panel) ? [...shown].filter(p => p !== panel) : [...shown, panel]);
     writeDemoHash();
   };
-for (const b of buttons('tabs')) b.onclick = () => (location.hash = b.dataset.page ?? b.dataset.demo!);
+for (const b of buttons('tabs'))
+  b.onclick = () => {
+    setMenu(false);
+    location.hash = b.dataset.page ?? b.dataset.demo!;
+  };
+$('menu').onclick = () => setMenu(document.body.dataset.menu !== 'open');
+addEventListener('click', e => {
+  if (!(e.target as Element).closest('.sidebar')) setMenu(false);
+});
 for (const b of buttons('lang')) b.onclick = () => setLang(b.dataset.lang as Lang);
 for (const b of buttons('nsel'))
   b.onclick = () => {
@@ -268,7 +288,7 @@ addEventListener('blur', () => {
 });
 
 initTheme();
-mountThemeToggle();
+mountThemeToggle($('tools'));
 setProcesses(processes);
 setCores(cores);
 setKernel(showKernel);

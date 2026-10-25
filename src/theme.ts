@@ -44,7 +44,7 @@ export function initTheme() {
 }
 
 /** The light/dark switch in the bottom-left corner, with a link to the source beside it. */
-export function mountThemeToggle() {
+export function mountThemeToggle(parent: HTMLElement = document.body) {
   const button = document.createElement('button');
   button.className = 'themetoggle';
   const render = () => {
@@ -73,5 +73,5 @@ export function mountThemeToggle() {
   });
   source.target = '_blank';
   source.rel = 'noopener';
-  document.body.append(button, source);
+  parent.append(button, source);
 }

@@ -7,29 +7,51 @@
   </head>
   <body data-mode="vars" data-demo="pong">
     <nav class="sidebar">
-      <h1>Simple Tech</h1>
-      <div class="tabs" id="tabs">
-        <h2>Computer</h2>
-        <button data-demo="pong" class="on">Pong</button>
-        <button data-demo="procs">Concurrency</button>
-        <button data-page="computer/virtual-memory/">Virtual memory</button>
-        <h2>AI</h2>
-        <button data-page="ai/markov/build/">Markov: Learning</button>
-        <button data-page="ai/markov/predict/">Markov: Predicting</button>
-        <button data-page="ai/gpts/gpt2-markov/">GPT2 vs Markov</button>
-        <button data-page="ai/gpts/2-4-6/">GPT Then and Now</button>
-        <button data-page="ai/gpts/s-m-l-apples/">Model size: Apples</button>
-        <button data-page="ai/gpts/s-m-l/">Model size: Mazes</button>
-        <button data-page="ai/gpts/wikipedia/">Tool calls</button>
-        <button data-page="ai/gpts/python/">Python as a Tool</button>
-        <button data-page="ai/gpts/context/">Context management</button>
+      <div class="banner">
+        <h1>Simple Tech</h1>
+        <button class="menu" id="menu" aria-expanded="false" aria-controls="drawer">
+          <span id="current"></span>
+          <svg
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+          >
+            <path d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+        </button>
+      </div>
+      <div class="drawer" id="drawer">
+        <div class="tabs" id="tabs">
+          <h2>Computer</h2>
+          <button data-demo="pong" class="on">Pong</button>
+          <button data-demo="procs">Concurrency</button>
+          <button data-page="computer/virtual-memory/">Virtual memory</button>
+          <h2>AI</h2>
+          <button data-page="ai/markov/build/">Markov: Learning</button>
+          <button data-page="ai/markov/predict/">Markov: Predicting</button>
+          <button data-page="ai/gpts/gpt2-markov/">GPT2 vs Markov</button>
+          <button data-page="ai/gpts/2-4-6/">GPT Then and Now</button>
+          <button data-page="ai/gpts/s-m-l-apples/">Model size: Apples</button>
+          <button data-page="ai/gpts/s-m-l/">Model size: Mazes</button>
+          <button data-page="ai/gpts/wikipedia/">Tool calls</button>
+          <button data-page="ai/gpts/python/">Python as a Tool</button>
+          <button data-page="ai/gpts/context/">Context management</button>
+        </div>
+        <div class="tools" id="tools">
+          <aside
+            class="credit"
+            data-tip="Some of the time and tokens for this project were provided by Attio."
+          >
+            <a href="https://attio.com" target="_blank" rel="noopener"><i class="attio"></i></a>
+            <span>Thank you!</span>
+          </aside>
+        </div>
       </div>
     </nav>
-
-    <aside class="credit" data-tip="Some of the time and tokens for this project were provided by Attio.">
-      <a href="https://attio.com" target="_blank" rel="noopener"><i class="attio"></i></a>
-      <span>Thank you!</span>
-    </aside>
 
     <main>
       <div class="layout" id="layout">
