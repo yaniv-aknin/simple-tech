@@ -1,16 +1,17 @@
 <div class="ai ai-gpts ai-tools">
-  <div class="app wide nopick">
+  <div class="app wide">
     <section class="main">
-      <div class="lead">
-        <div class="prompt" id="prompt"></div>
-        <div class="commands">
+      <div class="promptbox">
+        <div class="phead">
+          <span class="label">Prompt</span>
           <span class="mode" id="mode"></span>
-          <div class="switch" id="switch" role="group" aria-label="Python tool">
-            <button data-mode="plain">Code off</button>
-            <button data-mode="tools">Code on</button>
+          <div class="seg" id="sizes"></div>
+          <div class="seg" id="switch" role="group" aria-label="Python tool">
+            <button data-mode="plain">Code off</button><button data-mode="tools">Code on</button>
           </div>
           <button id="go" class="play" title="Start">Start</button>
         </div>
+        <div class="prompt" id="prompt"></div>
       </div>
       <div class="results" id="results"></div>
     </section>

@@ -297,7 +297,7 @@
     white-space: pre-wrap;
   }
 
-  @container (max-width: 1250px) {
+  @container (max-width: 800px) {
     .main.wiki {
       grid-template-columns: 1fr;
     }

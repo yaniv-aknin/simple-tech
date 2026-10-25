@@ -4,6 +4,7 @@ import './tools.css';
 import './wikipedia.css';
 import html from './wikipedia.html?raw';
 import type {Mount} from '../../../page.ts';
+import {RESET} from '../../../ui/icons.ts';
 import {sleep} from '../../core/openai.ts';
 import {
   SYSTEM_PROMPT,
@@ -238,6 +239,7 @@ export const mount: Mount = (root, signal) => {
     button.blur();
   });
 
+  $('reset').innerHTML = RESET;
   $('reset').addEventListener('click', () => {
     history = [];
     lastTitle = '';

@@ -9,33 +9,35 @@
   }
   .app.wide {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
     gap: 14px;
     padding: 16px;
-  }
-  .app.wide.nopick {
-    grid-template-rows: minmax(0, 1fr);
   }
   .main {
     gap: 14px;
   }
 
-  .lead {
-    display: flex;
-    align-items: center;
-    gap: 14px 24px;
-  }
-  .lead > :first-child {
-    flex: 1;
-    min-width: 0;
-  }
-  .commands {
+  .promptbox {
     display: flex;
     flex-direction: column;
+    gap: 10px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px;
+  }
+  .phead {
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 10px;
   }
-  .commands .mode:empty {
+  .phead .label {
+    margin-right: auto;
+    color: var(--dim);
+  }
+  .mode:empty,
+  .seg:empty {
     display: none;
   }
   .mode {
@@ -56,10 +58,6 @@
     display: flex;
     align-items: center;
     gap: 24px;
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 12px 16px;
   }
   .prompt .q {
     flex: 1;
@@ -73,19 +71,19 @@
     resize: none;
     overflow: hidden;
     font: inherit;
-    font-size: 18px;
+    font-size: 15px;
     line-height: 1.45;
-    letter-spacing: -0.3px;
     color: var(--text);
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 8px;
-    padding: 2px 8px;
-    margin: 0 -8px;
-    width: calc(100% + 16px);
+    background: var(--field);
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    padding: 6px 10px;
+  }
+  .prompt .q {
+    gap: 6px;
   }
   .prompt textarea:hover {
-    background: color-mix(in srgb, var(--text) 4%, transparent);
+    border-color: var(--blue);
   }
   .prompt textarea:focus {
     outline: none;
@@ -110,9 +108,8 @@
     align-items: baseline;
     gap: 10px;
     white-space: nowrap;
-    font-size: 18px;
+    font-size: 15px;
     line-height: 1.45;
-    letter-spacing: -0.3px;
   }
   .preview .first {
     flex: 0 1 auto;
@@ -185,11 +182,8 @@
     gap: 12px;
   }
   .mname {
-    font-size: 12px;
+    font-size: 15px;
     font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--dim);
   }
   .msub {
     color: var(--dim);
@@ -359,7 +353,7 @@
     overflow: auto;
   }
 
-  @container (max-width: 1250px) {
+  @container (max-width: 800px) {
     .app.wide {
       height: auto;
     }
@@ -378,21 +372,13 @@
       flex-wrap: wrap;
     }
   }
-  @container (max-height: 820px) and (min-width: 1251px) {
-    .prompt textarea {
-      font-size: 16px;
-    }
+  @container (max-height: 820px) and (min-width: 801px) {
     .run .ans {
       font-size: 20px;
     }
     .run.long .ans {
       font-size: 12px;
     }
-  }
-
-  :scope.multiline .prompt textarea,
-  :scope.multiline .preview {
-    font-size: 15px;
   }
 
   .sheet.paper {
@@ -446,33 +432,7 @@
     align-items: flex-end;
     gap: 8px;
   }
-  .sizes {
-    display: flex;
-  }
-  .sizes button {
-    border-radius: 0;
-    padding: 4px 10px;
-  }
-  .sizes button:first-child {
-    border-radius: 6px 0 0 6px;
-  }
-  .sizes button:last-child {
-    border-radius: 0 6px 6px 0;
-  }
-  .sizes button + button {
-    border-left: 0;
-  }
-  .sizes button.on {
-    background: var(--blue);
-    border-color: var(--blue);
-    color: #fff;
-  }
 
-  :scope[data-task='2-4-6'] .prompt,
-  :scope[data-task='s-m-l-apples'] .prompt,
-  :scope[data-task='s-m-l'] .prompt {
-    min-height: 168px;
-  }
   :scope[data-task='s-m-l'] .maze {
     height: 130px;
   }

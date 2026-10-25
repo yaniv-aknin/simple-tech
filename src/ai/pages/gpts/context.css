@@ -2,9 +2,6 @@
   .main.ctx {
     gap: 14px;
   }
-  .ctx .prompt textarea {
-    font-size: 17px;
-  }
   .cols {
     flex: 1;
     min-height: 0;
@@ -46,7 +43,7 @@
     color: var(--dim);
     font-size: 11px;
   }
-  .col .switch {
+  .col .seg {
     align-self: flex-start;
   }
 
@@ -209,17 +206,17 @@
   .tiles {
     flex: none;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 8px;
   }
   .tile {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     gap: 4px;
-    min-height: 100px;
-    padding: 10px 12px;
-    border-radius: 10px;
+    min-height: 72px;
+    padding: 8px 10px;
+    border-radius: 6px;
     border: 1px solid var(--line-strong);
     background: color-mix(in srgb, var(--text) 3%, transparent);
     font-size: 13px;
@@ -286,7 +283,7 @@
     font-variant-numeric: tabular-nums;
   }
 
-  @container (max-width: 1250px) {
+  @container (max-width: 1000px) {
     .cols {
       grid-template-columns: 1fr;
     }

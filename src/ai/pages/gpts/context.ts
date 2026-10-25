@@ -4,6 +4,7 @@ import './tools.css';
 import './context.css';
 import html from './context.html?raw';
 import type {Mount} from '../../../page.ts';
+import {RESET} from '../../../ui/icons.ts';
 import {
   AGENT_SPEEDUP,
   LIMIT_TOKENS,
@@ -351,6 +352,7 @@ export const mount: Mount = (root, signal) => {
       button.blur();
     });
     $('question').addEventListener('input', autosize);
+    $('reset').innerHTML = RESET;
     $('reset').addEventListener('click', () => {
       reset();
       $('reset').blur();

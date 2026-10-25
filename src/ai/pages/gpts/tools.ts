@@ -69,7 +69,6 @@ export const mount: Mount = (root, signal) => {
   function renderPrompt() {
     const q = document.createElement('div');
     q.className = 'q';
-    q.style.fontSize = '22px';
     q.textContent = parts.grid === null ? parts.head : `${parts.head} ${parts.tail}`;
     const expected = expectedAnswer(option(), parts);
     const truth = document.createElement('div');
@@ -77,15 +76,15 @@ export const mount: Mount = (root, signal) => {
     truth.hidden = expected === null;
     truth.innerHTML = 'Correct answer<b></b>';
     truth.querySelector('b')!.textContent = expected;
-    const sizes = document.createElement('div');
-    sizes.className = 'sizes';
-    config.options.forEach((option, i) => {
-      const button = el('button', i === current ? 'on' : '', `${option.id}×${option.id}`);
-      button.addEventListener('click', () => selectOption(i));
-      sizes.append(button);
-    });
+    $('sizes').replaceChildren(
+      ...config.options.map((option, i) => {
+        const button = el('button', i === current ? 'on' : '', `${option.id}×${option.id}`);
+        button.addEventListener('click', () => selectOption(i));
+        return button;
+      }),
+    );
     const side = el('div', 'side');
-    side.append(truth, sizes);
+    side.append(truth);
     const maze = parts.grid === null ? [] : [renderMaze(parts.grid, openEditor)];
     $('prompt').replaceChildren(q, ...maze, side);
     renderMode();

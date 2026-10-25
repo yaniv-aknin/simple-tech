@@ -1,25 +1,4 @@
 @scope (.ai-tools) {
-  .switch {
-    display: flex;
-  }
-  .switch button {
-    border-radius: 0;
-  }
-  .switch button:first-child {
-    border-radius: 6px 0 0 6px;
-  }
-  .switch button:last-child {
-    border-radius: 0 6px 6px 0;
-  }
-  .switch button + button {
-    border-left: 0;
-  }
-  .switch button.on {
-    background: var(--blue);
-    border-color: var(--blue);
-    color: #fff;
-  }
-
   .log {
     flex: 1;
     min-height: 0;

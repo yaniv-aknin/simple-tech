@@ -1,10 +1,15 @@
 <div class="ai ai-gpts ai-tools ai-context">
-  <div class="app wide nopick">
+  <div class="app wide">
     <section class="main ctx">
-      <div class="prompt">
-        <div class="q"><textarea id="question" rows="1" spellcheck="false"></textarea></div>
-        <div class="sizes" id="presets"></div>
-        <button id="reset">Reset</button>
+      <div class="promptbox">
+        <div class="phead">
+          <span class="label">Question</span>
+          <div class="seg" id="presets"></div>
+          <button id="reset" class="icon" title="Reset" aria-label="Reset"></button>
+        </div>
+        <div class="prompt">
+          <div class="q"><textarea id="question" rows="1" spellcheck="false"></textarea></div>
+        </div>
       </div>
       <div class="cols">
         <div class="col" id="stuff">
@@ -12,7 +17,7 @@
             <span class="mname">Context stuffing</span><span class="msub">load it all</span
             ><button class="run play" title="Run" data-method="stuff">Run</button>
           </div>
-          <div class="switch scope" id="scope">
+          <div class="seg scope" id="scope">
             <button data-scope="book" class="on" id="scopeBook"></button>
             <button data-scope="all" id="scopeAll">All 16 books</button>
           </div>

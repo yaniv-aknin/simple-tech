@@ -131,16 +131,13 @@ export const mountTask =
     }
 
     function renderSizes() {
-      const sizes = document.createElement('div');
-      sizes.className = 'sizes';
-      config.options.forEach((o, i) => {
+      return config.options.map((o, i) => {
         const button = document.createElement('button');
         button.textContent = `${o.id}×${o.id}`;
         button.classList.toggle('on', i === current);
         button.addEventListener('click', () => selectOption(i));
-        sizes.append(button);
+        return button;
       });
-      return sizes;
     }
 
     function renderPrompt() {
@@ -162,7 +159,8 @@ export const mountTask =
       truthBox.className = 'truth';
       truthBox.id = 'truth';
       side.append(truthBox);
-      if (!page.querySelector('#books') && config.options.length > 1) side.append(renderSizes());
+      if (!page.querySelector('#books') && config.options.length > 1)
+        $('sizes').replaceChildren(...renderSizes());
       box.append(side);
       renderTruth();
       q.querySelectorAll('textarea').forEach(autosize);

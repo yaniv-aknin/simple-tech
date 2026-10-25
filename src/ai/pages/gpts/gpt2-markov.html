@@ -1,14 +1,15 @@
 <div class="ai ai-gpts multiline" data-task="gpt2-markov">
   <div class="app wide">
-    <div class="lead">
-      <nav class="seg" id="books" aria-label="Choose a prompt"></nav>
-      <div class="commands">
-        <span class="mode" id="mode"></span>
-        <button id="go" class="play" title="Start">Start</button>
-      </div>
-    </div>
     <section class="main">
-      <div class="prompt" id="prompt"></div>
+      <div class="promptbox">
+        <div class="phead">
+          <span class="label">Prompt</span>
+          <nav class="seg" id="books" aria-label="Choose a prompt"></nav>
+          <span class="mode" id="mode"></span>
+          <button id="go" class="play" title="Start">Start</button>
+        </div>
+        <div class="prompt" id="prompt"></div>
+      </div>
       <div class="results" id="results"></div>
     </section>
   </div>

@@ -1,11 +1,15 @@
 <div class="ai ai-gpts ai-tools ai-wikipedia">
-  <div class="app wide nopick">
+  <div class="app wide">
     <section class="main wiki">
       <div class="pane chat">
         <div class="phead">
           <span class="ptitle">Chat</span><span class="pmeta">GPT6 Luna</span>
+          <span class="switchlabel">Auto tools</span>
+          <div class="seg" id="switch" role="group" aria-label="Auto tools">
+            <button data-auto="off" class="on">Off</button><button data-auto="on">On</button>
+          </div>
           <button id="instructions">Instructions</button>
-          <button id="reset">Reset</button>
+          <button id="reset" class="icon" title="Reset" aria-label="Reset"></button>
         </div>
         <div class="messages" id="messages"></div>
         <form class="composer" id="composer">
@@ -16,11 +20,6 @@
       <div class="pane tool" id="tool">
         <div class="phead">
           <span class="ptitle">Tool input</span><span class="pmeta" id="toolMeta"></span>
-          <span class="switchlabel">Auto tools</span>
-          <div class="switch" id="switch" role="group" aria-label="Auto tools">
-            <button data-auto="off" class="on">Off</button>
-            <button data-auto="on">On</button>
-          </div>
         </div>
         <div class="browser" id="browser">
           <div class="addr" id="addr"></div>
