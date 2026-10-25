@@ -200,6 +200,7 @@ export const mountTask =
       const results = $('results');
       results.innerHTML = '';
       results.style.setProperty('--cols', String(option().models.length));
+      results.style.setProperty('--runs', String(Math.max(...option().models.map(m => m.runs.length))));
       for (const m of option().models) {
         const col = document.createElement('div');
         col.className = 'model';
@@ -219,7 +220,6 @@ export const mountTask =
           sub.textContent = m.sub;
         }
         const runs = col.querySelector<HTMLElement>('.runs')!;
-        runs.style.setProperty('--runs', String(m.runs.length));
         for (let r = 0; r < m.runs.length; r++) {
           runs.insertAdjacentHTML(
             'beforeend',
