@@ -40,7 +40,17 @@
           <button data-page="ai/gpts/wikipedia/">Tool calls</button>
           <button data-page="ai/gpts/python/">Python as a Tool</button>
           <button data-page="ai/gpts/context/">Context management</button>
+          <button
+            class="help"
+            id="help"
+            aria-label="About this page"
+            aria-expanded="false"
+            aria-controls="helpText"
+          >
+            ?
+          </button>
         </div>
+        <div class="helptext" id="helpText" hidden></div>
         <div class="tools" id="tools">
           <aside
             class="credit"

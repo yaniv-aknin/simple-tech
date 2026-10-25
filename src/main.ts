@@ -2,6 +2,7 @@ import './style.css';
 import {initTheme, mountThemeToggle} from './theme.ts';
 import {PROC_HUES, procColor} from './demos/concurrency/concurrency.ts';
 import {DEMOS, type DemoKey} from './demos/index.ts';
+import {HELP} from './help.ts';
 import {atBreakpoint, finishKernel, tick, type DemoView, type Session} from './demos/demo.ts';
 import type {Direction} from './machine/keyboard.ts';
 import type {Mount} from './page.ts';
@@ -147,13 +148,38 @@ function switchDemo(key: DemoKey) {
 /** Marks the current tab, and names it in the banner that stands for the sidebar on a narrow screen. */
 function showTab(isOn: (b: HTMLElement) => boolean) {
   toggleOn($('tabs'), isOn);
-  $('current').textContent = $('tabs').querySelector('.on')?.textContent ?? '';
+  const tab = $('tabs').querySelector<HTMLElement>('.on');
+  $('current').textContent = tab?.textContent ?? '';
+  const help = tab && HELP[tab.dataset.page ?? tab.dataset.demo!];
+  $('help').hidden = !help;
+  $('helpText').innerHTML = help ?? '';
+  setHelp(false);
+  placeHelp();
+}
+
+/** Puts the help button on the current tab, and its text beside it. */
+function placeHelp() {
+  const tab = $('tabs').querySelector<HTMLElement>('.on');
+  if (!tab) return;
+  $('tabs').style.setProperty('--tab-top', `${tab.offsetTop}px`);
+  $('tabs').style.setProperty('--tab-height', `${tab.offsetHeight}px`);
+  const top = Math.min(tab.getBoundingClientRect().top, innerHeight - $('helpText').offsetHeight - 16);
+  $('helpText').style.setProperty('--help-top', `${Math.max(16, top)}px`);
+  $('helpText').style.setProperty('--help-left', `${$('drawer').getBoundingClientRect().right + 12}px`);
+}
+
+function setHelp(open: boolean) {
+  $('helpText').hidden = !open;
+  if (open) placeHelp();
+  $('help').classList.toggle('open', open);
+  $('help').setAttribute('aria-expanded', String(open));
 }
 
 /** On a narrow screen, the sidebar is a banner that opens to show the tabs. */
 function setMenu(open: boolean) {
   document.body.dataset.menu = open ? 'open' : 'closed';
   $('menu').setAttribute('aria-expanded', String(open));
+  if (open) placeHelp();
 }
 
 function unmountPage() {
@@ -234,13 +260,17 @@ for (const b of buttons('views'))
     setPanels(shown.has(panel) ? [...shown].filter(p => p !== panel) : [...shown, panel]);
     writeDemoHash();
   };
-for (const b of buttons('tabs'))
+for (const b of $('tabs').querySelectorAll<HTMLButtonElement>('[data-demo], [data-page]'))
   b.onclick = () => {
     setMenu(false);
     location.hash = b.dataset.page ?? b.dataset.demo!;
   };
 $('menu').onclick = () => setMenu(document.body.dataset.menu !== 'open');
+$('help').onclick = () => setHelp(!$('help').classList.contains('open'));
+addEventListener('resize', placeHelp);
+$('tabs').addEventListener('scroll', placeHelp);
 addEventListener('click', e => {
+  if (!(e.target as Element).closest('.help, .helptext')) setHelp(false);
   if (!(e.target as Element).closest('.sidebar')) setMenu(false);
 });
 for (const b of buttons('lang')) b.onclick = () => setLang(b.dataset.lang as Lang);
@@ -271,6 +301,7 @@ const KEY_DIRS = new Map<string, Direction>([
 ]);
 
 addEventListener('keydown', e => {
+  if (e.key === 'Escape') setHelp(false);
   if (page !== null) return;
   const dir = KEY_DIRS.get(e.key);
   if (dir) {
