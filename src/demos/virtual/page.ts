@@ -6,6 +6,7 @@ import type {Access} from '../../machine/machine.ts';
 import {$, setText} from '../../ui/dom.ts';
 import {editByte} from '../../ui/edit.ts';
 import {flashLevel} from '../../ui/flash.ts';
+import {powerButton} from '../../ui/power.ts';
 import {attachTooltip} from '../../ui/tooltip.ts';
 import type {Mount} from '../../page.ts';
 import {procColor} from '../concurrency/concurrency.ts';
@@ -20,6 +21,8 @@ const MEMORIES = [
 ];
 
 const SPEEDS = [0, 1, 5, 10, 50, 100, 500];
+/** The speed the machine runs at when it is turned on. */
+const POWER_ON_SPEED = SPEEDS.indexOf(10);
 const MAX_STEPS_PER_FRAME = 200;
 const STATE_TEXT = {stopped: 'not started', running: 'running', paused: 'paused', crashed: 'crashed'};
 const TOGGLE_TEXT = {
@@ -85,13 +88,16 @@ class View {
   private readonly sys: VirtualSystem;
   /** Where each program has a breakpoint: the clock stops when any of them is about to run that address. */
   private readonly breakpoints: Set<number>[];
+  /** Called when a program is started, which turns the machine on. */
+  private readonly started: () => void;
   private readonly cards: Card[] = [];
   private readonly frames: {box: HTMLElement; owner: HTMLElement; cells: HTMLElement[]}[] = [];
   private hover: Hover | null = null;
 
-  constructor(sys: VirtualSystem, page: HTMLElement, breakpoints: Set<number>[]) {
+  constructor(sys: VirtualSystem, page: HTMLElement, breakpoints: Set<number>[], started: () => void) {
     this.sys = sys;
     this.breakpoints = breakpoints;
+    this.started = started;
     $('procs').replaceChildren(...sys.procs.map((p, i) => this.buildCard(p, i)));
     this.buildFrames();
     page.onmouseover = e => this.pointAt(e);
@@ -162,7 +168,14 @@ class View {
       h('h2', '', `P${pid + 1} ${proc.def.name}`),
     );
     const toggle = Object.assign(h('button', 'icon toggle'), {
-      onclick: () => (this.sys.procs[pid].state === 'crashed' ? this.sys.reset(pid) : this.sys.toggle(pid)),
+      onclick: () => {
+        const proc = this.sys.procs[pid];
+        if (proc.state === 'crashed') this.sys.reset(pid);
+        else {
+          this.sys.toggle(pid);
+          if (proc.state === 'running') this.started();
+        }
+      },
     });
     head.append(
       toggle,
@@ -437,10 +450,15 @@ export const mount: Mount = (root, signal) => {
   root.innerHTML = html;
   const page = root.querySelector<HTMLElement>('.vm')!;
   const breakpoints: Set<number>[] = [];
-  let speedIdx = 3;
+  let speedIdx = 0;
+  /** Off is the state after a reset, until the clock first runs or steps, or a program starts. */
+  let powered = false;
   let memory = MEMORIES[0];
   let sys = new VirtualSystem([], memory);
-  let view = new View(sys, page, breakpoints);
+  const wake = () => {
+    if (!powered) setSpeed(POWER_ON_SPEED);
+  };
+  let view = new View(sys, page, breakpoints, wake);
   let budget = 0;
   let last = 0;
 
@@ -451,11 +469,18 @@ export const mount: Mount = (root, signal) => {
     [...speedBox.children].forEach(b =>
       b.classList.toggle('on', (b as HTMLElement).dataset.i === String(speedIdx)),
     );
+    if (i > 0) setPower(true);
+  };
+  const showPower = powerButton($<HTMLButtonElement>('powerSwitch'));
+  const setPower = (on: boolean) => {
+    powered = on;
+    showPower(on);
   };
   const stepButton = Object.assign(h('button', '', '>|'), {
     title: 'Step one tick: an instruction of every running program',
     onclick: () => {
       setSpeed(0);
+      setPower(true);
       sys.step();
       stepButton.blur();
     },
@@ -470,7 +495,8 @@ export const mount: Mount = (root, signal) => {
     };
     speedBox.append(b);
   });
-  setSpeed(speedIdx);
+  setSpeed(0);
+  setPower(false);
 
   const strip = $('strip');
   PROCESSES.forEach((def, pid) => {
@@ -483,7 +509,9 @@ export const mount: Mount = (root, signal) => {
       const id = sys.spawn(def);
       breakpoints[id] = new Set();
       view.addCard(id);
-      if (!e.shiftKey) sys.toggle(id);
+      if (e.shiftKey) return;
+      sys.toggle(id);
+      wake();
     };
     strip.append(b);
   });
@@ -499,7 +527,21 @@ export const mount: Mount = (root, signal) => {
       for (const [key, value] of Object.entries(proc.values)) sys.setParam(pid, key, value);
       if (proc.closed) sys.close(pid);
     });
-    view = new View(sys, page, breakpoints);
+    view = new View(sys, page, breakpoints, wake);
+  };
+
+  $('powerSwitch').onclick = () => {
+    $('powerSwitch').blur();
+    if (!powered) {
+      sys.procs.forEach((proc, pid) => {
+        if (proc.state === 'stopped') sys.toggle(pid);
+      });
+      setSpeed(POWER_ON_SPEED);
+      return;
+    }
+    setSpeed(0);
+    setPower(false);
+    rebuild();
   };
 
   const memBox = $('memsize');
