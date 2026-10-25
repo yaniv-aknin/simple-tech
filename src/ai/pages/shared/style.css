@@ -11,9 +11,63 @@
     height: 100%;
     color: var(--text);
     font-family: var(--sans);
-    font-size: 20px;
+    font-size: 14px;
     line-height: 1.4;
     -webkit-font-smoothing: antialiased;
+  }
+  button {
+    font: inherit;
+    color: var(--text);
+    background: var(--button);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 7px 12px;
+    cursor: pointer;
+  }
+  button:where(:hover:not(:disabled)) {
+    background: var(--button-hover);
+  }
+  button:where(:disabled) {
+    opacity: 0.4;
+    cursor: default;
+  }
+  /* Starts a run: a green circle with a play triangle; with .stop, a grey one with a square. Its text is for screen readers. */
+  button.play {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--ok);
+    color: var(--panel);
+    font-size: 0;
+  }
+  button.play::before {
+    content: '';
+    width: 13px;
+    height: 15px;
+    margin-left: 3px;
+    background: currentColor;
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+  }
+  button.play:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--ok) 85%, var(--text));
+  }
+  button.play.stop {
+    background: var(--button);
+    color: var(--text);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  button.play.stop::before {
+    width: 12px;
+    height: 12px;
+    margin-left: 0;
+    clip-path: none;
+    border-radius: 2px;
   }
   .app {
     min-height: 0;
@@ -21,8 +75,8 @@
     grid-template-columns: minmax(0, 1fr) 580px;
     grid-template-rows: auto minmax(0, 1fr);
     height: 100%;
-    gap: 20px 32px;
-    padding: 18px 40px 20px;
+    gap: 14px;
+    padding: 16px;
     max-width: 1920px;
     margin: 0 auto;
   }
@@ -41,7 +95,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 16px;
+    padding: 8px 12px;
     background: var(--panel);
     border: 1px solid var(--line);
     border-radius: var(--radius);
@@ -60,36 +114,36 @@
       0 8px 40px -8px var(--accent-soft);
   }
   .book .emoji {
-    font-size: 30px;
+    font-size: 19px;
   }
   .book .title {
     font-weight: 600;
-    font-size: 21px;
+    font-size: 14px;
     line-height: 1.15;
     display: block;
   }
   .book .author {
     color: var(--dim);
-    font-size: 17px;
+    font-size: 12px;
     display: block;
   }
 
   .main {
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 14px;
     min-width: 0;
     min-height: 0;
   }
   .controls {
     display: flex;
     flex-wrap: wrap;
-    gap: 18px 32px;
+    gap: 14px 24px;
     align-items: flex-end;
     background: var(--panel);
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 16px 22px;
+    padding: 14px;
   }
   .control {
     display: flex;
@@ -99,7 +153,7 @@
   .control label,
   .control .label {
     font-weight: 600;
-    font-size: 20px;
+    font-size: 14px;
   }
   .memory {
     min-width: 300px;
@@ -110,7 +164,7 @@
   .ticks {
     display: flex;
     justify-content: space-between;
-    font-size: 18px;
+    font-size: 13px;
     color: var(--dim);
   }
   .speed {
@@ -122,7 +176,7 @@
   }
   .seed input {
     font: inherit;
-    font-size: 22px;
+    font-size: 15px;
     padding: 10px 14px;
     width: 240px;
     border: 1px solid var(--line-strong);
@@ -141,52 +195,11 @@
     justify-content: flex-end;
     gap: 14px;
   }
-  #go,
-  #next,
-  #clear {
-    min-width: 190px;
-    font: inherit;
-    font-size: 28px;
-    font-weight: 600;
-    padding: 14px 36px;
-    border: 0;
-    border-radius: 10px;
-    cursor: pointer;
-  }
-  #go {
-    background: var(--blue);
-    color: #fff;
-  }
-  #next,
-  #clear {
-    background: var(--panel);
-    color: var(--text);
-    box-shadow: inset 0 0 0 1px var(--line-strong);
-  }
-  #next:hover,
-  #clear:hover {
-    background: var(--button-hover);
-    box-shadow: inset 0 0 0 1px var(--blue);
-  }
-  #clear {
-    min-width: 130px;
-  }
   #clear {
     color: var(--dim);
   }
   #clear.active {
     color: var(--text);
-  }
-  #go:hover {
-    background: var(--blue-strong);
-  }
-  #go.stop {
-    background: var(--panel);
-    color: var(--text);
-    box-shadow: inset 0 0 0 1px var(--line-strong);
-  }
-  #go.stop:hover {
-    background: var(--button-hover);
   }
 
   .stage {
@@ -204,10 +217,10 @@
     height: 100%;
     resize: none;
     font: inherit;
-    font-size: 34px;
+    font-size: 21px;
     line-height: 1.55;
     letter-spacing: -0.3px;
-    padding: 30px 38px;
+    padding: 16px 20px;
     color: var(--dim);
     background: var(--panel);
     border: 1px solid var(--line);
@@ -232,15 +245,15 @@
     background: var(--panel);
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 30px 38px;
-    font-size: 34px;
+    padding: 16px 20px;
+    font-size: 21px;
     line-height: 1.55;
     letter-spacing: -0.3px;
     white-space: pre-wrap;
   }
   .output .placeholder {
     color: var(--dim);
-    font-size: 26px;
+    font-size: 17px;
     letter-spacing: 0;
   }
   .w {
@@ -268,14 +281,14 @@
   }
   .status {
     color: var(--dim);
-    font-size: 19px;
+    font-size: 13px;
     min-height: 1.4em;
   }
   .legend {
     display: none;
     align-items: center;
     gap: 10px;
-    font-size: 20px;
+    font-size: 14px;
   }
   .legend.show {
     display: flex;
@@ -292,19 +305,21 @@
     background: var(--panel);
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 26px 28px;
+    padding: 14px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
     align-self: stretch;
     min-height: 0;
     overflow: hidden;
   }
   .panel h2 {
     margin: 0;
-    font-size: 28px;
-    font-weight: 600;
-    letter-spacing: -0.03em;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--dim);
   }
   .bars {
     display: flex;
@@ -313,7 +328,7 @@
   }
   .bar {
     position: relative;
-    height: 60px;
+    height: 40px;
     background: color-mix(in srgb, var(--text) 4%, transparent);
     border-radius: 8px;
     overflow: hidden;
@@ -331,11 +346,11 @@
     align-items: center;
     height: 100%;
     padding: 0 16px;
-    font-size: 28px;
+    font-size: 18px;
     font-weight: 600;
   }
   .bar .txt .pct {
-    font-size: 26px;
+    font-size: 17px;
     font-variant-numeric: tabular-nums;
   }
   .bar .txt .word {
@@ -345,7 +360,7 @@
   }
   .bar .txt .word small {
     font-weight: 400;
-    font-size: 18px;
+    font-size: 13px;
     color: var(--dim);
   }
   .bar.chosen {
@@ -367,7 +382,7 @@
   }
   .panel .empty {
     color: var(--dim);
-    font-size: 24px;
+    font-size: 16px;
   }
 
   @container (max-width: 1250px) {
@@ -381,8 +396,8 @@
       grid-column: 1;
     }
     .output {
-      font-size: 28px;
-      padding: 20px 24px;
+      font-size: 18px;
+      padding: 14px 16px;
     }
     .stage {
       min-height: 320px;
@@ -399,28 +414,9 @@
     .actions {
       flex-wrap: wrap;
     }
-    #go,
     #next,
     #clear {
       flex: 1 1 120px;
-      min-width: 0;
-    }
-  }
-  @container (max-height: 820px) and (min-width: 1251px) {
-    .app {
-      gap: 12px 28px;
-      padding-top: 14px;
-    }
-    .book {
-      padding: 8px 14px;
-    }
-    .output {
-      font-size: 30px;
-      padding: 20px 28px;
-      min-height: 260px;
-    }
-    .bar {
-      height: 52px;
     }
   }
 }

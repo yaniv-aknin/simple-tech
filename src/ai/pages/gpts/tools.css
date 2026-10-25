@@ -1,24 +1,22 @@
 @scope (.ai-tools) {
   .switch {
     display: flex;
-    padding: 3px;
-    background: var(--panel);
-    border: 1px solid var(--line-strong);
-    border-radius: 10px;
   }
   .switch button {
-    font: inherit;
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--dim);
-    background: none;
-    border: 0;
-    border-radius: 8px;
-    padding: 8px 20px;
-    cursor: pointer;
+    border-radius: 0;
+  }
+  .switch button:first-child {
+    border-radius: 6px 0 0 6px;
+  }
+  .switch button:last-child {
+    border-radius: 0 6px 6px 0;
+  }
+  .switch button + button {
+    border-left: 0;
   }
   .switch button.on {
     background: var(--blue);
+    border-color: var(--blue);
     color: #fff;
   }
 
@@ -38,7 +36,7 @@
     flex: none;
     padding-left: 12px;
     border-left: 3px solid var(--line-strong);
-    font-size: 18px;
+    font-size: 13px;
     line-height: 1.4;
     animation: pop 0.3s ease-out;
   }
@@ -69,7 +67,7 @@
   }
   .step .text {
     margin-top: 4px;
-    font-size: 22px;
+    font-size: 15px;
     font-weight: 600;
   }
   .step.ok .text {
@@ -84,7 +82,7 @@
     border-radius: 8px;
     background: var(--field);
     font:
-      15px/1.4 ui-monospace,
+      11px/1.4 ui-monospace,
       'SF Mono',
       Menlo,
       monospace;
@@ -97,7 +95,7 @@
   .step .label {
     margin-top: 6px;
     color: var(--dim);
-    font-size: 15px;
+    font-size: 11px;
   }
   .step.clickable {
     cursor: pointer;
@@ -109,7 +107,7 @@
     width: min(1100px, 100%);
   }
   .sheet.wire #code {
-    font-size: 19px;
+    font-size: 13px;
     white-space: pre-wrap;
   }
 }

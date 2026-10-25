@@ -56,11 +56,11 @@
     border-radius: 10px;
     background: color-mix(in srgb, var(--text) 4%, transparent);
     color: var(--dim);
-    font-size: 20px;
+    font-size: 14px;
   }
   .stat .num {
     color: var(--text);
-    font-size: 24px;
+    font-size: 16px;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
     margin-right: 4px;
@@ -99,7 +99,7 @@
   }
   .log-empty {
     color: var(--dim);
-    font-size: 24px;
+    font-size: 16px;
     line-height: 1.4;
     padding-bottom: 4px;
   }
@@ -110,7 +110,7 @@
     gap: 14px;
     white-space: nowrap;
     font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-    font-size: 26px;
+    font-size: 17px;
   }
   .log-row .k {
     color: var(--dim);
@@ -127,14 +127,14 @@
   .log-row .next small {
     font-family: var(--sans);
     font-weight: 400;
-    font-size: 17px;
+    font-size: 12px;
     color: var(--dim);
   }
   .log-row .count {
     margin-left: auto;
     padding: 0 10px;
     border-radius: 8px;
-    font-size: 20px;
+    font-size: 14px;
     line-height: 28px;
     color: var(--dim);
     background: color-mix(in srgb, var(--text) 6%, transparent);
@@ -156,7 +156,7 @@
     gap: 10px;
   }
   .widget h2 {
-    font-size: 22px;
+    font-size: 15px;
     color: var(--dim);
   }
   .memory-rows {
@@ -172,7 +172,7 @@
   button.link {
     all: unset;
     cursor: pointer;
-    font-size: 15px;
+    font-size: 11px;
     color: var(--dim);
     text-decoration: underline;
   }
