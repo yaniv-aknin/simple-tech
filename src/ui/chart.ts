@@ -10,9 +10,9 @@ export interface Sample {
   values: number[];
 }
 
-/** The scale after seeing `peak`: it doubles until it holds it, and never gets smaller. */
-export function grownMax(current: number, peak: number) {
-  let max = current;
+/** The scale for values up to `peak`: the smallest power of two that holds it, and at least 1. */
+export function scaleFor(peak: number) {
+  let max = 1;
   while (max < peak) max *= 2;
   return max;
 }
@@ -46,11 +46,10 @@ const svg = <K extends keyof SVGElementTagNameMap>(tag: K, attrs: Record<string,
   return node;
 };
 
-/** What a chart remembers: samples and marks of the last stretch of time, and the scale it has grown to. */
+/** What a chart remembers: samples and marks of the last stretch of time. */
 export class History {
   samples: Sample[] = [];
   marks: number[] = [];
-  max = 1;
   private readonly windowMs: number;
 
   constructor(windowMs: number) {
@@ -59,7 +58,6 @@ export class History {
 
   push(t: number, values: number[]) {
     this.samples.push({t, values});
-    this.max = grownMax(this.max, Math.max(0, ...values));
     while (this.samples.length > 1 && t - this.samples[0].t > this.windowMs + 1000) this.samples.shift();
   }
 
@@ -68,23 +66,24 @@ export class History {
     if (this.samples.length) this.marks.push(t);
   }
 
-  /** Forgets everything, including how far the scale had grown. */
+  /** Forgets everything. */
   clear() {
     this.samples = [];
     this.marks = [];
-    this.max = 1;
   }
 
-  /** What is still within the window at `now`. */
+  /** What is still within the window at `now`, and the scale that holds its largest value. */
   within(now: number) {
     this.marks = this.marks.filter(t => now - t <= this.windowMs);
-    return {samples: this.samples.filter(s => now - s.t <= this.windowMs), marks: this.marks};
+    const samples = this.samples.filter(s => now - s.t <= this.windowMs);
+    const max = scaleFor(Math.max(0, ...samples.flatMap(s => s.values)));
+    return {samples, marks: this.marks, max};
   }
 }
 
 /**
- * A line chart of a few series over the last `seconds`. The scale only grows, a dashed line marks when something
- * was changed, and nothing is forgotten until `clear()`.
+ * A line chart of a few series over the last `seconds`. The scale holds the largest value in view, growing and
+ * shrinking with it; a dashed line marks when something was changed, and nothing is forgotten until `clear()`.
  */
 export class RateChart {
   private readonly history: History;
@@ -135,8 +134,7 @@ export class RateChart {
   }
 
   render(now: number) {
-    const {samples, marks} = this.history.within(now);
-    const max = this.history.max;
+    const {samples, marks, max} = this.history.within(now);
     [max, max / 2, 0].forEach((v, k) => {
       this.labels[k].textContent = Number.isInteger(v) ? String(v) : v.toFixed(1);
     });

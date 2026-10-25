@@ -1,17 +1,14 @@
 import {describe, expect, it} from 'vitest';
-import {History, grownMax, linePath} from './chart.ts';
+import {History, linePath, scaleFor} from './chart.ts';
 
-describe('grownMax', () => {
-  it('doubles until it holds the peak', () => {
-    expect(grownMax(1, 0.4)).toBe(1);
-    expect(grownMax(1, 1.5)).toBe(2);
-    expect(grownMax(1, 5)).toBe(8);
-    expect(grownMax(2, 33)).toBe(64);
-  });
-
-  it('never shrinks', () => {
-    expect(grownMax(16, 0)).toBe(16);
-    expect(grownMax(16, 3)).toBe(16);
+describe('scaleFor', () => {
+  it('is the smallest power of two that holds the peak, and at least 1', () => {
+    expect(scaleFor(0)).toBe(1);
+    expect(scaleFor(0.4)).toBe(1);
+    expect(scaleFor(1.5)).toBe(2);
+    expect(scaleFor(5)).toBe(8);
+    expect(scaleFor(64)).toBe(64);
+    expect(scaleFor(65)).toBe(128);
   });
 });
 
@@ -45,7 +42,7 @@ describe('linePath', () => {
 });
 
 describe('History', () => {
-  it('keeps its samples, marks and scale across a mark, and forgets all of them on clear', () => {
+  it('keeps its samples and marks across a mark, and forgets both on clear', () => {
     const h = new History(30000);
     h.push(1000, [3, 0]);
     h.mark(1500);
@@ -53,12 +50,9 @@ describe('History', () => {
     const seen = h.within(2000);
     expect(seen.samples).toHaveLength(2);
     expect(seen.marks).toEqual([1500]);
-    expect(h.max).toBe(4);
-    h.push(3000, [0, 0]);
-    expect(h.max).toBe(4);
+    expect(seen.max).toBe(4);
     h.clear();
-    expect(h.within(3100)).toEqual({samples: [], marks: []});
-    expect(h.max).toBe(1);
+    expect(h.within(3100)).toEqual({samples: [], marks: [], max: 1});
   });
 
   it('has nothing to mark before there is history', () => {
@@ -77,11 +71,12 @@ describe('History', () => {
     expect(seen.marks).toEqual([]);
   });
 
-  it('does not let the scale shrink when the big values leave the window', () => {
+  it('grows the scale to the largest value in the window, and shrinks it once that value leaves', () => {
     const h = new History(30000);
-    h.push(0, [100]);
-    h.push(60000, [1]);
-    expect(h.within(60000).samples).toHaveLength(1);
-    expect(h.max).toBe(128);
+    h.push(0, [100, 3]);
+    h.push(20000, [5, 1]);
+    expect(h.within(20000).max).toBe(128);
+    h.push(40000, [1, 2]);
+    expect(h.within(40000).max).toBe(8);
   });
 });
