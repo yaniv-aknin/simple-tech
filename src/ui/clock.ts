@@ -2,7 +2,7 @@ import './clock.css';
 
 export const SPEEDS = [0, 1, 5, 10, 50, 100, 500];
 /** The speed the machine runs at when it is turned on. */
-const POWER_ON_SPEED = SPEEDS.indexOf(10);
+const POWER_ON_SPEED = SPEEDS.indexOf(100);
 
 const POWER_ICON =
   '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" ' +
@@ -144,6 +144,6 @@ export class Clock {
     this.power.classList.toggle('invite', !on && !clickedBefore());
     this.power.title = on
       ? 'Turn off: stop the clock, and reset the memory and the CPU'
-      : 'Turn on: run the clock at 10 instructions per second';
+      : `Turn on: run the clock at ${SPEEDS[POWER_ON_SPEED]} instructions per second`;
   }
 }
