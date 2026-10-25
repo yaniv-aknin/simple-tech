@@ -36,13 +36,13 @@ export class PongView implements DemoView {
     }
   }
 
-  render(t: number) {
-    this.draw(t);
+  render(t: number, powered: boolean) {
+    this.draw(t, powered);
     setText(this.score, String(this.m.mem[ADDR.SCORE]));
     for (const f of this.updaters) f(t);
   }
 
-  private draw(t: number) {
+  private draw(t: number, powered: boolean) {
     const m = this.m.mem;
     const ctx = this.ctx;
     const score = m[ADDR.SCORE];
@@ -50,6 +50,7 @@ export class PongView implements DemoView {
     this.lastScore = score;
     ctx.fillStyle = '#05080d';
     ctx.fillRect(0, 0, GW * CELL, GH * CELL);
+    if (!powered) return;
     ctx.fillStyle = t < this.flashUntil ? '#ffd60a' : '#3a4a66';
     ctx.fillRect(0, 0, GW * CELL, CELL);
     ctx.fillRect(0, 0, CELL, GH * CELL);

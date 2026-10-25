@@ -72,7 +72,8 @@ export function boot(setup: DemoSetup, clock?: () => number): Session {
 
 export interface DemoView {
   readonly keyboard?: Keyboard;
-  render(t: number): void;
+  /** Draws the demo; `powered` is whether the machine is on. */
+  render(t: number, powered: boolean): void;
 }
 
 export interface Demo {

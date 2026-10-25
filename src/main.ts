@@ -206,7 +206,7 @@ function frame(t: number) {
     }
   }
   if (page === null) {
-    view.render(t);
+    view.render(t, clock.powered);
     cpus.forEach((cpu, k) => cpu.render(session.cores[k]));
     listing.update(session.cores, ips <= 10);
     ram.render(session.cores, t);

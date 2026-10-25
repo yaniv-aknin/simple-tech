@@ -55,7 +55,7 @@ export class Clock {
   private readonly speeds: HTMLButtonElement[];
   private readonly power: HTMLButtonElement;
   private speed = 0;
-  private powered = false;
+  private on = false;
   private budget = 0;
 
   constructor(opts: ClockOptions) {
@@ -76,7 +76,7 @@ export class Clock {
       try {
         sessionStorage.setItem(CLICKED, '1');
       } catch {}
-      if (this.powered) {
+      if (this.on) {
         this.off();
         opts.turnedOff();
       } else {
@@ -97,6 +97,11 @@ export class Clock {
     this.off();
   }
 
+  /** Whether the machine is on. */
+  get powered() {
+    return this.on;
+  }
+
   /** Instructions per second; 0 while the clock is stopped. */
   get ips() {
     return SPEEDS[this.speed];
@@ -115,7 +120,7 @@ export class Clock {
 
   /** Turns the machine on at its usual speed, if it is off. */
   wake() {
-    if (!this.powered) this.setSpeed(POWER_ON_SPEED);
+    if (!this.on) this.setSpeed(POWER_ON_SPEED);
   }
 
   /** How many ticks are due after `dt` seconds, at `perInstruction` ticks an instruction, and at most `max`. */
@@ -134,7 +139,7 @@ export class Clock {
   }
 
   private setPower(on: boolean) {
-    this.powered = on;
+    this.on = on;
     this.power.classList.toggle('on', on);
     this.power.classList.toggle('invite', !on && !clickedBefore());
     this.power.title = on
