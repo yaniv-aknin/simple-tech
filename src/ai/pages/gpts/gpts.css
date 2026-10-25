@@ -9,24 +9,34 @@
   }
   .app.wide {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
     gap: 14px 32px;
     padding: 14px 32px 18px;
   }
   .app.wide.nopick {
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
   }
   .main {
     gap: 14px;
   }
 
-  .bar {
+  .lead {
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 14px 24px;
   }
-  .bar h1 {
-    margin-right: auto;
+  .lead > :first-child {
+    flex: 1;
+    min-width: 0;
+  }
+  .commands {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .commands .mode:empty {
+    display: none;
   }
   .mode {
     color: var(--dim);
@@ -41,7 +51,7 @@
     cursor: pointer;
     padding: 0;
   }
-  .bar #go {
+  .commands #go {
     min-width: 150px;
     padding: 10px 32px;
     font-size: 24px;

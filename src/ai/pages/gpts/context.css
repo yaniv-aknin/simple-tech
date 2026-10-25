@@ -1,8 +1,5 @@
 @scope (.ai-context) {
-  .bar h1 {
-    margin-right: auto;
-  }
-  .bar .ghost {
+  .ghost {
     font: inherit;
     font-size: 20px;
     color: var(--dim);
@@ -12,7 +9,7 @@
     padding: 8px 20px;
     cursor: pointer;
   }
-  .bar .ghost:hover {
+  .ghost:hover {
     color: var(--text);
     border-color: var(--blue);
   }
