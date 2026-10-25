@@ -18,10 +18,11 @@ const SLOWEST_PER_SEC = 1;
 const FASTEST_FLOOR_PER_SEC = 20;
 const FASTEST_FINISHES_IN_SEC = 10;
 const SPEED_STEPS = 14;
-const CHUNK = 300;
-const LOG_ROWS = 14;
-const LOG_ROW_PX = 38;
+const CHUNK = 600;
+const LOG_ROWS = 60;
+const LOG_ROW_PX = 26;
 const MEMORY_ROWS = 10;
+const TEXT_INSET = 20;
 const MEMORY_REFRESH_MS = 250;
 
 interface LogRow {
@@ -126,7 +127,11 @@ export const mount: Mount = (root, signal) => {
   function centerMarker(cur: number, n: number, animate: boolean) {
     const marker = spans[Math.max(cur, 0) + (cur < 0 ? 0 : n) - chunkStart];
     if (!flow || !marker) return;
-    const target = $('text').clientHeight / 2 - marker.offsetTop - marker.offsetHeight / 2;
+    /* The current line sits in the middle, once there is text above it to fill the top half. */
+    const target = Math.min(
+      TEXT_INSET,
+      $('text').clientHeight / 2 - marker.offsetTop - marker.offsetHeight / 2,
+    );
     flow.style.transition = animate ? 'transform 0.2s ease-out' : 'none';
     flow.style.transform = `translateY(${target}px)`;
   }
