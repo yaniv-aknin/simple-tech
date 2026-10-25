@@ -6,16 +6,13 @@ import {atBreakpoint, finishKernel, tick, type DemoView, type Session} from './d
 import type {Direction} from './machine/keyboard.ts';
 import type {Mount} from './page.ts';
 import {RateChart} from './ui/chart.ts';
-import {powerButton, stepButton} from './ui/controls.ts';
+import {Clock} from './ui/clock.ts';
 import {CpuPanel} from './ui/cpu.ts';
 import {$, toggleOn} from './ui/dom.ts';
 import {Listing, type Lang} from './ui/listing.ts';
 import {RamGrid} from './ui/ram.ts';
 import {attachTooltip} from './ui/tooltip.ts';
 
-const SPEEDS = [0, 1, 5, 10, 50, 100, 500];
-/** The speed the machine runs at when it is turned on. */
-const POWER_ON_SPEED = SPEEDS.indexOf(10);
 const MAX_STEPS_PER_FRAME = 400;
 const DEFAULT_PROCESSES = 1;
 const PANELS = ['vars', 'ins', 'cpu', 'ram'] as const;
@@ -38,8 +35,19 @@ const PAGES: Record<string, () => Promise<Mount>> = {
 const breakpoints = new Set<number>();
 const listing = new Listing($('listing'));
 const ram = new RamGrid($('ram'));
-const showPower = powerButton($<HTMLButtonElement>('power'));
-stepButton($<HTMLButtonElement>('step'));
+const clock = new Clock({
+  label: 'Clock: instructions per second',
+  stepTitle: 'Step one tick: an instruction, or one phase of it while the CPU or RAM is shown',
+  step: () => tick(session.cores, phasesShown(), showKernel),
+  setting: () => {
+    if (demoKey === 'procs') chart.mark(performance.now());
+  },
+  turnedOff: () => {
+    chart.clear();
+    restart();
+  },
+});
+$('clock').replaceWith(clock.el);
 /** The counts per second of the concurrency demo, which go on across restarts until the machine is turned off. */
 const chart = new RateChart(
   $('rateChart'),
@@ -57,18 +65,13 @@ let cores = 1;
 let showKernel = false;
 let cpus: CpuPanel[] = [];
 let shown = new Set<Panel>(DEFAULT_PANELS);
-let speedIdx = 0;
-/** Off is the state after a reset, until the clock first runs or steps. */
-let powered = false;
 let session: Session;
 let view: DemoView;
-let budget = 0;
 let lastT = 0;
 
 function restart() {
   if (demoKey === 'procs') chart.mark(performance.now());
   ({session, view} = DEMOS[demoKey].start({processes, cores, chart}));
-  budget = 0;
   const count = session.cores.length;
   $('cpus').dataset.cores = String(count);
   $('cpus').replaceChildren();
@@ -111,18 +114,6 @@ function setLang(lang: Lang) {
   toggleOn($('lang'), b => b.dataset.lang === lang);
 }
 
-function setSpeed(i: number) {
-  speedIdx = i;
-  budget = 0;
-  toggleOn($('clock'), b => Number(b.dataset.i) === i);
-  if (i > 0) setPower(true);
-}
-
-function setPower(on: boolean) {
-  powered = on;
-  showPower(on);
-}
-
 function setProcesses(n: number) {
   processes = n;
   toggleOn($('nsel'), b => Number(b.dataset.n) === n);
@@ -149,8 +140,7 @@ function switchDemo(key: DemoKey) {
   unmountPage();
   document.body.dataset.demo = key;
   toggleOn($('tabs'), b => b.dataset.demo === key);
-  setSpeed(0);
-  setPower(false);
+  clock.off();
   restart();
 }
 
@@ -170,7 +160,7 @@ async function mountPage(path: string) {
 /** Every visit builds the page afresh, from the state in the URL. */
 function showPage(path: string) {
   page = path;
-  setSpeed(0);
+  clock.stop();
   document.body.dataset.demo = 'page';
   toggleOn($('tabs'), b => b.dataset.page === path);
   void mountPage(path);
@@ -205,21 +195,15 @@ function frame(t: number) {
   }
   const dt = Math.min(100, t - lastT) / 1000;
   lastT = t;
-  const ips = SPEEDS[speedIdx];
-  if (ips > 0) {
-    const byPhase = phasesShown() && ips <= 10;
-    budget += dt * ips * (byPhase ? 2 : 1);
-    let n = 0;
-    while (budget >= 1 && n < MAX_STEPS_PER_FRAME) {
-      tick(session.cores, byPhase, showKernel);
-      budget--;
-      n++;
-      if (atBreakpoint(session.cores, breakpoints)) {
-        setSpeed(0);
-        break;
-      }
+  const ips = clock.ips;
+  const byPhase = phasesShown() && ips <= 10;
+  const due = clock.due(dt, byPhase ? 2 : 1, MAX_STEPS_PER_FRAME);
+  for (let i = 0; i < due; i++) {
+    tick(session.cores, byPhase, showKernel);
+    if (atBreakpoint(session.cores, breakpoints)) {
+      clock.stop();
+      break;
     }
-    if (n >= MAX_STEPS_PER_FRAME) budget = 0;
   }
   if (page === null) {
     view.render(t);
@@ -240,17 +224,6 @@ for (const b of buttons('views'))
   };
 for (const b of buttons('tabs')) b.onclick = () => (location.hash = b.dataset.page ?? b.dataset.demo!);
 for (const b of buttons('lang')) b.onclick = () => setLang(b.dataset.lang as Lang);
-$('step').onclick = () => {
-  setSpeed(0);
-  setPower(true);
-  tick(session.cores, phasesShown(), showKernel);
-  $('step').blur();
-};
-for (const b of buttons('clock').filter(b => b.dataset.i !== undefined))
-  b.onclick = () => {
-    if (demoKey === 'procs') chart.mark(performance.now());
-    setSpeed(Number(b.dataset.i));
-  };
 for (const b of buttons('nsel'))
   b.onclick = () => {
     setProcesses(Number(b.dataset.n));
@@ -269,19 +242,6 @@ for (const b of buttons('csel'))
     restart();
     writeDemoHash();
   };
-$('power').onclick = () => {
-  $('power').blur();
-  if (!powered) {
-    if (demoKey === 'procs') chart.mark(performance.now());
-    setSpeed(POWER_ON_SPEED);
-    return;
-  }
-  chart.clear();
-  setSpeed(0);
-  setPower(false);
-  restart();
-};
-
 const press = (dir: Direction) => view?.keyboard?.press(dir);
 const release = (dir: Direction) => view?.keyboard?.release(dir);
 

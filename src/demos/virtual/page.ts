@@ -3,7 +3,7 @@ import html from './page.html?raw';
 import {hex, hex2} from '../../machine/format.ts';
 import type {Program} from '../../machine/assembler.ts';
 import type {Access} from '../../machine/machine.ts';
-import {powerButton, stepButton} from '../../ui/controls.ts';
+import {Clock} from '../../ui/clock.ts';
 import {$, setText} from '../../ui/dom.ts';
 import {editByte} from '../../ui/edit.ts';
 import {flashLevel} from '../../ui/flash.ts';
@@ -20,9 +20,6 @@ const MEMORIES = [
   {label: '256 bytes with page tables', frames: 4 * DEFAULT_FRAMES, tablesInRam: true},
 ];
 
-const SPEEDS = [0, 1, 5, 10, 50, 100, 500];
-/** The speed the machine runs at when it is turned on. */
-const POWER_ON_SPEED = SPEEDS.indexOf(10);
 const MAX_STEPS_PER_FRAME = 200;
 const STATE_TEXT = {stopped: 'not started', running: 'running', paused: 'paused', crashed: 'crashed'};
 const TOGGLE_TEXT = {
@@ -450,54 +447,24 @@ export const mount: Mount = (root, signal) => {
   root.innerHTML = html;
   const page = root.querySelector<HTMLElement>('.vm')!;
   const breakpoints: Set<number>[] = [];
-  let speedIdx = 0;
-  /** Off is the state after a reset, until the clock first runs or steps, or a program starts. */
-  let powered = false;
   let memory = MEMORIES[0];
   let sys = new VirtualSystem([], memory);
-  const wake = () => {
-    if (!powered) setSpeed(POWER_ON_SPEED);
-  };
+  /** Starting a program turns the machine on. */
+  const wake = () => clock.wake();
   let view = new View(sys, page, breakpoints, wake);
-  let budget = 0;
   let last = 0;
 
-  const speedBox = $('speed');
-  const setSpeed = (i: number) => {
-    speedIdx = i;
-    budget = 0;
-    [...speedBox.children].forEach(b =>
-      b.classList.toggle('on', (b as HTMLElement).dataset.i === String(speedIdx)),
-    );
-    if (i > 0) setPower(true);
-  };
-  const showPower = powerButton($<HTMLButtonElement>('powerSwitch'));
-  const setPower = (on: boolean) => {
-    powered = on;
-    showPower(on);
-  };
-  const step = Object.assign(h('button'), {
-    title: 'Step one tick: an instruction of every running program',
-    onclick: () => {
-      setSpeed(0);
-      setPower(true);
-      sys.step();
-      step.blur();
-    },
+  const clock = new Clock({
+    label: 'Clock: instructions per second, for each program',
+    stepTitle: 'Step one tick: an instruction of every running program',
+    step: () => sys.step(),
+    turningOn: () =>
+      sys.procs.forEach((proc, pid) => {
+        if (proc.state === 'stopped') sys.toggle(pid);
+      }),
+    turnedOff: () => rebuild(),
   });
-  stepButton(step);
-  speedBox.append(step);
-  SPEEDS.forEach((ips, i) => {
-    const b = h('button', '', String(ips));
-    b.dataset.i = String(i);
-    b.onclick = () => {
-      setSpeed(i);
-      b.blur();
-    };
-    speedBox.append(b);
-  });
-  setSpeed(0);
-  setPower(false);
+  $('clock').replaceWith(clock.el);
 
   const strip = $('strip');
   PROCESSES.forEach((def, pid) => {
@@ -529,20 +496,6 @@ export const mount: Mount = (root, signal) => {
       if (proc.closed) sys.close(pid);
     });
     view = new View(sys, page, breakpoints, wake);
-  };
-
-  $('powerSwitch').onclick = () => {
-    $('powerSwitch').blur();
-    if (!powered) {
-      sys.procs.forEach((proc, pid) => {
-        if (proc.state === 'stopped') sys.toggle(pid);
-      });
-      setSpeed(POWER_ON_SPEED);
-      return;
-    }
-    setSpeed(0);
-    setPower(false);
-    rebuild();
   };
 
   const memBox = $('memsize');
@@ -594,23 +547,16 @@ export const mount: Mount = (root, signal) => {
     if (signal.aborted) return;
     const dt = Math.min(100, t - last) / 1000;
     last = t;
-    const ips = SPEEDS[speedIdx];
-    if (ips > 0) {
-      budget += dt * ips;
-      let n = 0;
-      while (budget >= 1 && n < MAX_STEPS_PER_FRAME) {
-        sys.step();
-        budget--;
-        n++;
-        const hit = sys.procs.some(
-          (p, pid) => p.state === 'running' && p.cpu.next === 'fetch' && breakpoints[pid].has(p.cpu.pc),
-        );
-        if (hit) {
-          setSpeed(0);
-          break;
-        }
+    const due = clock.due(dt, 1, MAX_STEPS_PER_FRAME);
+    for (let i = 0; i < due; i++) {
+      sys.step();
+      const hit = sys.procs.some(
+        (p, pid) => p.state === 'running' && p.cpu.next === 'fetch' && breakpoints[pid].has(p.cpu.pc),
+      );
+      if (hit) {
+        clock.stop();
+        break;
       }
-      if (n >= MAX_STEPS_PER_FRAME) budget = 0;
     }
     view.render(t);
     const crashed = sys.procs.some(p => p.state === 'crashed');

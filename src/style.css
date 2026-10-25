@@ -63,9 +63,6 @@
   .seg.wide {
     width: 100%;
   }
-  .seg.wide #step {
-    flex: 0 0 44px;
-  }
   .seg.wide button {
     flex: 1;
     padding-left: 0;
@@ -186,14 +183,6 @@
   }
   button:hover {
     background: var(--button-hover);
-  }
-  .clockrow {
-    display: flex;
-    align-items: flex-end;
-    gap: 10px;
-  }
-  .clockrow .speed {
-    flex: 1;
   }
   .machine .views {
     margin-top: 12px;

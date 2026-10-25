@@ -36,21 +36,7 @@
         <div class="col left">
           <section class="panel machine">
             <h2>Machine</h2>
-            <div class="clockrow">
-              <div class="speed">
-                <div class="dim seg-label">Clock: instructions per second</div>
-                <div class="seg wide" id="clock">
-                  <button
-                    id="step"
-                    title="Step one tick: an instruction, or one phase of it while the CPU or RAM is shown"
-                  ></button>
-                  <button data-i="0">0</button><button data-i="1">1</button><button data-i="2">5</button
-                  ><button data-i="3">10</button><button data-i="4">50</button><button data-i="5">100</button
-                  ><button data-i="6">500</button>
-                </div>
-              </div>
-              <button id="power"></button>
-            </div>
+            <div id="clock"></div>
             <div class="views">
               <div class="dim seg-label">Show</div>
               <div class="seg wide" id="views">

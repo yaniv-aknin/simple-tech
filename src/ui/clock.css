@@ -1,3 +1,27 @@
+.clock-label {
+  margin-bottom: 6px;
+}
+.clock-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.clock .seg {
+  flex: 1;
+}
+.clock .seg button {
+  flex: 1;
+  min-width: 40px;
+  padding-left: 0;
+  padding-right: 0;
+}
+.clock .seg .step {
+  flex: 0 0 44px;
+}
+.step svg {
+  display: block;
+  margin: 0 auto;
+}
 .power {
   flex: none;
   display: grid;
@@ -29,8 +53,4 @@
     animation: none;
     box-shadow: 0 0 6px 2px color-mix(in srgb, var(--ok) 35%, transparent);
   }
-}
-.step svg {
-  display: block;
-  margin: 0 auto;
 }
