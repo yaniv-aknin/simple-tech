@@ -23,3 +23,10 @@ export function pageParams(page: HTMLElement) {
 
   return {getParam, getIntParam, setParam};
 }
+
+/** Opens another page of the site with the given state: within the shell by its hash, on a page on its own by its URL. */
+export function openPage(route: string, query: Record<string, string | number>) {
+  const search = '?' + new URLSearchParams(Object.entries(query).map(([k, v]) => [k, String(v)]));
+  if (location.hash) location.hash = '#' + route + search;
+  else location.href = import.meta.env.BASE_URL + route + search;
+}

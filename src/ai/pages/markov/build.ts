@@ -12,7 +12,8 @@ import {
   tokenize,
 } from '../../core/text.ts';
 import {RESET, STEP} from '../../../ui/icons.ts';
-import {loadBooks, loadText, renderBooks, type Book} from '../shared/books.ts';
+import {handOffCustomText, loadBooks, loadText, renderBooks, type Book} from '../shared/books.ts';
+import {openPage} from '../shared/params.ts';
 
 const SLOWEST_PER_SEC = 1;
 const FASTEST_FLOOR_PER_SEC = 20;
@@ -227,6 +228,7 @@ export const mount: Mount = (root, signal) => {
     renderTally();
     renderLog();
     renderMemory(!isRunning);
+    $('finished').hidden = !(total() > 0 && pos >= total());
     const b = books[current];
     $('status').textContent =
       b && tokens.length ? `${b.title}: ${tokens.length.toLocaleString()} words and punctuation marks` : '';
@@ -318,6 +320,10 @@ export const mount: Mount = (root, signal) => {
     step();
     render();
     $('next').blur();
+  });
+  $('predict').addEventListener('click', () => {
+    if (books[current].custom) handOffCustomText(books[current].text);
+    openPage('ai/markov/predict/', {...(current && {book: current}), ...(order !== 2 && {order}), go: 1});
   });
   $('clear').addEventListener('click', () => {
     stop();

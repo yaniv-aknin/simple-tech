@@ -180,4 +180,26 @@
   button.link:hover {
     color: var(--text);
   }
+  .finished {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    border: 1px solid var(--ok);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--ok) 12%, var(--panel));
+    font-weight: 600;
+  }
+  .finished[hidden] {
+    display: none;
+  }
+  .finished button {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #fff;
+    font-weight: 600;
+  }
+  .finished button:hover {
+    background: var(--blue-strong);
+  }
 }

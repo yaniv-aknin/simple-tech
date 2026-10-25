@@ -9,7 +9,7 @@ import {loadBooks, loadText, renderBooks, type Book} from '../shared/books.ts';
 /* ---------- UI state ---------- */
 
 export const mount: Mount = (root, signal) => {
-  const {$, $input, $text, getIntParam, setParam} = buildPage(root, html);
+  const {$, $input, $text, getParam, getIntParam, setParam} = buildPage(root, html);
 
   const books: Book[] = [];
   let current = 0;
@@ -293,6 +293,10 @@ export const mount: Mount = (root, signal) => {
   async function boot() {
     books.push(...(await loadBooks($text('pasteText'))));
     setOrder(getIntParam('order', 2));
+    if (getParam('go')) {
+      setParam('go', null);
+      setRunning(true);
+    }
     selectBook(getIntParam('book', 0));
   }
 

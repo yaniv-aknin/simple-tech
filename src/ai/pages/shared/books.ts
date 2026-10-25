@@ -16,6 +16,27 @@ const BOOKS = [
   {file: 'holmes.txt', title: 'Sherlock Holmes', author: 'Arthur Conan Doyle'},
 ];
 
+const HANDED_OFF_KEY = 'handed-off-custom-text';
+
+/** Keeps the pasted text for the next page to open, which shows the same book. */
+export function handOffCustomText(text: string) {
+  try {
+    sessionStorage.setItem(HANDED_OFF_KEY, text);
+  } catch {
+    /* the next page falls back to the default text */
+  }
+}
+
+function takeHandedOffText() {
+  try {
+    const text = sessionStorage.getItem(HANDED_OFF_KEY);
+    sessionStorage.removeItem(HANDED_OFF_KEY);
+    return text;
+  } catch {
+    return null;
+  }
+}
+
 /** The books, the last being the custom text, which also fills `paste`. */
 export async function loadBooks(paste: HTMLTextAreaElement): Promise<Book[]> {
   const books: Book[] = BOOKS.map(b => ({...b, text: '', corpus: null}));
@@ -26,11 +47,13 @@ export async function loadBooks(paste: HTMLTextAreaElement): Promise<Book[]> {
     corpus: null,
     custom: true,
   };
-  const res = await fetch(asset('texts/custom.txt'));
-  if (res.ok) {
-    custom.text = await res.text();
-    paste.value = custom.text;
+  const handedOff = takeHandedOffText();
+  if (handedOff !== null) custom.text = handedOff;
+  else {
+    const res = await fetch(asset('texts/custom.txt'));
+    if (res.ok) custom.text = await res.text();
   }
+  paste.value = custom.text;
   books.push(custom);
   return books;
 }
