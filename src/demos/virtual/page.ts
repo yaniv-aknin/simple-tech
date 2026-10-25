@@ -157,6 +157,7 @@ class View {
       Object.assign(h('i', 'chip'), {style: `background:${procColor(pid, true)}`}),
       h('h2', '', `P${pid + 1} ${proc.def.name}`),
     );
+    const params = h('div', 'params');
     const toggle = Object.assign(h('button', 'icon toggle'), {
       onclick: () => {
         const proc = this.sys.procs[pid];
@@ -168,6 +169,7 @@ class View {
       },
     });
     head.append(
+      params,
       toggle,
       Object.assign(h('button', 'icon'), {
         title: 'Close this program and free its frames',
@@ -175,8 +177,6 @@ class View {
         onclick: () => this.sys.close(pid),
       }),
     );
-
-    const controls = h('div', 'controls');
 
     const inputs = (proc.def.params ?? []).map(param => {
       const input = Object.assign(h('input', 'hexin'), {
@@ -193,7 +193,7 @@ class View {
       input.dataset.key = param.key;
       const label = h('label', 'param');
       label.append(h('span', '', param.label), input);
-      controls.append(label);
+      params.append(label);
       return input;
     });
 
@@ -234,7 +234,7 @@ class View {
     const memory = h('div', 'memory');
     memory.append(grid);
 
-    card.append(head, h('p', 'blurb', proc.def.blurb), controls, status, memory, listing);
+    card.append(head, h('p', 'blurb', proc.def.blurb), status, memory, listing);
     this.cards[pid] = {
       el: card,
       program: proc.program,

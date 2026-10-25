@@ -221,8 +221,15 @@
     border-color: var(--error);
     color: #fff;
   }
-  .chead h2 + .icon {
+  .chead .params {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     margin-left: auto;
+    white-space: nowrap;
+  }
+  .chead h2 {
+    white-space: nowrap;
   }
   .chead .icon {
     display: grid;
@@ -251,15 +258,6 @@
   .blurb {
     color: var(--dim);
   }
-  .controls {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 6px 8px;
-  }
-  .controls:empty {
-    margin-top: -10px;
-  }
   .param {
     display: inline-flex;
     align-items: center;
@@ -268,8 +266,8 @@
     font-size: 12px;
   }
   .hexin {
-    width: 56px;
-    padding: 4px 6px;
+    width: 50px;
+    padding: 3px 5px;
     font: 600 13px var(--mono);
     color: var(--text);
     background: var(--field);
