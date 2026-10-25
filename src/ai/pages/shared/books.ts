@@ -5,7 +5,6 @@ export interface Book {
   file?: string;
   title: string;
   author: string;
-  emoji: string;
   text: string;
   corpus: Corpus | null;
   custom?: boolean;
@@ -13,8 +12,8 @@ export interface Book {
 
 /** The book picker, in order. Files live in public/ai/texts/. */
 const BOOKS = [
-  {file: 'pride.txt', title: 'Pride and Prejudice', author: 'Jane Austen', emoji: '💌'},
-  {file: 'holmes.txt', title: 'Sherlock Holmes', author: 'Arthur Conan Doyle', emoji: '🔍'},
+  {file: 'pride.txt', title: 'Pride and Prejudice', author: 'Jane Austen'},
+  {file: 'holmes.txt', title: 'Sherlock Holmes', author: 'Arthur Conan Doyle'},
 ];
 
 /** The books, the last being the custom text, which also fills `paste`. */
@@ -23,7 +22,6 @@ export async function loadBooks(paste: HTMLTextAreaElement): Promise<Book[]> {
   const custom: Book = {
     title: 'Custom text',
     author: 'Paste anything',
-    emoji: '✉️',
     text: '',
     corpus: null,
     custom: true,
@@ -45,19 +43,16 @@ export async function loadText(b: Book) {
 
 export function renderBooks(
   nav: HTMLElement,
-  books: Pick<Book, 'emoji' | 'title' | 'author'>[],
+  books: Pick<Book, 'title' | 'author'>[],
   current: number,
   onSelect: (i: number) => void,
 ) {
   nav.innerHTML = '';
   books.forEach((b, i) => {
     const btn = document.createElement('button');
-    btn.className = 'book' + (i === current ? ' active' : '');
-    btn.innerHTML =
-      '<span class="emoji"></span><span><span class="title"></span><span class="author"></span></span>';
-    btn.querySelector('.emoji')!.textContent = b.emoji;
-    btn.querySelector('.title')!.textContent = b.title;
-    btn.querySelector('.author')!.textContent = b.author;
+    btn.className = i === current ? 'on' : '';
+    btn.textContent = b.title;
+    btn.title = b.author;
     btn.addEventListener('click', () => {
       onSelect(i);
       btn.blur();

@@ -3,6 +3,7 @@ import html from './predict.html?raw';
 import type {Mount} from '../../../page.ts';
 import {Corpus, generate, type Step} from '../../core/markov.ts';
 import {friendly, isWord, spaceBefore} from '../../core/text.ts';
+import {RESET, STEP} from '../../../ui/icons.ts';
 import {loadBooks, loadText, renderBooks, type Book} from '../shared/books.ts';
 
 /* ---------- UI state ---------- */
@@ -57,8 +58,8 @@ export const mount: Mount = (root, signal) => {
   function setOrder(v: number) {
     order = Math.max(1, Math.min(3, v));
     setParam('order', order === 2 ? null : order);
-    $input('memory').value = String(order);
-    $('memLabel').textContent = `Remembers the last ${order} word${order > 1 ? 's' : ''}`;
+    for (const b of $('memory').children)
+      b.classList.toggle('on', (b as HTMLElement).dataset.n === String(order));
     halt();
     resume();
   }
@@ -260,8 +261,13 @@ export const mount: Mount = (root, signal) => {
     if (wasRunning) run(true);
     $('clear').blur();
   });
-  $('memory').addEventListener('input', () => setOrder(Number($input('memory').value)));
-  $('memory').addEventListener('change', () => $('memory').blur());
+  for (const b of $('memory').querySelectorAll('button'))
+    b.addEventListener('click', () => {
+      setOrder(Number(b.dataset.n));
+      b.blur();
+    });
+  $('next').innerHTML = STEP;
+  $('clear').innerHTML = RESET;
   $('speed').addEventListener('change', () => $('speed').blur());
   signal.addEventListener('abort', stop);
 

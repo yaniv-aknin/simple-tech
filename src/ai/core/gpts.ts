@@ -21,7 +21,6 @@ export interface Option {
   id: string;
   title?: string;
   sub?: string;
-  emoji?: string;
   prompt: string;
   grid?: string;
   truth?: string;
@@ -96,18 +95,11 @@ const HOLMES_TLDR =
     '“It is simplicity itself,” said he; “my eyes tell me that on the inside of your left shoe, just where the firelight strikes it, the leather is scored by six almost parallel cuts. Obviously they have been caused by someone who has very carelessly scraped round the edges of the sole in order to remove crusted mud from it. Hence, you see, my double deduction that you had been out in vile weather, and that you had a particularly malignant boot-slitting specimen of the London slavey. As to your practice, if a gentleman walks into my rooms smelling of iodoform, with a black mark of nitrate of silver upon his right forefinger, and a bulge on the right side of his top-hat to show where he has secreted his stethoscope, I must be dull, indeed, if I do not pronounce him to be an active member of the medical profession.”',
   ].join('\n\n') + '\n\nTL;DR:';
 
-function versusOption(
-  id: string,
-  title: string,
-  emoji: string,
-  prompt: string,
-  extra: Partial<Option> = {},
-): Option {
+function versusOption(id: string, title: string, prompt: string, extra: Partial<Option> = {}): Option {
   return {
     id,
     title,
     sub: '',
-    emoji,
     prompt,
     ...extra,
     models: [
@@ -157,7 +149,6 @@ function mazeOption(size: number, grid: string, maxTokens: number, extra: Partia
     id: String(size),
     title: `${size}×${size} maze`,
     sub: 'Count the paths',
-    emoji: '🧩',
     prompt: mazePrompt(grid),
     grid,
     truth: String(countPaths(grid)),
@@ -212,9 +203,9 @@ export const TASKS: Record<string, Task> = {
     runs: 3,
     multiline: true,
     options: [
-      versusOption('glorp', 'Glorp', '🐾', GLORP),
-      versusOption('capitals', 'Capitals', '🌍', CAPITALS, {compact: true}),
-      versusOption('tldr', 'TL;DR', '🔍', HOLMES_TLDR),
+      versusOption('glorp', 'Glorp', GLORP),
+      versusOption('capitals', 'Capitals', CAPITALS, {compact: true}),
+      versusOption('tldr', 'TL;DR', HOLMES_TLDR),
     ],
   },
   's-m-l': {

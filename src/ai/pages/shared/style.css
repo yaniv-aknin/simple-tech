@@ -72,8 +72,8 @@
   .app {
     min-height: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 580px;
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 440px);
+    grid-template-rows: minmax(0, 1fr);
     height: 100%;
     gap: 14px;
     padding: 16px;
@@ -84,48 +84,33 @@
     grid-column: 1 / -1;
   }
 
-  .books {
-    grid-column: 1 / -1;
+  .seg {
     display: flex;
-    gap: 12px;
     flex-wrap: wrap;
   }
-  .book {
-    flex: 1 1 200px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 8px 12px;
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    font: inherit;
-    color: inherit;
-    text-align: left;
-    cursor: pointer;
+  .seg button {
+    border-radius: 0;
   }
-  .book:hover {
-    border-color: var(--line-strong);
+  .seg button:first-child {
+    border-radius: 6px 0 0 6px;
   }
-  .book.active {
+  .seg button:last-child {
+    border-radius: 0 6px 6px 0;
+  }
+  .seg button + button {
+    border-left: 0;
+  }
+  .seg button.on {
+    background: var(--blue);
     border-color: var(--blue);
-    box-shadow:
-      0 0 0 1px var(--blue),
-      0 8px 40px -8px var(--accent-soft);
+    color: #fff;
   }
-  .book .emoji {
-    font-size: 19px;
-  }
-  .book .title {
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 1.15;
-    display: block;
-  }
-  .book .author {
-    color: var(--dim);
-    font-size: 12px;
-    display: block;
+  button.icon {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
   }
 
   .main {
@@ -152,35 +137,22 @@
   }
   .control label,
   .control .label {
-    font-weight: 600;
-    font-size: 14px;
-  }
-  .memory {
-    min-width: 300px;
-  }
-  .memory input[type='range'] {
-    width: 100%;
-  }
-  .ticks {
-    display: flex;
-    justify-content: space-between;
-    font-size: 13px;
     color: var(--dim);
   }
-  .speed {
-    min-width: 200px;
+  .speed input {
+    width: 160px;
   }
   input[type='range'] {
     accent-color: var(--blue);
-    height: 32px;
+    height: 36px;
+    margin: 0;
   }
   .seed input {
     font: inherit;
-    font-size: 15px;
-    padding: 10px 14px;
-    width: 240px;
+    padding: 7px 10px;
+    width: 200px;
     border: 1px solid var(--line-strong);
-    border-radius: 10px;
+    border-radius: 6px;
     background: var(--field);
     color: var(--text);
   }
@@ -190,10 +162,10 @@
     box-shadow: 0 0 0 3px var(--accent-soft);
   }
   .actions {
-    flex-basis: 100%;
+    margin-left: auto;
     display: flex;
-    justify-content: flex-end;
-    gap: 14px;
+    align-items: center;
+    gap: 8px;
   }
   #clear {
     color: var(--dim);
@@ -300,7 +272,7 @@
   }
 
   aside.panel {
-    grid-row: 2;
+    grid-row: 1;
     grid-column: 2;
     background: var(--panel);
     border: 1px solid var(--line);
@@ -385,15 +357,16 @@
     font-size: 16px;
   }
 
-  @container (max-width: 1250px) {
+  @container (max-width: 900px) {
     .app {
-      grid-template-columns: 1fr;
-      padding: 16px 18px;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: none;
       height: auto;
     }
     aside.panel {
       grid-row: auto;
       grid-column: 1;
+      height: 480px;
     }
     .output {
       font-size: 18px;
@@ -401,22 +374,6 @@
     }
     .stage {
       min-height: 320px;
-    }
-    .actions {
-      margin-left: 0;
-    }
-  }
-  @container (max-width: 600px) {
-    .memory {
-      min-width: 0;
-      flex: 1 1 100%;
-    }
-    .actions {
-      flex-wrap: wrap;
-    }
-    #next,
-    #clear {
-      flex: 1 1 120px;
     }
   }
 }

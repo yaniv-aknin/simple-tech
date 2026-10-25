@@ -11,6 +11,7 @@ import {
   stripBoilerplate,
   tokenize,
 } from '../../core/text.ts';
+import {RESET, STEP} from '../../../ui/icons.ts';
 import {loadBooks, loadText, renderBooks, type Book} from '../shared/books.ts';
 
 const SLOWEST_PER_SEC = 1;
@@ -295,8 +296,8 @@ export const mount: Mount = (root, signal) => {
   function setOrder(v: number) {
     order = Math.max(1, Math.min(3, v));
     setParam('order', order === 2 ? null : order);
-    $input('memory').value = String(order);
-    $('memLabel').textContent = `Remembers the last ${order} word${order > 1 ? 's' : ''}`;
+    for (const b of $('memory').children)
+      b.classList.toggle('on', (b as HTMLElement).dataset.n === String(order));
     stop();
     reset();
   }
@@ -326,8 +327,13 @@ export const mount: Mount = (root, signal) => {
     renderMemory(true);
     $('punct').blur();
   });
-  $('memory').addEventListener('input', () => setOrder(Number($input('memory').value)));
-  $('memory').addEventListener('change', () => $('memory').blur());
+  for (const b of $('memory').querySelectorAll('button'))
+    b.addEventListener('click', () => {
+      setOrder(Number(b.dataset.n));
+      b.blur();
+    });
+  $('next').innerHTML = STEP;
+  $('clear').innerHTML = RESET;
   $('speed').addEventListener('change', () => $('speed').blur());
 
   let pasteTimer = 0;

@@ -433,7 +433,7 @@ export const mountTask =
       setParam('option', i || null);
       const books = page.querySelector<HTMLElement>('#books');
       if (books && config.options.length > 1) {
-        const cards = config.options.map(o => ({emoji: o.emoji!, title: o.title!, author: o.sub!}));
+        const cards = config.options.map(o => ({title: o.title!, author: o.sub!}));
         renderBooks(books, cards, current, selectOption);
       }
       loadOption();

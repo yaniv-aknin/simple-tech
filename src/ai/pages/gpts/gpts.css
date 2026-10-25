@@ -360,6 +360,9 @@
   }
 
   @container (max-width: 1250px) {
+    .app.wide {
+      height: auto;
+    }
     .results {
       grid-template-columns: 1fr;
     }
@@ -390,10 +393,6 @@
   :scope.multiline .prompt textarea,
   :scope.multiline .preview {
     font-size: 15px;
-  }
-
-  .book .author:empty {
-    display: none;
   }
 
   .sheet.paper {
