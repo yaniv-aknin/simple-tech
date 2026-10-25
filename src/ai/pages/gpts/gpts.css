@@ -17,6 +17,9 @@
     gap: 14px;
   }
 
+  :scope[data-task] .promptbox {
+    max-width: calc((100% - 2 * 14px) / 3);
+  }
   .promptbox {
     display: flex;
     flex-direction: column;
@@ -59,11 +62,12 @@
 
   .prompt {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 24px;
+    gap: 12px 24px;
   }
   .prompt .q {
-    flex: 1;
+    flex: 1 1 260px;
     align-self: flex-start;
     min-width: 0;
     display: flex;
