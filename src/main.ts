@@ -9,10 +9,13 @@ import {RateChart} from './ui/chart.ts';
 import {CpuPanel} from './ui/cpu.ts';
 import {$, toggleOn} from './ui/dom.ts';
 import {Listing, type Lang} from './ui/listing.ts';
+import {powerButton} from './ui/power.ts';
 import {RamGrid} from './ui/ram.ts';
 import {attachTooltip} from './ui/tooltip.ts';
 
 const SPEEDS = [0, 1, 5, 10, 50, 100, 500];
+/** The speed the machine runs at when it is turned on. */
+const POWER_ON_SPEED = SPEEDS.indexOf(10);
 const MAX_STEPS_PER_FRAME = 400;
 const DEFAULT_PROCESSES = 1;
 const PANELS = ['vars', 'ins', 'cpu', 'ram'] as const;
@@ -35,7 +38,8 @@ const PAGES: Record<string, () => Promise<Mount>> = {
 const breakpoints = new Set<number>();
 const listing = new Listing($('listing'));
 const ram = new RamGrid($('ram'));
-/** The counts per second of the concurrency demo, which go on across restarts until Reset. */
+const showPower = powerButton($<HTMLButtonElement>('power'));
+/** The counts per second of the concurrency demo, which go on across restarts until the machine is turned off. */
 const chart = new RateChart(
   $('rateChart'),
   PROC_HUES.map((_, i) => procColor(i, true)),
@@ -53,6 +57,8 @@ let showKernel = false;
 let cpus: CpuPanel[] = [];
 let shown = new Set<Panel>(DEFAULT_PANELS);
 let speedIdx = 0;
+/** Off is the state after a reset, until the clock first runs or steps. */
+let powered = false;
 let session: Session;
 let view: DemoView;
 let budget = 0;
@@ -108,6 +114,12 @@ function setSpeed(i: number) {
   speedIdx = i;
   budget = 0;
   toggleOn($('clock'), b => Number(b.dataset.i) === i);
+  if (i > 0) setPower(true);
+}
+
+function setPower(on: boolean) {
+  powered = on;
+  showPower(on);
 }
 
 function setProcesses(n: number) {
@@ -137,6 +149,7 @@ function switchDemo(key: DemoKey) {
   document.body.dataset.demo = key;
   toggleOn($('tabs'), b => b.dataset.demo === key);
   setSpeed(0);
+  setPower(false);
   restart();
 }
 
@@ -228,6 +241,7 @@ for (const b of buttons('tabs')) b.onclick = () => (location.hash = b.dataset.pa
 for (const b of buttons('lang')) b.onclick = () => setLang(b.dataset.lang as Lang);
 $('step').onclick = () => {
   setSpeed(0);
+  setPower(true);
   tick(session.cores, phasesShown(), showKernel);
   $('step').blur();
 };
@@ -254,9 +268,16 @@ for (const b of buttons('csel'))
     restart();
     writeDemoHash();
   };
-$('rst').onclick = () => {
+$('power').onclick = () => {
+  $('power').blur();
+  if (!powered) {
+    if (demoKey === 'procs') chart.mark(performance.now());
+    setSpeed(POWER_ON_SPEED);
+    return;
+  }
   chart.clear();
   setSpeed(0);
+  setPower(false);
   restart();
 };
 

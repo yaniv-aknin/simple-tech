@@ -50,27 +50,15 @@
     border-color: var(--blue);
     color: #fff;
   }
-  header,
   .layout {
     width: 100%;
     max-width: 1900px;
     margin-left: auto;
     margin-right: auto;
   }
-  header {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 12px;
-    flex: none;
-  }
   h1 {
     font-size: 18px;
     margin: 0;
-  }
-  .reset {
-    margin-left: auto;
   }
   .seg.wide {
     width: 100%;
@@ -111,7 +99,6 @@
     border-color: var(--blue);
     color: #fff;
   }
-  body[data-demo='page'] header,
   body[data-demo='page'] .layout {
     display: none;
   }
@@ -200,6 +187,14 @@
   }
   button:hover {
     background: var(--button-hover);
+  }
+  .clockrow {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+  }
+  .clockrow .speed {
+    flex: 1;
   }
   .machine .views {
     margin-top: 12px;
