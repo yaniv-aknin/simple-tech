@@ -3,20 +3,28 @@
     <h1>Virtual memory</h1>
   </header>
 
-  <div class="toolbar">
-    <div class="group">
-      <span class="dim">Speed</span>
-      <div class="seg" id="speed"></div>
-      <span class="dim">instructions per second, for each program</span>
-    </div>
-    <div class="group">
-      <span class="dim">Physical memory</span>
-      <div class="seg" id="memsize"></div>
-    </div>
-    <div class="group">
-      <span class="dim">Start program:</span>
-      <div class="strip" id="strip"></div>
-    </div>
+  <div class="top">
+    <section class="panel">
+      <h2>Machine</h2>
+      <div class="settings">
+        <div class="group">
+          <span class="dim">Speed</span>
+          <div class="seg" id="speed"></div>
+          <span class="dim">instructions per second, for each program</span>
+        </div>
+        <div class="group">
+          <span class="dim">Physical memory</span>
+          <div class="seg" id="memsize"></div>
+        </div>
+      </div>
+    </section>
+    <section class="panel">
+      <h2>Processes</h2>
+      <div class="group">
+        <span class="dim">Start program:</span>
+        <div class="strip" id="strip"></div>
+      </div>
+    </section>
   </div>
 
   <div class="legend">
