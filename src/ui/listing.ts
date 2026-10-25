@@ -7,6 +7,7 @@ import type {Machine} from '../machine/machine.ts';
 export type Lang = 'asm' | 'c';
 
 const MIN_COLUMN_PX = 400;
+const MAX_COLUMN_PX = 640;
 
 const C_KEYWORDS = /\b(void|uint8_t|uint16_t|struct|for|if|else|goto)\b/g;
 
@@ -70,9 +71,16 @@ export class Listing {
   /** Told which address the pointer is on in the listing, or null when it leaves. */
   onAddressHover: (addr: number | null) => void = () => {};
 
+  /** The card around the listing, which is as wide as the columns need. */
+  private get panel() {
+    return this.el.parentElement!;
+  }
+
   constructor(el: HTMLElement) {
     this.el = el;
-    new ResizeObserver(() => this.fit()).observe(el);
+    const observer = new ResizeObserver(() => this.fit());
+    observer.observe(el);
+    observer.observe(this.panel.parentElement!);
   }
 
   setLang(lang: Lang) {
@@ -83,23 +91,26 @@ export class Listing {
   }
 
   /**
-   * Show the program in the fewest columns (each at least MIN_COLUMN_PX wide) that hold it without
-   * scrolling; if even the most that fit are not enough, use those and scroll.
+   * Show the program in the fewest columns (each between MIN_COLUMN_PX and MAX_COLUMN_PX wide) that hold it without
+   * scrolling, in a card that ends with the last column; if even the most that fit are not enough, use those and scroll.
    */
   private fit() {
     const rows = this.el.querySelector<HTMLElement>(this.lang === 'c' ? '#crows' : '#rows');
     if (!rows) return;
-    const most = Math.max(1, Math.floor(this.el.offsetWidth / MIN_COLUMN_PX));
+    const panel = this.panel;
+    panel.style.width = '';
+    const space = panel.offsetWidth;
+    const chrome = space - this.el.clientWidth;
+    const most = Math.max(1, Math.floor(space / MIN_COLUMN_PX));
     this.el.style.overflow = 'hidden';
     rows.style.columnFill = 'auto';
     rows.style.height = this.el.clientHeight + 'px';
     for (let count = 1; count <= most; count++) {
       rows.style.columnCount = String(count);
-      if (rows.scrollWidth <= rows.clientWidth) {
-        this.el.style.overflow = '';
-        return;
-      }
+      panel.style.width = Math.min(space, count * MAX_COLUMN_PX + chrome) + 'px';
+      if (rows.scrollWidth <= rows.clientWidth) return;
     }
+    panel.style.width = '';
     rows.style.columnFill = 'balance';
     rows.style.height = '';
     this.el.style.overflow = '';

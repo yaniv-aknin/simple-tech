@@ -15,6 +15,8 @@ import {RamGrid} from './ui/ram.ts';
 import {attachTooltip} from './ui/tooltip.ts';
 
 const MAX_STEPS_PER_FRAME = 400;
+const PROGRAM_MIN_PX = 440;
+const LAYOUT_GAP_PX = 14;
 const DEFAULT_PROCESSES = 1;
 const PANELS = ['vars', 'ins', 'cpu', 'ram'] as const;
 type Panel = (typeof PANELS)[number];
@@ -100,15 +102,30 @@ function setPanels(panels: Iterable<Panel>) {
   shown = new Set(panels);
   for (const p of PANELS) document.body.dataset[p] = shown.has(p) ? 'on' : 'off';
   toggleOn($('views'), b => shown.has(b.dataset.view as Panel));
-  const middle = shown.has('cpu') || shown.has('ram');
-  const columns = [
-    'minmax(340px, 416px)',
-    middle && 'minmax(400px, 576px)',
-    shown.has('ins') && 'minmax(340px, 1fr)',
-  ].filter(Boolean);
+  const top = ['minmax(340px, 416px)', hasMiddle() && 'minmax(400px, 576px)'].filter(Boolean);
+  const columns = [...top, shown.has('ins') && `minmax(${PROGRAM_MIN_PX}px, 1fr)`].filter(Boolean);
   $('layout').style.setProperty('--columns', columns.join(' '));
+  $('layout').style.setProperty('--top-columns', top.join(' '));
+  arrange();
+}
+
+const hasMiddle = () => shown.has('cpu') || shown.has('ram');
+
+/**
+ * As the layout narrows: the program goes under the other panels when it would be left too narrow beside them, and
+ * then all the panels go into one column when they would not fit side by side.
+ */
+function arrange() {
+  const layout = $('layout');
+  const top = 340 + (hasMiddle() ? 400 + LAYOUT_GAP_PX : 0);
+  layout.classList.toggle(
+    'stacked',
+    shown.has('ins') && layout.clientWidth < top + LAYOUT_GAP_PX + PROGRAM_MIN_PX,
+  );
+  layout.classList.toggle('single', layout.clientWidth < top);
   listing.refit();
 }
+new ResizeObserver(arrange).observe($('layout'));
 
 function setLang(lang: Lang) {
   listing.setLang(lang);

@@ -208,6 +208,20 @@
     gap: 14px;
     flex: 1;
   }
+  .layout.stacked {
+    grid-template-columns: var(--top-columns);
+    flex: none;
+  }
+  .layout.single {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .layout.stacked .prog {
+    grid-column: 1 / -1;
+  }
+  .layout.stacked #listing {
+    flex: none;
+    height: 560px;
+  }
   .col {
     display: flex;
     flex-direction: column;
