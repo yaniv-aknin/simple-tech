@@ -16,3 +16,17 @@
 .power.on:hover {
   background: color-mix(in srgb, var(--ok) 85%, var(--text));
 }
+.power.invite {
+  animation: power-invite 2.4s ease-in-out infinite;
+}
+@keyframes power-invite {
+  50% {
+    box-shadow: 0 0 8px 3px color-mix(in srgb, var(--ok) 45%, transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .power.invite {
+    animation: none;
+    box-shadow: 0 0 6px 2px color-mix(in srgb, var(--ok) 35%, transparent);
+  }
+}
